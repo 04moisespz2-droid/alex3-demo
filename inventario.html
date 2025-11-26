@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <title>Inventario - ALEX 3.0</title>
+  <link rel="stylesheet" href="assets/css/styles.css">
+</head>
+
+<body class="dashboard-body">
+
+  <div class="sidebar">
+    <h2 class="logo">ALEX 3.0</h2>
+    <ul class="menu">
+      <li id="menu-dashboard"><a href="dashboard.html">🏠 Inicio</a></li>
+      <li id="menu-inventario"><a href="inventario.html">📦 Inventario</a></li>
+      <li id="menu-ventas"><a href="ventas.html">💵 Ventas</a></li>
+      <li id="menu-caja"><a href="caja.html">💰 Caja</a></li>
+      <li id="menu-usuarios"><a href="usuarios.html">👤 Usuarios</a></li>
+      <li id="menu-reportes"><a href="reportes.html">📊 Reportes</a></li>
+
+    </ul>
+  </div>
+
+  <div class="main-content">
+    <h1>Inventario</h1>
+
+    <div class="inventario-form">
+      <h3>Agregar producto</h3>
+
+      <input id="codigo" class="input" type="text" placeholder="Código del producto">
+      <input id="nombre" class="input" type="text" placeholder="Nombre del producto">
+      <input id="compra" class="input" type="number" placeholder="Precio de compra (Q)">
+      <input id="venta" class="input" type="number" placeholder="Precio de venta (Q)">
+      <input id="stock" class="input" type="number" placeholder="Stock inicial">
+
+      <button class="btn" onclick="agregarProducto()">Agregar</button>
+    </div>
+
+    <table class="tabla">
+      <thead>
+        <tr>
+          <th>Código</th>
+          <th>Nombre</th>
+          <th>Compra (Q)</th>
+          <th>Venta (Q)</th>
+          <th>Ganancia (Q)</th>
+          <th>Margen (%)</th>
+          <th>Stock</th>
+          <th>Acciones</th>
+        </tr>
+      </thead>
+      <tbody id="tabla-body"></tbody>
+    </table>
+
+  </div>
+
+  <script src="alex-storage.js"></script>
+  <script src="alex-roles.js"></script>
+  <script>
+    const usuarioActual = getUsuarioActualObligatorio();
+    aplicarPermisosYProteger("inventario");
+
+    let productos = load("productos", []);
+
+    function agregarProducto() {
+      const codigo = document.getElementById("codigo").value;
+      const nombre = document.getElementById("nombre").value;
+      const compra = parseFloat(document.getElementById("compra").value);
+      const venta = parseFloat(document.getElementById("venta").value);
+      const stock = parseInt(document.getElementById("stock").value);
+
+      if (!codigo || !nombre || isNaN(compra) || isNaN(venta) || isNaN(stock)) {
+        alert("Por favor completa todos los campos.");
+        return;
+      }
+
+      const ganancia = venta - compra;
+      const margen = (ganancia / compra * 100).toFixed(1);
+
+      const nuevo = { codigo, nombre, compra, venta, ganancia, margen, stock };
+      productos.push(nuevo);
+
+      save("productos", productos);
+      renderTabla();
+    }
+
+    function renderTabla() {
+      const tbody = document.getElementById("tabla-body");
+      tbody.innerHTML = "";
+
+      productos.forEach((p, index) => {
+        tbody.innerHTML += `
+          <tr>
+            <td>${p.codigo}</td>
+            <td>${p.nombre}</td>
+            <td>Q${p.compra.toFixed(2)}</td>
+            <td>Q${p.venta.toFixed(2)}</td>
+            <td>Q${p.ganancia.toFixed(2)}</td>
+            <td>${p.margen}%</td>
+            <td>${p.stock}</td>
+            <td><button onclick="eliminarProducto(${index})">🗑️</button></td>
+          </tr>
+        `;
+      });
+    }
+
+    function eliminarProducto(index) {
+      productos.splice(index, 1);
+      save("productos", productos);
+      renderTabla();
+    }
+
+    renderTabla();
+  </script>
+
+</body>
+</html>

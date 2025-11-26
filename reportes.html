@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <title>Reportes - ALEX 3.0</title>
+  <link rel="stylesheet" href="assets/css/styles.css">
+</head>
+
+<body class="dashboard-body">
+
+  <div class="sidebar">
+    <h2 class="logo">ALEX 3.0</h2>
+    <ul class="menu">
+      <li id="menu-dashboard"><a href="dashboard.html">🏠 Inicio</a></li>
+      <li id="menu-inventario"><a href="inventario.html">📦 Inventario</a></li>
+      <li id="menu-ventas"><a href="ventas.html">💵 Ventas</a></li>
+      <li id="menu-caja"><a href="caja.html">💰 Caja</a></li>
+      <li id="menu-usuarios"><a href="usuarios.html">👤 Usuarios</a></li>
+      <li id="menu-reportes"><a href="reportes.html">📊 Reportes</a></li>
+    </ul>
+  </div>
+
+  <div class="main-content">
+    <h1>Reportes generales</h1>
+    <p>Resumen rápido del estado del sistema.</p>
+
+    <!-- INVENTARIO -->
+    <h2>Inventario</h2>
+    <div class="resumen-caja">
+      <div class="card-resumen">
+        <h4>Total de productos</h4>
+        <p><span id="totalProductosTexto">0</span></p>
+      </div>
+      <div class="card-resumen">
+        <h4>Valor inventario (compra)</h4>
+        <p>Q<span id="valorCompraTexto">0.00</span></p>
+      </div>
+      <div class="card-resumen">
+        <h4>Valor inventario (venta)</h4>
+        <p>Q<span id="valorVentaTexto">0.00</span></p>
+      </div>
+    </div>
+
+    <!-- VENTAS -->
+    <h2>Ventas</h2>
+    <div class="resumen-caja">
+      <div class="card-resumen ingreso">
+        <h4>Total venta activa (POS)</h4>
+        <p>Q<span id="totalVentaActivaTexto">0.00</span></p>
+      </div>
+    </div>
+
+    <!-- CAJA -->
+    <h2>Caja</h2>
+    <div class="resumen-caja">
+      <div class="card-resumen">
+        <h4>Saldo inicial</h4>
+        <p>Q<span id="saldoInicialRep">0.00</span></p>
+      </div>
+      <div class="card-resumen ingreso">
+        <h4>Total ingresos</h4>
+        <p>Q<span id="totalIngresosRep">0.00</span></p>
+      </div>
+      <div class="card-resumen egreso">
+        <h4>Total egresos</h4>
+        <p>Q<span id="totalEgresosRep">0.00</span></p>
+      </div>
+      <div class="card-resumen saldo">
+        <h4>Saldo actual</h4>
+        <p>Q<span id="saldoActualRep">0.00</span></p>
+      </div>
+    </div>
+
+    <!-- CIERRES DE CAJA -->
+    <h2>Últimos cierres de caja</h2>
+    <table class="tabla">
+      <thead>
+        <tr>
+          <th>Fecha/Hora</th>
+          <th>Saldo al cierre</th>
+          <th>Observaciones</th>
+        </tr>
+      </thead>
+      <tbody id="tabla-cierres-rep-body"></tbody>
+    </table>
+  </div>
+
+  <script src="alex-storage.js"></script>
+  <script src="alex-roles.js"></script>
+  <script>
+    const usuarioActual = getUsuarioActualObligatorio();
+    aplicarPermisosYProteger("reportes");
+
+    function q2(n) {
+      return n.toFixed(2);
+    }
+
+    function cargarReportes() {
+      const productos = load("productos", []);
+      const ventasActivas = load("ventasActivas", []);
+      const saldoInicial = load("saldoInicial", 0);
+      const movimientos = load("movimientosCaja", []);
+      const cierres = load("cierresCaja", []);
+
+      // ===== INVENTARIO =====
+      document.getElementById("totalProductosTexto").innerText = productos.length;
+
+      let valorCompra = 0;
+      let valorVenta = 0;
+
+      productos.forEach(p => {
+        valorCompra += (p.compra || 0) * (p.stock || 0);
+        valorVenta += (p.venta || 0) * (p.stock || 0);
+      });
+
+      document.getElementById("valorCompraTexto").innerText = q2(valorCompra);
+      document.getElementById("valorVentaTexto").innerText = q2(valorVenta);
+
+      // ===== VENTAS (venta activa del POS) =====
+      let totalVentaActiva = 0;
+      ventasActivas.forEach(l => {
+        totalVentaActiva += l.subtotal || 0;
+      });
+      document.getElementById("totalVentaActivaTexto").innerText = q2(totalVentaActiva);
+
+      // ===== CAJA =====
+      let totalIngresos = 0;
+      let totalEgresos = 0;
+
+      movimientos.forEach(m => {
+        if (m.tipo === "ingreso") totalIngresos += m.monto || 0;
+        else if (m.tipo === "egreso") totalEgresos += m.monto || 0;
+      });
+
+      const saldoActual = saldoInicial + totalIngresos - totalEgresos;
+
+      document.getElementById("saldoInicialRep").innerText = q2(saldoInicial);
+      document.getElementById("totalIngresosRep").innerText = q2(totalIngresos);
+      document.getElementById("totalEgresosRep").innerText = q2(totalEgresos);
+      document.getElementById("saldoActualRep").innerText = q2(saldoActual);
+
+      // ===== CIERRES =====
+      const tbody = document.getElementById("tabla-cierres-rep-body");
+      tbody.innerHTML = "";
+
+      // Mostramos máximo 5 cierres (del más reciente al más antiguo)
+      const ultimos = [...cierres].reverse().slice(0, 5);
+
+      ultimos.forEach(c => {
+        tbody.innerHTML += `
+          <tr>
+            <td>${c.fecha}</td>
+            <td>Q${q2(c.saldoFinal || 0)}</td>
+            <td>${c.observaciones || ""}</td>
+          </tr>
+        `;
+      });
+    }
+
+    cargarReportes();
+  </script>
+
+</body>
+</html>

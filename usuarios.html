@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <title>Usuarios - ALEX 3.0</title>
+  <link rel="stylesheet" href="assets/css/styles.css">
+</head>
+
+<body class="dashboard-body">
+
+  <div class="sidebar">
+    <h2 class="logo">ALEX 3.0</h2>
+    <ul class="menu">
+      <li id="menu-dashboard"><a href="dashboard.html">🏠 Inicio</a></li>
+      <li id="menu-inventario"><a href="inventario.html">📦 Inventario</a></li>
+      <li id="menu-ventas"><a href="ventas.html">💵 Ventas</a></li>
+      <li id="menu-caja"><a href="caja.html">💰 Caja</a></li>
+      <li id="menu-usuarios"><a href="usuarios.html">👤 Usuarios</a></li>
+      <li id="menu-reportes"><a href="reportes.html">📊 Reportes</a></li>
+
+    </ul>
+  </div>
+
+  <div class="main-content">
+    <h1>Gestión de usuarios</h1>
+
+    <div class="usuarios-form inventario-form">
+      <h3>Agregar usuario</h3>
+
+      <input id="uNombre" class="input" type="text" placeholder="Nombre completo">
+      <input id="uUsuario" class="input" type="text" placeholder="Usuario (login)">
+      
+      <select id="uRol" class="input">
+        <option value="dueno">Dueño / Administrador</option>
+        <option value="cajero">Cajero</option>
+        <option value="inventario">Inventario / Bodega</option>
+        <option value="invitado">Invitado (solo lectura)</option>
+      </select>
+
+      <input id="uPassword" class="input" type="password" placeholder="Contraseña (solo demo)">
+
+      <button class="btn" onclick="agregarUsuario()">Guardar usuario</button>
+    </div>
+
+    <h3>Lista de usuarios</h3>
+    <table class="tabla">
+      <thead>
+        <tr>
+          <th>Nombre</th>
+          <th>Usuario</th>
+          <th>Rol</th>
+          <th>Creado</th>
+          <th>Acciones</th>
+        </tr>
+      </thead>
+      <tbody id="tabla-usuarios-body"></tbody>
+    </table>
+  </div>
+
+  <script src="alex-storage.js"></script>
+  <script src="alex-roles.js"></script>
+  <script>
+    const usuarioActual = getUsuarioActualObligatorio();
+    aplicarPermisosYProteger("usuarios");
+
+    let usuarios = load("usuarios", []);
+
+    function rolLegible(rol) {
+      switch (rol) {
+        case "dueno": return "Dueño / Admin";
+        case "cajero": return "Cajero";
+        case "inventario": return "Inventario / Bodega";
+        case "invitado": return "Invitado";
+        default: return rol;
+      }
+    }
+
+    function agregarUsuario() {
+      const nombre = document.getElementById("uNombre").value;
+      const usuario = document.getElementById("uUsuario").value;
+      const rol = document.getElementById("uRol").value;
+      const password = document.getElementById("uPassword").value;
+
+      if (nombre.trim() === "" || usuario.trim() === "" || password.trim() === "") {
+        alert("Por favor completa nombre, usuario y contraseña.");
+        return;
+      }
+
+      const yaExiste = usuarios.find(u => u.usuario === usuario);
+      if (yaExiste) {
+        alert("Ya existe un usuario con ese nombre de usuario.");
+        return;
+      }
+
+      const nuevo = {
+        nombre,
+        usuario,
+        rol,
+        password,
+        creadoEn: new Date().toLocaleString("es-GT")
+      };
+
+      usuarios.push(nuevo);
+      save("usuarios", usuarios);
+
+      limpiarFormulario();
+      renderUsuarios();
+    }
+
+    function limpiarFormulario() {
+      document.getElementById("uNombre").value = "";
+      document.getElementById("uUsuario").value = "";
+      document.getElementById("uRol").value = "dueno";
+      document.getElementById("uPassword").value = "";
+      document.getElementById("uNombre").focus();
+    }
+
+    function renderUsuarios() {
+      const tbody = document.getElementById("tabla-usuarios-body");
+      tbody.innerHTML = "";
+
+      usuarios.forEach((u, index) => {
+        tbody.innerHTML += `
+          <tr>
+            <td>${u.nombre}</td>
+            <td>${u.usuario}</td>
+            <td>${rolLegible(u.rol)}</td>
+            <td>${u.creadoEn}</td>
+            <td><button onclick="eliminarUsuario(${index})">🗑️</button></td>
+          </tr>
+        `;
+      });
+    }
+
+    function eliminarUsuario(index) {
+      if (!confirm("¿Seguro que quieres eliminar este usuario?")) return;
+      usuarios.splice(index, 1);
+      save("usuarios", usuarios);
+      renderUsuarios();
+    }
+
+    renderUsuarios();
+  </script>
+
+</body>
+</html>
