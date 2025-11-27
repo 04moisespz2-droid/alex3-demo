@@ -3,9 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <title>Inventario - ALEX 3.0</title>
-<link rel="stylesheet" href="styles.css">
-
-
+  <link rel="stylesheet" href="styles.css">
 </head>
 
 <body class="dashboard-body">
@@ -19,7 +17,6 @@
       <li id="menu-caja"><a href="caja.html">💰 Caja</a></li>
       <li id="menu-usuarios"><a href="usuarios.html">👤 Usuarios</a></li>
       <li id="menu-reportes"><a href="reportes.html">📊 Reportes</a></li>
-
     </ul>
   </div>
 
@@ -31,8 +28,8 @@
 
       <input id="codigo" class="input" type="text" placeholder="Código del producto">
       <input id="nombre" class="input" type="text" placeholder="Nombre del producto">
-      <input id="compra" class="input" type="number" placeholder="Precio de compra (Q)">
-      <input id="venta" class="input" type="number" placeholder="Precio de venta (Q)">
+      <input id="compra" class="input" type="number" step="0.01" placeholder="Precio de compra (moneda del sistema)">
+      <input id="venta" class="input" type="number" step="0.01" placeholder="Precio de venta (moneda del sistema)">
       <input id="stock" class="input" type="number" placeholder="Stock inicial">
 
       <button class="btn" onclick="agregarProducto()">Agregar</button>
@@ -43,9 +40,9 @@
         <tr>
           <th>Código</th>
           <th>Nombre</th>
-          <th>Compra (Q)</th>
-          <th>Venta (Q)</th>
-          <th>Ganancia (Q)</th>
+          <th>Compra</th>
+          <th>Venta</th>
+          <th>Ganancia</th>
           <th>Margen (%)</th>
           <th>Stock</th>
           <th>Acciones</th>
@@ -64,6 +61,11 @@
 
     let productos = load("productos", []);
 
+    // Usar la moneda configurada en el sistema
+    function formatearMoneda(valor) {
+      return alex3FormatearMoneda(valor);
+    }
+
     function agregarProducto() {
       const codigo = document.getElementById("codigo").value;
       const nombre = document.getElementById("nombre").value;
@@ -77,13 +79,23 @@
       }
 
       const ganancia = venta - compra;
-      const margen = (ganancia / compra * 100).toFixed(1);
+      const margen = ((ganancia / compra) * 100).toFixed(1);
 
       const nuevo = { codigo, nombre, compra, venta, ganancia, margen, stock };
       productos.push(nuevo);
 
       save("productos", productos);
+      limpiarFormulario();
       renderTabla();
+    }
+
+    function limpiarFormulario() {
+      document.getElementById("codigo").value = "";
+      document.getElementById("nombre").value = "";
+      document.getElementById("compra").value = "";
+      document.getElementById("venta").value = "";
+      document.getElementById("stock").value = "";
+      document.getElementById("codigo").focus();
     }
 
     function renderTabla() {
@@ -95,9 +107,9 @@
           <tr>
             <td>${p.codigo}</td>
             <td>${p.nombre}</td>
-            <td>Q${p.compra.toFixed(2)}</td>
-            <td>Q${p.venta.toFixed(2)}</td>
-            <td>Q${p.ganancia.toFixed(2)}</td>
+            <td>${formatearMoneda(p.compra)}</td>
+            <td>${formatearMoneda(p.venta)}</td>
+            <td>${formatearMoneda(p.ganancia)}</td>
             <td>${p.margen}%</td>
             <td>${p.stock}</td>
             <td><button onclick="eliminarProducto(${index})">🗑️</button></td>
@@ -117,5 +129,3 @@
 
 </body>
 </html>
-
-
