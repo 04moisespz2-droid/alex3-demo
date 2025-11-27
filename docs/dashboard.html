@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <title>ALEX 3.0 - Panel</title>
+  <link rel="stylesheet" href="assets/css/styles.css">
+</head>
+
+<body class="dashboard-body">
+  
+  <div class="sidebar">
+    <h2 class="logo">ALEX 3.0</h2>
+
+    <ul class="menu">
+      <li id="menu-dashboard"><a href="dashboard.html">🏠 Inicio</a></li>
+      <li id="menu-inventario"><a href="inventario.html">📦 Inventario</a></li>
+      <li id="menu-ventas"><a href="ventas.html">💵 Ventas</a></li>
+      <li id="menu-caja"><a href="caja.html">💰 Caja</a></li>
+      <li id="menu-usuarios"><a href="usuarios.html">👤 Usuarios</a></li>
+      <li id="menu-reportes"><a href="reportes.html">📊 Reportes</a></li>
+
+      <li><a href="#" onclick="cerrarSesion()">🚪 Cerrar sesión</a></li>
+    </ul>
+  </div>
+
+  <div class="main-content">
+    <h1 id="bienvenidaTitulo">Bienvenido al Panel Principal</h1>
+    <p id="bienvenidaTexto">Selecciona un módulo del menú izquierdo.</p>
+  </div>
+
+  <script src="alex-storage.js"></script>
+  <script src="alex-roles.js"></script>
+  <script>
+    const usuarioActual = getUsuarioActualObligatorio();
+
+    const titulo = document.getElementById("bienvenidaTitulo");
+    const texto = document.getElementById("bienvenidaTexto");
+
+    if (usuarioActual) {
+      titulo.textContent = "Bienvenido, " + usuarioActual.nombre;
+      texto.textContent = "Rol: " + usuarioActual.rol + ". Selecciona un módulo del menú izquierdo.";
+    }
+
+    aplicarPermisosYProteger("dashboard");
+
+    function cerrarSesion() {
+      save("usuarioActual", null);
+      window.location.href = "index.html";
+    }
+  </script>
+
+</body>
+</html>

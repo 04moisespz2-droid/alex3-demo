@@ -1,1 +1,78 @@
-<!-- temporal, se va a reemplazar -->
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <title>ALEX 3.0 - Login</title>
+  <link rel="stylesheet" href="assets/css/styles.css">
+</head>
+
+<body>
+  <div class="login-container">
+    <h1 class="title">ALEX 3.0</h1>
+
+    <div class="login-box">
+      <h2>Iniciar Sesión</h2>
+
+      <input id="loginUsuario" type="text" placeholder="Usuario" class="input">
+      <input id="loginPassword" type="password" placeholder="Contraseña" class="input">
+
+      <button class="btn" onclick="iniciarSesion()">Ingresar</button>
+
+      <p id="loginError" style="color: #ffdddd; margin-top: 10px;"></p>
+    </div>
+  </div>
+
+  <!-- Sistema de guardado -->
+  <script src="alex-storage.js"></script>
+
+  <script>
+    function iniciarSesion() {
+      const usuarioInput = document.getElementById("loginUsuario").value;
+      const passwordInput = document.getElementById("loginPassword").value;
+      const errorLabel = document.getElementById("loginError");
+
+      errorLabel.textContent = "";
+
+      if (usuarioInput.trim() === "" || passwordInput.trim() === "") {
+        errorLabel.textContent = "Por favor ingresa usuario y contraseña.";
+        return;
+      }
+
+      const usuarios = load("usuarios", []);
+
+      if (usuarios.length === 0) {
+        if (!confirm("No hay usuarios registrados. ¿Quieres crear este usuario como DUEÑO/ADMIN?")) {
+          return;
+        }
+
+        const nuevo = {
+          nombre: usuarioInput,
+          usuario: usuarioInput,
+          rol: "dueno",
+          password: passwordInput,
+          creadoEn: new Date().toLocaleString("es-GT")
+        };
+
+        usuarios.push(nuevo);
+        save("usuarios", usuarios);
+        save("usuarioActual", nuevo);
+
+        window.location.href = "dashboard.html";
+        return;
+      }
+
+      const encontrado = usuarios.find(u =>
+        u.usuario === usuarioInput && u.password === passwordInput
+      );
+
+      if (!encontrado) {
+        errorLabel.textContent = "Usuario o contraseña incorrectos.";
+        return;
+      }
+
+      save("usuarioActual", encontrado);
+      window.location.href = "dashboard.html";
+    }
+  </script>
+</body>
+</html>

@@ -1,0 +1,243 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <title>Caja - ALEX 3.0</title>
+  <link rel="stylesheet" href="assets/css/styles.css">
+</head>
+
+<body class="dashboard-body">
+
+  <div class="sidebar">
+    <h2 class="logo">ALEX 3.0</h2>
+    <ul class="menu">
+      <li id="menu-dashboard"><a href="dashboard.html">🏠 Inicio</a></li>
+      <li id="menu-inventario"><a href="inventario.html">📦 Inventario</a></li>
+      <li id="menu-ventas"><a href="ventas.html">💵 Ventas</a></li>
+      <li id="menu-caja"><a href="caja.html">💰 Caja</a></li>
+      <li id="menu-usuarios"><a href="usuarios.html">👤 Usuarios</a></li>
+      <li id="menu-reportes"><a href="reportes.html">📊 Reportes</a></li>
+
+    </ul>
+  </div>
+
+  <div class="main-content">
+    <h1>Caja (Profesional)</h1>
+
+    <div class="caja-config">
+      <h3>Saldo inicial de caja</h3>
+      <input id="saldoInicialInput" class="input" type="number" step="0.01" placeholder="Ej: 500.00">
+      <button class="btn" onclick="actualizarSaldoInicial()">Guardar saldo inicial</button>
+    </div>
+
+    <div class="resumen-caja">
+      <div class="card-resumen">
+        <h4>Saldo inicial</h4>
+        <p>Q<span id="saldoInicialTexto">0.00</span></p>
+      </div>
+      <div class="card-resumen ingreso">
+        <h4>Total ingresos</h4>
+        <p>Q<span id="totalIngresosTexto">0.00</span></p>
+      </div>
+      <div class="card-resumen egreso">
+        <h4>Total egresos</h4>
+        <p>Q<span id="totalEgresosTexto">0.00</span></p>
+      </div>
+      <div class="card-resumen saldo">
+        <h4>Saldo actual</h4>
+        <p>Q<span id="saldoActualTexto">0.00</span></p>
+      </div>
+    </div>
+
+    <div class="caja-form">
+      <h3>Registrar movimiento</h3>
+
+      <select id="tipoMovimiento" class="input">
+        <option value="ingreso">Ingreso</option>
+        <option value="egreso">Egreso</option>
+      </select>
+
+      <input id="descripcionMovimiento" class="input" type="text" placeholder="Descripción">
+      <input id="categoriaMovimiento" class="input" type="text" placeholder="Categoría">
+      <input id="montoMovimiento" class="input" type="number" step="0.01" placeholder="Monto (Q)">
+
+      <button class="btn" onclick="agregarMovimiento()">Registrar movimiento</button>
+    </div>
+
+    <h3>Movimientos de caja</h3>
+    <table class="tabla">
+      <thead>
+        <tr>
+          <th>Fecha/Hora</th>
+          <th>Tipo</th>
+          <th>Descripción</th>
+          <th>Categoría</th>
+          <th>Monto (Q)</th>
+          <th>Saldo después</th>
+          <th>Acciones</th>
+        </tr>
+      </thead>
+      <tbody id="tabla-movimientos-body"></tbody>
+    </table>
+
+    <div class="caja-cierre">
+      <h3>Cierre de caja</h3>
+      <button class="btn cierre-btn" onclick="cerrarCaja()">Registrar cierre de caja</button>
+
+      <table class="tabla">
+        <thead>
+          <tr>
+            <th>Fecha/Hora</th>
+            <th>Saldo al cierre</th>
+            <th>Observaciones</th>
+          </tr>
+        </thead>
+        <tbody id="tabla-cierres-body"></tbody>
+      </table>
+    </div>
+
+  </div>
+
+  <script src="alex-storage.js"></script>
+  <script src="alex-roles.js"></script>
+  <script>
+    const usuarioActual = getUsuarioActualObligatorio();
+    aplicarPermisosYProteger("caja");
+
+    let saldoInicial = load("saldoInicial", 0);
+    let movimientos = load("movimientosCaja", []);
+    let cierres = load("cierresCaja", []);
+
+    function formatearQ(n) { return n.toFixed(2); }
+
+    function actualizarSaldoInicial() {
+      const valor = parseFloat(document.getElementById("saldoInicialInput").value);
+
+      if (isNaN(valor) || valor < 0) {
+        alert("Ingresa un saldo inicial válido.");
+        return;
+      }
+
+      saldoInicial = valor;
+      save("saldoInicial", saldoInicial);
+
+      document.getElementById("saldoInicialTexto").innerText = formatearQ(saldoInicial);
+      recalcularResumenYTabla();
+      alert("Saldo inicial actualizado.");
+    }
+
+    function agregarMovimiento() {
+      const tipo = document.getElementById("tipoMovimiento").value;
+      const descripcion = document.getElementById("descripcionMovimiento").value;
+      const categoria = document.getElementById("categoriaMovimiento").value;
+      const monto = parseFloat(document.getElementById("montoMovimiento").value);
+
+      if (descripcion.trim() === "" || categoria.trim() === "" || isNaN(monto) || monto <= 0) {
+        alert("Completa descripción, categoría y un monto mayor a 0.");
+        return;
+      }
+
+      const fecha = new Date().toLocaleString("es-GT");
+      const movimiento = { tipo, descripcion, categoria, monto, fecha };
+
+      movimientos.push(movimiento);
+      save("movimientosCaja", movimientos);
+
+      document.getElementById("descripcionMovimiento").value = "";
+      document.getElementById("categoriaMovimiento").value = "";
+      document.getElementById("montoMovimiento").value = "";
+      document.getElementById("descripcionMovimiento").focus();
+
+      recalcularResumenYTabla();
+    }
+
+    function recalcularResumenYTabla() {
+      const tbody = document.getElementById("tabla-movimientos-body");
+      tbody.innerHTML = "";
+
+      let totalIngresos = 0;
+      let totalEgresos = 0;
+      let saldoActual = saldoInicial;
+
+      movimientos.forEach((mov, index) => {
+        if (mov.tipo === "ingreso") {
+          totalIngresos += mov.monto;
+          saldoActual += mov.monto;
+        } else {
+          totalEgresos += mov.monto;
+          saldoActual -= mov.monto;
+        }
+
+        tbody.innerHTML += `
+          <tr>
+            <td>${mov.fecha}</td>
+            <td>${mov.tipo === "ingreso" ? "Ingreso" : "Egreso"}</td>
+            <td>${mov.descripcion}</td>
+            <td>${mov.categoria}</td>
+            <td>${mov.tipo === "ingreso" ? "+" : "-"}Q${formatearQ(mov.monto)}</td>
+            <td>Q${formatearQ(calcularSaldoHasta(index))}</td>
+            <td><button onclick="eliminarMovimiento(${index})">🗑️</button></td>
+          </tr>
+        `;
+      });
+
+      document.getElementById("totalIngresosTexto").innerText = formatearQ(totalIngresos);
+      document.getElementById("totalEgresosTexto").innerText = formatearQ(totalEgresos);
+      document.getElementById("saldoActualTexto").innerText = formatearQ(saldoActual);
+    }
+
+    function calcularSaldoHasta(i) {
+      let saldo = saldoInicial;
+      for (let x = 0; x <= i; x++) {
+        const mov = movimientos[x];
+        if (mov.tipo === "ingreso") saldo += mov.monto;
+        else saldo -= mov.monto;
+      }
+      return saldo;
+    }
+
+    function eliminarMovimiento(index) {
+      movimientos.splice(index, 1);
+      save("movimientosCaja", movimientos);
+      recalcularResumenYTabla();
+    }
+
+    function cerrarCaja() {
+      let totalIngresos = movimientos.filter(m => m.tipo === "ingreso").reduce((a, b) => a + b.monto, 0);
+      let totalEgresos = movimientos.filter(m => m.tipo === "egreso").reduce((a, b) => a + b.monto, 0);
+
+      const saldoFinal = saldoInicial + totalIngresos - totalEgresos;
+      const fecha = new Date().toLocaleString("es-GT");
+      const observaciones = prompt("Observaciones del cierre:", "") || "";
+
+      cierres.push({ fecha, saldoFinal, observaciones });
+      save("cierresCaja", cierres);
+
+      renderCierres();
+
+      alert("Cierre de caja registrado. Saldo final: Q" + formatearQ(saldoFinal));
+    }
+
+    function renderCierres() {
+      const tbody = document.getElementById("tabla-cierres-body");
+      tbody.innerHTML = "";
+
+      cierres.forEach(c => {
+        tbody.innerHTML += `
+          <tr>
+            <td>${c.fecha}</td>
+            <td>Q${formatearQ(c.saldoFinal)}</td>
+            <td>${c.observaciones}</td>
+          </tr>
+        `;
+      });
+    }
+
+    // Inicializar
+    document.getElementById("saldoInicialTexto").innerText = formatearQ(saldoInicial);
+    renderCierres();
+    recalcularResumenYTabla();
+  </script>
+
+</body>
+</html>
