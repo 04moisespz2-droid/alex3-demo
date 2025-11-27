@@ -1,171 +1,133 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-  <meta charset="UTF-8" />
+  <meta charset="UTF-8">
   <title>Configuración - ALEX 3.0</title>
-  <link rel="stylesheet" href="styles.css" />
+  <link rel="stylesheet" href="styles.css">
 </head>
+
 <body class="dashboard-body">
 
   <div class="sidebar">
     <h2 class="logo">ALEX 3.0</h2>
     <ul class="menu">
-      <li><a href="dashboard.html">🏠 Inicio</a></li>
-      <li><a href="inventario.html">📦 Inventario</a></li>
-      <li><a href="ventas.html">💵 Ventas</a></li>
-      <li><a href="caja.html">💰 Caja</a></li>
-      <li><a href="usuarios.html">👤 Usuarios</a></li>
-      <li><a href="reportes.html">📊 Reportes</a></li>
-      <li class="active"><a href="configuracion.html">⚙️ Configuración</a></li>
+      <li id="menu-dashboard"><a href="dashboard.html">🏠 Inicio</a></li>
+      <li id="menu-inventario"><a href="inventario.html">📦 Inventario</a></li>
+      <li id="menu-ventas"><a href="ventas.html">💵 Ventas</a></li>
+      <li id="menu-caja"><a href="caja.html">💰 Caja</a></li>
+      <li id="menu-usuarios"><a href="usuarios.html">👤 Usuarios</a></li>
+      <li id="menu-reportes"><a href="reportes.html">📊 Reportes</a></li>
+      <li id="menu-configuracion"><a href="configuracion.html">⚙️ Configuración</a></li>
     </ul>
   </div>
 
   <div class="main-content">
-    <h1>⚙️ Configuración de ALEX 3.0</h1>
-    <p>Administra las opciones generales del sistema.</p>
+    <h1>Configuración de ALEX 3.0</h1>
 
-    <!-- 🔵 MONEDA DEL SISTEMA -->
-    <div class="settings-box">
-      <h2>💵 Moneda del sistema</h2>
-      <label for="monedaSistema">Moneda principal:</label>
-      <select id="monedaSistema" onchange="guardarMonedaSistema()">
-        <option value="GTQ">GTQ – Quetzal (Guatemala)</option>
-        <option value="MXN">MXN – Peso mexicano</option>
-        <option value="USD">USD – Dólar estadounidense</option>
-        <option value="COP">COP – Peso colombiano</option>
-        <option value="PEN">PEN – Sol peruano</option>
-        <option value="CLP">CLP – Peso chileno</option>
-        <option value="BRL">BRL – Real brasileño</option>
-        <option value="ARS">ARS – Peso argentino</option>
-      </select>
-      <p id="monedaSistemaInfo" style="margin-top:6px;"></p>
-    </div>
+    <div class="config-card">
+      <h3>Moneda principal del sistema</h3>
+      <p>Esta moneda se usará para mostrar precios, ventas, caja, etc.</p>
 
-    <!-- 🔥 MODO DESARROLLADOR -->
-    <div class="settings-box">
-      <h2>🛠️ Modo desarrollador</h2>
-      <p>Desactiva caché y fuerza recarga instantánea al actualizar archivos.</p>
-
-      <label for="modoDevSwitch">Activar modo desarrollador:</label>
-      <select id="modoDevSwitch" onchange="guardarModoDev()">
-        <option value="0">Desactivado</option>
-        <option value="1">Activado</option>
+      <label for="monedaSelect">Selecciona la moneda:</label>
+      <select id="monedaSelect" class="input">
+        <option value="GTQ">🇬🇹 Quetzal guatemalteco (GTQ)</option>
+        <option value="MXN">🇲🇽 Peso mexicano (MXN)</option>
+        <option value="USD">🇺🇸 Dólar estadounidense (USD)</option>
+        <option value="COP">🇨🇴 Peso colombiano (COP)</option>
+        <option value="PEN">🇵🇪 Sol peruano (PEN)</option>
+        <option value="CLP">🇨🇱 Peso chileno (CLP)</option>
+        <option value="BRL">🇧🇷 Real brasileño (BRL)</option>
+        <option value="ARS">🇦🇷 Peso argentino (ARS)</option>
+        <option value="EUR">🇪🇺 Euro (EUR)</option>
       </select>
 
-      <p id="infoModoDev" style="margin-top:6px; font-size:0.9rem;"></p>
+      <p style="margin-top:8px;">
+        Vista previa: <strong id="previewMoneda">Q 123.45</strong>
+      </p>
     </div>
 
-    <!-- RESPALDOS -->
-    <div class="settings-box">
-      <h2>🗂️ Respaldos</h2>
-      <button onclick="exportarRespaldoALEX3()">💾 Exportar respaldo</button>
-      <button onclick="document.getElementById('archivoRespaldo').click()">📂 Importar respaldo</button>
-      <input type="file" id="archivoRespaldo" accept="application/json" style="display:none" onchange="importarRespaldoALEX3(this.files[0])">
+    <div class="config-card">
+      <h3>Modo desarrollador</h3>
+      <p>Solo para ti / pruebas. Puede mostrar datos de ejemplo o atajos de pruebas.</p>
+
+      <label>
+        <input type="checkbox" id="modoDevCheck">
+        Activar modo desarrollador
+      </label>
     </div>
 
-    <!-- REINICIO -->
-    <div class="settings-box">
-      <h2>⚠️ Restaurar sistema</h2>
-      <button onclick="restaurarFabrica()">🔄 Restaurar ALEX 3.0</button>
-    </div>
-
+    <button class="btn" onclick="guardarConfiguracion()">Guardar configuración</button>
   </div>
 
   <script src="alex-storage.js"></script>
   <script src="alex-dev.js"></script>
+  <script src="alex-roles.js"></script>
 
   <script>
-    // =======================
-    // MONEDA
-    // =======================
-    const MONEDAS_SISTEMA = {
-      GTQ: { simbolo: "Q", nombre: "Quetzal" },
-      MXN: { simbolo: "$", nombre: "Peso mexicano" },
-      USD: { simbolo: "$", nombre: "Dólar" },
-      COP: { simbolo: "$", nombre: "Peso colombiano" },
-      PEN: { simbolo: "S/", nombre: "Sol peruano" },
-      CLP: { simbolo: "$", nombre: "Peso chileno" },
-      BRL: { simbolo: "R$", nombre: "Real brasileño" },
-      ARS: { simbolo: "$", nombre: "Peso argentino" }
-    };
+    const usuarioActual = getUsuarioActualObligatorio();
+    aplicarPermisosYProteger("configuracion");
 
-    function cargarMonedaSistema() {
-      const sel = document.getElementById("monedaSistema");
-      let codigo = localStorage.getItem("alex3_moneda_sistema") || "GTQ";
-      sel.value = codigo;
+    const MONEDAS = [
+      { codigo: "GTQ", simbolo: "Q", ejemplo: "Q 123.45" },
+      { codigo: "MXN", simbolo: "$", ejemplo: "$ 123.45 MXN" },
+      { codigo: "USD", simbolo: "$", ejemplo: "$ 123.45" },
+      { codigo: "COP", simbolo: "$", ejemplo: "$ 123.45 COP" },
+      { codigo: "PEN", simbolo: "S/", ejemplo: "S/ 123.45" },
+      { codigo: "CLP", simbolo: "$", ejemplo: "$ 123.45 CLP" },
+      { codigo: "BRL", simbolo: "R$", ejemplo: "R$ 123.45" },
+      { codigo: "ARS", simbolo: "$", ejemplo: "$ 123.45 ARS" },
+      { codigo: "EUR", simbolo: "€", ejemplo: "€ 123.45" },
+    ];
 
-      const m = MONEDAS_SISTEMA[codigo];
-      document.getElementById("monedaSistemaInfo").innerText =
-        "Moneda actual: " + m.simbolo + " (" + m.nombre + ")";
-    }
-
-    function guardarMonedaSistema() {
-      const val = document.getElementById("monedaSistema").value;
-      localStorage.setItem("alex3_moneda_sistema", val);
-      alert("Moneda del sistema actualizada.");
-      cargarMonedaSistema();
-    }
-
-    // =======================
-    // MODO DESARROLLADOR
-    // =======================
-    function cargarModoDev() {
-      const estado = localStorage.getItem("alex3_modo_dev") || "0";
-      document.getElementById("modoDevSwitch").value = estado;
-
-      document.getElementById("infoModoDev").innerText =
-        estado === "1"
-          ? "Modo desarrollador ACTIVADO. La caché está deshabilitada."
-          : "Modo desarrollador desactivado.";
-    }
-
-    function guardarModoDev() {
-      const val = document.getElementById("modoDevSwitch").value;
-      localStorage.setItem("alex3_modo_dev", val);
-      alert("Modo desarrollador actualizado. Recarga la página.");
-      location.reload();
-    }
-
-    // =======================
-    // RESPALDOS / RESET
-    // =======================
-    function exportarRespaldoALEX3() {
-      const data = {};
-      Object.keys(localStorage).forEach(k => data[k] = localStorage.getItem(k));
-      const blob = new Blob([JSON.stringify(data, null, 2)], { type: "application/json" });
-      const url = URL.createObjectURL(blob);
-      const a = document.createElement("a");
-      a.href = url;
-      a.download = "alex3-respaldo.json";
-      a.click();
-      URL.revokeObjectURL(url);
-    }
-
-    function importarRespaldoALEX3(file) {
-      const reader = new FileReader();
-      reader.onload = (evt) => {
-        const data = JSON.parse(evt.target.result);
-        localStorage.clear();
-        Object.keys(data).forEach(k => localStorage.setItem(k, data[k]));
-        alert("Respaldo importado. Recarga la página.");
-        location.reload();
-      };
-      reader.readAsText(file);
-    }
-
-    function restaurarFabrica() {
-      if (confirm("¿Seguro? Esto borra todo.")) {
-        localStorage.clear();
-        alert("Sistema restaurado.");
-        location.reload();
+    function cargarConfiguracion() {
+      let config = {};
+      try {
+        config = JSON.parse(localStorage.getItem("alex3_config") || "{}");
+      } catch (e) {
+        config = {};
       }
+
+      const select = document.getElementById("monedaSelect");
+      const checkDev = document.getElementById("modoDevCheck");
+
+      if (config.monedaCodigo) {
+        select.value = config.monedaCodigo;
+      }
+
+      if (typeof config.modoDesarrollador === "boolean") {
+        checkDev.checked = config.modoDesarrollador;
+      }
+
+      actualizarPreview();
     }
 
-    // =======================
-    // INICIAR
-    // =======================
-    cargarMonedaSistema();
-    cargarModoDev();
+    function actualizarPreview() {
+      const codigo = document.getElementById("monedaSelect").value;
+      const moneda = MONEDAS.find(m => m.codigo === codigo) || MONEDAS[0];
+      document.getElementById("previewMoneda").innerText = moneda.ejemplo;
+    }
+
+    document.getElementById("monedaSelect").addEventListener("change", actualizarPreview);
+
+    function guardarConfiguracion() {
+      const codigo = document.getElementById("monedaSelect").value;
+      const modoDev = document.getElementById("modoDevCheck").checked;
+
+      const moneda = MONEDAS.find(m => m.codigo === codigo) || MONEDAS[0];
+
+      const config = {
+        monedaCodigo: moneda.codigo,
+        monedaSimbolo: moneda.simbolo,
+        modoDesarrollador: modoDev
+      };
+
+      localStorage.setItem("alex3_config", JSON.stringify(config));
+
+      alert("Configuración guardada. Recarga las páginas para aplicar los cambios.");
+    }
+
+    // Inicializar
+    cargarConfiguracion();
   </script>
 
 </body>
