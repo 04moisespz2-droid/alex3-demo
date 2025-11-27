@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <title>ALEX 3.0 - Gastos</title>
+  <link rel="stylesheet" href="styles.css">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+</head>
+
+<body class="dashboard-body">
+  <aside class="sidebar">
+    <div class="sidebar-header">
+      <span class="logo-badge">A</span>
+      <div class="sidebar-logo-text">
+        <span class="sidebar-logo-main">ALEX 3.0</span>
+        <span class="sidebar-logo-sub">Panel del negocio</span>
+      </div>
+    </div>
+
+    <nav class="sidebar-nav">
+      <a href="dashboard.html" class="sidebar-link">📊 Dashboard</a>
+      <a href="ventas.html" class="sidebar-link">💵 Ventas</a>
+      <a href="inventario.html" class="sidebar-link">📦 Inventario</a>
+      <a href="caja.html" class="sidebar-link">💰 Caja</a>
+      <a href="compras.html" class="sidebar-link">🧾 Compras</a>
+      <a href="gastos.html" class="sidebar-link active">📉 Gastos</a>
+      <a href="clientes.html" class="sidebar-link">👥 Clientes</a>
+      <a href="proveedores.html" class="sidebar-link">🚚 Proveedores</a>
+      <a href="contabilidad.html" class="sidebar-link">📚 Contabilidad</a>
+      <a href="sat.html" class="sidebar-link">🇬🇹 SAT Guatemala</a>
+      <a href="ia.html" class="sidebar-link">🤖 IA empresarial</a>
+      <a href="configuracion.html" class="sidebar-link">⚙️ Configuración</a>
+    </nav>
+
+    <div class="sidebar-footer">
+      <span class="sidebar-footer-title">Empresa demo</span>
+      <span class="sidebar-footer-sub">Versión 1.0</span>
+    </div>
+  </aside>
+
+  <div class="main-layout">
+    <header class="topbar">
+      <button class="btn-menu-mobile" id="btnMenuMobile">☰</button>
+
+      <div class="topbar-left">
+        <h1 class="topbar-title">Gastos</h1>
+        <p class="topbar-subtitle">Egresos del negocio: servicios, rentas, sueldos y más.</p>
+      </div>
+
+      <div class="topbar-right">
+        <span class="topbar-company">Mi tienda demo</span>
+        <span class="topbar-divider">•</span>
+        <span class="topbar-user">Brayan (Dueño)</span>
+      </div>
+    </header>
+
+    <main class="main-content">
+      <section class="card">
+        <h2 class="card-title">Listado de gastos</h2>
+        <p class="card-description">
+          Aquí se verán todos los gastos registrados y su impacto en la utilidad.
+        </p>
+
+        <table class="table">
+          <thead>
+            <tr>
+              <th>Fecha</th>
+              <th>Categoría</th>
+              <th>Descripción</th>
+              <th>Método de pago</th>
+              <th>Monto</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td colspan="5" class="table-empty">
+                Aún no hay gastos registrados en esta versión demo.
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </section>
+    </main>
+  </div>
+
+  <script>
+    const btnMenuMobile = document.getElementById('btnMenuMobile');
+    const sidebar = document.querySelector('.sidebar');
+    btnMenuMobile.addEventListener('click', () => {
+      sidebar.classList.toggle('sidebar-open');
+    });
+  </script>
+</body>
+</html>
