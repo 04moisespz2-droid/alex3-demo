@@ -50,6 +50,7 @@
   </div>
 
   <script src="alex-storage.js"></script>
+  <script src="alex-dev.js"></script>
   <script src="alex-roles.js"></script>
 
   <script>
@@ -58,17 +59,17 @@
 
     let lineasVenta = load("ventasActivas", []);
 
-    function formatearMoneda(v) {
-      return alex3FormatearMoneda(v);
+    function formatearMoneda(n) {
+      return alex3FormatearMoneda(n);
     }
 
     function agregarLineaVenta() {
-      const nombre = document.getElementById("ventaNombre").value;
+      const nombre = document.getElementById("ventaNombre").value.trim();
       const precio = parseFloat(document.getElementById("ventaPrecio").value);
       const cantidad = parseInt(document.getElementById("ventaCantidad").value);
 
-      if (nombre.trim() === "" || isNaN(precio) || precio <= 0 || isNaN(cantidad) || cantidad <= 0) {
-        alert("Por favor ingresa un nombre válido, precio mayor a 0 y cantidad mayor a 0.");
+      if (!nombre || isNaN(precio) || precio <= 0 || isNaN(cantidad) || cantidad <= 0) {
+        alert("Ingresa un nombre válido, un precio mayor a 0 y una cantidad mayor a 0.");
         return;
       }
 
@@ -78,18 +79,22 @@
       lineasVenta.push(linea);
       save("ventasActivas", lineasVenta);
 
+      limpiarFormularioVenta();
+      renderTablaVentas();
+    }
+
+    function limpiarFormularioVenta() {
       document.getElementById("ventaNombre").value = "";
       document.getElementById("ventaPrecio").value = "";
       document.getElementById("ventaCantidad").value = "";
       document.getElementById("ventaNombre").focus();
-
-      renderTablaVentas();
     }
 
     function renderTablaVentas() {
       const tbody = document.getElementById("tabla-ventas-body");
-      tbody.innerHTML = "";
+      if (!tbody) return;
 
+      tbody.innerHTML = "";
       let total = 0;
 
       lineasVenta.forEach((l, index) => {
@@ -110,11 +115,13 @@
     }
 
     function eliminarLinea(index) {
+      if (!confirm("¿Eliminar esta línea de venta?")) return;
       lineasVenta.splice(index, 1);
       save("ventasActivas", lineasVenta);
       renderTablaVentas();
     }
 
+    // Inicializar tabla
     renderTablaVentas();
   </script>
 
