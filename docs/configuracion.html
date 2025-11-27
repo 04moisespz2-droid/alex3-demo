@@ -7,7 +7,7 @@
 </head>
 <body class="dashboard-body">
 
-  <!-- Sidebar (mismo estilo que tus otras páginas) -->
+  <!-- Sidebar igual que el resto -->
   <div class="sidebar">
     <h2 class="logo">ALEX 3.0</h2>
     <ul class="menu">
@@ -23,232 +23,161 @@
 
   <div class="main-content">
     <h1>⚙️ Configuración de ALEX 3.0</h1>
-    <p>Aquí puedes administrar opciones avanzadas del sistema.</p>
+    <p>Administra las opciones generales del sistema.</p>
 
-    <!-- BLOQUE: Conversor de monedas -->
-    <div style="margin-top: 20px; padding: 16px; border-radius: 8px; background:#151515; border:1px solid #333;">
-      <h2>💱 Conversor de monedas (Latinoamérica)</h2>
-      <p style="font-size: 0.9rem; color:#ccc;">
-        Tasas de ejemplo, puedes ajustarlas según el día. Conversión interna, sin conexión a internet.
+    <!-- BLOQUE: Moneda del sistema -->
+    <div class="settings-box">
+      <h2>💵 Moneda del sistema</h2>
+      <label for="monedaSistema">Moneda principal que usarán los precios del sistema:</label>
+      <select id="monedaSistema" onchange="guardarMonedaSistema()">
+        <option value="GTQ">GTQ – Quetzal (Guatemala)</option>
+        <option value="MXN">MXN – Peso mexicano</option>
+        <option value="USD">USD – Dólar estadounidense</option>
+        <option value="COP">COP – Peso colombiano</option>
+        <option value="PEN">PEN – Sol peruano</option>
+        <option value="CLP">CLP – Peso chileno</option>
+        <option value="BRL">BRL – Real brasileño</option>
+        <option value="ARS">ARS – Peso argentino</option>
+      </select>
+      <p id="monedaSistemaInfo" style="margin-top:6px; font-size:0.9rem; color:#ccc;"></p>
+    </div>
+
+    <!-- BLOQUE: Respaldos -->
+    <div class="settings-box">
+      <h2>🗂️ Respaldos del sistema</h2>
+      <p style="font-size:0.9rem; color:#ccc;">Exporta o importa todos los datos guardados en este navegador.</p>
+      <button onclick="exportarRespaldoALEX3()">💾 Exportar respaldo</button>
+      <button onclick="document.getElementById('archivoRespaldoALEX3').click()">📂 Importar respaldo</button>
+      <input type="file" id="archivoRespaldoALEX3" accept="application/json" style="display:none"
+             onchange="importarRespaldoALEX3(this.files[0])">
+    </div>
+
+    <!-- BLOQUE: Restaurar -->
+    <div class="settings-box">
+      <h2>⚠️ Restaurar ALEX 3.0</h2>
+      <p style="font-size:0.9rem; color:#ccc;">
+        Esta opción borra todos los datos guardados (inventario, ventas, caja, usuarios, etc.) en este navegador.
       </p>
-
-      <!-- Formulario de conversión -->
-      <div style="display:flex; flex-wrap:wrap; gap:10px; margin-top:10px; align-items:center;">
-        <div>
-          <label for="monedaOrigen">Moneda origen:</label><br />
-          <select id="monedaOrigen"></select>
-        </div>
-        <div>
-          <label for="monedaDestino">Moneda destino:</label><br />
-          <select id="monedaDestino"></select>
-        </div>
-        <div>
-          <label for="montoOrigen">Monto:</label><br />
-          <input id="montoOrigen" type="number" step="0.01" placeholder="Ej: 100" />
-        </div>
-        <div style="align-self:flex-end;">
-          <button onclick="convertirMoneda()" style="padding:8px 14px;">Convertir</button>
-        </div>
-      </div>
-
-      <p id="resultadoConversion" style="margin-top:12px; font-weight:bold;"></p>
-
-      <hr style="margin:18px 0; border-color:#333;" />
-
-      <!-- Tabla de tasas -->
-      <h3>✏️ Editar tasas de cambio (1 USD = ...)</h3>
-      <p style="font-size: 0.9rem; color:#ccc;">
-        Aquí defines cuántas unidades de cada moneda equivalen a <b>1 dólar (USD)</b>.
-        Ejemplo: si 1 USD ≈ 7.8 GTQ, escribe 7.8 en Quetzal.
-      </p>
-
-      <div style="display:grid; grid-template-columns:repeat(auto-fit,minmax(180px,1fr)); gap:10px; margin-top:10px;">
-        <div>
-          <label for="tasa_USD">USD (Dólar USA):</label>
-          <input id="tasa_USD" type="number" step="0.0001" />
-        </div>
-        <div>
-          <label for="tasa_GTD">GTQ (Quetzal):</label>
-          <input id="tasa_GTQ" type="number" step="0.0001" />
-        </div>
-        <div>
-          <label for="tasa_MXN">MXN (Peso mexicano):</label>
-          <input id="tasa_MXN" type="number" step="0.0001" />
-        </div>
-        <div>
-          <label for="tasa_COP">COP (Peso colombiano):</label>
-          <input id="tasa_COP" type="number" step="0.0001" />
-        </div>
-        <div>
-          <label for="tasa_BRL">BRL (Real brasileño):</label>
-          <input id="tasa_BRL" type="number" step="0.0001" />
-        </div>
-        <div>
-          <label for="tasa_CLP">CLP (Peso chileno):</label>
-          <input id="tasa_CLP" type="number" step="0.0001" />
-        </div>
-        <div>
-          <label for="tasa_PEN">PEN (Sol peruano):</label>
-          <input id="tasa_PEN" type="number" step="0.0001" />
-        </div>
-        <div>
-          <label for="tasa_ARS">ARS (Peso argentino):</label>
-          <input id="tasa_ARS" type="number" step="0.0001" />
-        </div>
-      </div>
-
-      <button onclick="guardarTasasMoneda()" style="margin-top:12px; padding:8px 14px;">
-        💾 Guardar tasas
-      </button>
-      <p id="mensajeTasas" style="margin-top:6px; font-size:0.9rem; color:#9f9;">
-      </p>
+      <button onclick="restaurarFabrica()">🔄 Restaurar a fábrica</button>
     </div>
 
     <p style="margin-top:24px; font-size:0.85rem; color:#777;">
-      ALEX 3.0 – Módulo de configuración con conversor de monedas (demo local sin conexión a bancos).
+      ALEX 3.0 — Configuración general (moneda, respaldos y restauración).
     </p>
   </div>
 
   <script>
     // ==========================
-    // T A S A S   D E   C A M B I O
-    // Base: 1 USD = X moneda
-    // Se guardan en localStorage: alex3_tasas
+    // MONEDA DEL SISTEMA (CONFIG)
     // ==========================
-
-    const MONEDAS = [
-      { codigo: "USD", nombre: "USD – Dólar USA" },
-      { codigo: "GTQ", nombre: "GTQ – Quetzal (Guatemala)" },
-      { codigo: "MXN", nombre: "MXN – Peso mexicano" },
-      { codigo: "COP", nombre: "COP – Peso colombiano" },
-      { codigo: "BRL", nombre: "BRL – Real brasileño" },
-      { codigo: "CLP", nombre: "CLP – Peso chileno" },
-      { codigo: "PEN", nombre: "PEN – Sol peruano" },
-      { codigo: "ARS", nombre: "ARS – Peso argentino" }
-    ];
-
-    // Tasas de ejemplo, tú las puedes ajustar en la interfaz.
-    const TASAS_POR_DEFECTO = {
-      USD: 1,      // 1 USD = 1 USD
-      GTQ: 7.8,    // ejemplo: 1 USD ≈ 7.8 quetzales
-      MXN: 17.0,   // ejemplo
-      COP: 4000,   // ejemplo
-      BRL: 5.5,    // ejemplo
-      CLP: 950,    // ejemplo
-      PEN: 3.8,    // ejemplo
-      ARS: 900     // ejemplo
+    const MONEDAS_SISTEMA = {
+      GTQ: { simbolo: "Q", nombre: "Quetzal (Guatemala)", sufijo: "" },
+      MXN: { simbolo: "$", nombre: "Peso mexicano", sufijo: " MXN" },
+      USD: { simbolo: "$", nombre: "Dólar estadounidense", sufijo: " USD" },
+      COP: { simbolo: "$", nombre: "Peso colombiano", sufijo: " COP" },
+      PEN: { simbolo: "S/", nombre: "Sol peruano", sufijo: "" },
+      CLP: { simbolo: "$", nombre: "Peso chileno", sufijo: " CLP" },
+      BRL: { simbolo: "R$", nombre: "Real brasileño", sufijo: "" },
+      ARS: { simbolo: "$", nombre: "Peso argentino", sufijo: " ARS" }
     };
 
-    function cargarTasas() {
+    function cargarMonedaSistema() {
+      const sel = document.getElementById("monedaSistema");
+      if (!sel) return;
+
+      let codigo = localStorage.getItem("alex3_moneda_sistema") || "GTQ";
+      if (!MONEDAS_SISTEMA[codigo]) codigo = "GTQ";
+
+      sel.value = codigo;
+      actualizarTextoMoneda();
+    }
+
+    function guardarMonedaSistema() {
+      const sel = document.getElementById("monedaSistema");
+      const codigo = sel.value;
+      localStorage.setItem("alex3_moneda_sistema", codigo);
+      actualizarTextoMoneda();
+      alert("✅ Moneda del sistema actualizada.");
+    }
+
+    function actualizarTextoMoneda() {
+      const info = document.getElementById("monedaSistemaInfo");
+      if (!info) return;
+
+      let codigo = localStorage.getItem("alex3_moneda_sistema") || "GTQ";
+      if (!MONEDAS_SISTEMA[codigo]) codigo = "GTQ";
+
+      const m = MONEDAS_SISTEMA[codigo];
+      info.textContent =
+        `Moneda actual: ${m.simbolo} (${m.nombre}). Todos los precios se consideran en esta moneda.`;
+    }
+
+    // ==========================
+    // RESPALDOS Y RESTAURAR
+    // (estas funciones estarán en alex-storage.js, pero
+    // si ya las tienes ahí, puedes borrarlas de aquí)
+    // ==========================
+
+    function exportarRespaldoALEX3() {
       try {
-        const guardadas = localStorage.getItem("alex3_tasas");
-        if (guardadas) {
-          return JSON.parse(guardadas);
+        const data = {};
+        for (let i = 0; i < localStorage.length; i++) {
+          const key = localStorage.key(i);
+          const value = localStorage.getItem(key);
+          data[key] = value;
         }
-      } catch (e) {
-        console.error("Error leyendo tasas guardadas:", e);
+        const blob = new Blob([JSON.stringify(data, null, 2)], {
+          type: "application/json",
+        });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement("a");
+        a.href = url;
+        a.download = "alex3-respaldo.json";
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        URL.revokeObjectURL(url);
+        alert("✅ Respaldo generado correctamente.");
+      } catch (error) {
+        console.error("Error al exportar respaldo:", error);
+        alert("❌ Ocurrió un error al exportar el respaldo.");
       }
-      return { ...TASAS_POR_DEFECTO };
     }
 
-    function guardarTasas(tasas) {
-      localStorage.setItem("alex3_tasas", JSON.stringify(tasas));
-    }
-
-    let tasas = cargarTasas();
-
-    function llenarSelectMonedas() {
-      const selOrigen = document.getElementById("monedaOrigen");
-      const selDestino = document.getElementById("monedaDestino");
-      selOrigen.innerHTML = "";
-      selDestino.innerHTML = "";
-
-      MONEDAS.forEach(m => {
-        const opt1 = document.createElement("option");
-        opt1.value = m.codigo;
-        opt1.textContent = m.nombre;
-        selOrigen.appendChild(opt1);
-
-        const opt2 = document.createElement("option");
-        opt2.value = m.codigo;
-        opt2.textContent = m.nombre;
-        selDestino.appendChild(opt2);
-      });
-
-      selOrigen.value = "GTQ"; // origen por defecto
-      selDestino.value = "USD"; // destino por defecto
-    }
-
-    function llenarInputsTasas() {
-      // Si falta alguna porque el usuario borró, rellenamos con defecto
-      MONEDAS.forEach(m => {
-        if (typeof tasas[m.codigo] !== "number" || isNaN(tasas[m.codigo])) {
-          tasas[m.codigo] = TASAS_POR_DEFECTO[m.codigo] || 1;
+    function importarRespaldoALEX3(file) {
+      if (!file) return;
+      const reader = new FileReader();
+      reader.onload = function (event) {
+        try {
+          const contenido = event.target.result;
+          const data = JSON.parse(contenido);
+          if (typeof data !== "object" || data === null) {
+            alert("❌ El archivo no tiene un formato válido.");
+            return;
+          }
+          localStorage.clear();
+          Object.keys(data).forEach((key) => {
+            localStorage.setItem(key, data[key]);
+          });
+          alert("✅ Respaldo importado correctamente. Recarga la página.");
+          location.reload();
+        } catch (error) {
+          console.error("Error al importar respaldo:", error);
+          alert("❌ Ocurrió un error al importar el respaldo.");
         }
-      });
-
-      document.getElementById("tasa_USD").value = tasas.USD;
-      document.getElementById("tasa_GTQ").value = tasas.GTQ;
-      document.getElementById("tasa_MXN").value = tasas.MXN;
-      document.getElementById("tasa_COP").value = tasas.COP;
-      document.getElementById("tasa_BRL").value = tasas.BRL;
-      document.getElementById("tasa_CLP").value = tasas.CLP;
-      document.getElementById("tasa_PEN").value = tasas.PEN;
-      document.getElementById("tasa_ARS").value = tasas.ARS;
+      };
+      reader.readAsText(file);
     }
 
-    function guardarTasasMoneda() {
-      tasas.USD = parseFloat(document.getElementById("tasa_USD").value) || 1;
-      tasas.GTQ = parseFloat(document.getElementById("tasa_GTQ").value) || TASAS_POR_DEFECTO.GTQ;
-      tasas.MXN = parseFloat(document.getElementById("tasa_MXN").value) || TASAS_POR_DEFECTO.MXN;
-      tasas.COP = parseFloat(document.getElementById("tasa_COP").value) || TASAS_POR_DEFECTO.COP;
-      tasas.BRL = parseFloat(document.getElementById("tasa_BRL").value) || TASAS_POR_DEFECTO.BRL;
-      tasas.CLP = parseFloat(document.getElementById("tasa_CLP").value) || TASAS_POR_DEFECTO.CLP;
-      tasas.PEN = parseFloat(document.getElementById("tasa_PEN").value) || TASAS_POR_DEFECTO.PEN;
-      tasas.ARS = parseFloat(document.getElementById("tasa_ARS").value) || TASAS_POR_DEFECTO.ARS;
-
-      guardarTasas(tasas);
-      const msg = document.getElementById("mensajeTasas");
-      msg.textContent = "✅ Tasas guardadas. Recuerda que son aproximadas y puedes cambiarlas cuando quieras.";
-      setTimeout(() => { msg.textContent = ""; }, 4000);
-    }
-
-    function convertirMoneda() {
-      const origen = document.getElementById("monedaOrigen").value;
-      const destino = document.getElementById("monedaDestino").value;
-      const monto = parseFloat(document.getElementById("montoOrigen").value);
-
-      const salida = document.getElementById("resultadoConversion");
-
-      if (!origen || !destino || isNaN(monto) || monto <= 0) {
-        salida.textContent = "Ingresa un monto válido y selecciona ambas monedas.";
-        salida.style.color = "#ff8080";
-        return;
+    function restaurarFabrica() {
+      if (confirm("¿Seguro? Perderás todos los datos guardados en este navegador.")) {
+        localStorage.clear();
+        alert("✅ ALEX 3.0 restaurado a fábrica.");
+        location.reload();
       }
-
-      // Paso 1: llevar todo a USD
-      const tasaOrigen = tasas[origen];
-      const tasaDestino = tasas[destino];
-
-      if (!tasaOrigen || !tasaDestino) {
-        salida.textContent = "Faltan tasas de cambio. Revisa la tabla de abajo.";
-        salida.style.color = "#ff8080";
-        return;
-      }
-
-      // Si tasa[X] = cuántas unidades de X son 1 USD:
-      // 1 USD = tasa[X] X
-      // => 1 X = 1 / tasa[X] USD
-      const montoEnUSD = monto / tasaOrigen;
-      const montoDestino = montoEnUSD * tasaDestino;
-
-      salida.textContent = `${monto.toFixed(2)} ${origen} ≈ ${montoDestino.toFixed(2)} ${destino}`;
-      salida.style.color = "#9ff59f";
     }
 
-    // Inicializar al cargar la página
-    llenarSelectMonedas();
-    llenarInputsTasas();
+    window.addEventListener("load", cargarMonedaSistema);
   </script>
 
 </body>
