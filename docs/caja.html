@@ -2,252 +2,123 @@
 <html lang="es">
 <head>
   <meta charset="UTF-8">
-  <title>Caja - ALEX 3.0</title>
+  <title>ALEX 3.0 - Caja</title>
   <link rel="stylesheet" href="styles.css">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
 </head>
 
 <body class="dashboard-body">
+  <!-- Sidebar -->
+  <aside class="sidebar">
+    <div class="sidebar-header">
+      <span class="logo-badge">A</span>
+      <div class="sidebar-logo-text">
+        <span class="sidebar-logo-main">ALEX 3.0</span>
+        <span class="sidebar-logo-sub">Panel del negocio</span>
+      </div>
+    </div>
 
-  <div class="sidebar">
-    <h2 class="logo">ALEX 3.0</h2>
-    <ul class="menu">
-      <li id="menu-dashboard"><a href="dashboard.html">🏠 Inicio</a></li>
-      <li id="menu-inventario"><a href="inventario.html">📦 Inventario</a></li>
-      <li id="menu-ventas"><a href="ventas.html">💵 Ventas</a></li>
-      <li id="menu-caja"><a href="caja.html">💰 Caja</a></li>
-      <li id="menu-usuarios"><a href="usuarios.html">👤 Usuarios</a></li>
-      <li id="menu-reportes"><a href="reportes.html">📊 Reportes</a></li>
-    </ul>
+    <nav class="sidebar-nav">
+      <a href="dashboard.html" class="sidebar-link">📊 Dashboard</a>
+      <a href="ventas.html" class="sidebar-link">💵 Ventas</a>
+      <a href="inventario.html" class="sidebar-link">📦 Inventario</a>
+      <a href="caja.html" class="sidebar-link active">💰 Caja</a>
+      <a href="compras.html" class="sidebar-link">🧾 Compras</a>
+      <a href="gastos.html" class="sidebar-link">📉 Gastos</a>
+      <a href="clientes.html" class="sidebar-link">👥 Clientes</a>
+      <a href="proveedores.html" class="sidebar-link">🚚 Proveedores</a>
+      <a href="contabilidad.html" class="sidebar-link">📚 Contabilidad</a>
+      <a href="sat.html" class="sidebar-link">🇬🇹 SAT Guatemala</a>
+      <a href="ia.html" class="sidebar-link">🤖 IA empresarial</a>
+      <a href="configuracion.html" class="sidebar-link">⚙️ Configuración</a>
+    </nav>
+
+    <div class="sidebar-footer">
+      <span class="sidebar-footer-title">Empresa demo</span>
+      <span class="sidebar-footer-sub">Versión 1.0</span>
+    </div>
+  </aside>
+
+  <!-- Layout principal -->
+  <div class="main-layout">
+    <!-- Topbar -->
+    <header class="topbar">
+      <button class="btn-menu-mobile" id="btnMenuMobile">☰</button>
+
+      <div class="topbar-left">
+        <h1 class="topbar-title">Caja</h1>
+        <p class="topbar-subtitle">Control de entradas y salidas de efectivo.</p>
+      </div>
+
+      <div class="topbar-right">
+        <span class="topbar-company">Mi tienda demo</span>
+        <span class="topbar-divider">•</span>
+        <span class="topbar-user">Brayan (Dueño)</span>
+      </div>
+    </header>
+
+    <!-- Contenido principal -->
+    <main class="main-content">
+      <section class="cards-grid">
+        <article class="card kpi-card">
+          <h2 class="card-title">Saldo en caja</h2>
+          <p class="card-kpi">Q 0.00</p>
+          <p class="card-kpi-sub">Saldo calculado con los movimientos registrados.</p>
+        </article>
+
+        <article class="card kpi-card">
+          <h2 class="card-title">Ingresos de hoy</h2>
+          <p class="card-kpi">Q 0.00</p>
+          <p class="card-kpi-sub">Entradas directas a caja.</p>
+        </article>
+
+        <article class="card kpi-card">
+          <h2 class="card-title">Egresos de hoy</h2>
+          <p class="card-kpi gasto">Q 0.00</p>
+          <p class="card-kpi-sub">Salidas por gastos, compras u otros.</p>
+        </article>
+
+        <article class="card kpi-card">
+          <h2 class="card-title">Cortes realizados</h2>
+          <p class="card-kpi">0</p>
+          <p class="card-kpi-sub">Número de cortes de caja registrados.</p>
+        </article>
+      </section>
+
+      <section class="card">
+        <h2 class="card-title">Movimientos de caja</h2>
+        <p class="card-description">
+          En la versión completa verás aquí cada ingreso y egreso con su detalle.
+        </p>
+
+        <table class="table">
+          <thead>
+            <tr>
+              <th>Fecha</th>
+              <th>Tipo</th>
+              <th>Descripción</th>
+              <th>Monto</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td colspan="4" class="table-empty">
+                Aún no hay movimientos en esta versión demo.
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </section>
+    </main>
   </div>
-
-  <div class="main-content">
-    <h1>Caja (Profesional)</h1>
-
-    <div class="caja-config">
-      <h3>Saldo inicial de caja</h3>
-      <input id="saldoInicialInput" class="input" type="number" step="0.01" placeholder="Ej: 500.00">
-      <button class="btn" onclick="actualizarSaldoInicial()">Guardar saldo inicial</button>
-    </div>
-
-    <div class="resumen-caja">
-      <div class="card-resumen">
-        <h4>Saldo inicial</h4>
-        <p><span id="saldoInicialTexto">0.00</span></p>
-      </div>
-      <div class="card-resumen ingreso">
-        <h4>Total ingresos</h4>
-        <p><span id="totalIngresosTexto">0.00</span></p>
-      </div>
-      <div class="card-resumen egreso">
-        <h4>Total egresos</h4>
-        <p><span id="totalEgresosTexto">0.00</span></p>
-      </div>
-      <div class="card-resumen saldo">
-        <h4>Saldo actual</h4>
-        <p><span id="saldoActualTexto">0.00</span></p>
-      </div>
-    </div>
-
-    <div class="caja-form">
-      <h3>Registrar movimiento</h3>
-
-      <select id="tipoMovimiento" class="input">
-        <option value="ingreso">Ingreso</option>
-        <option value="egreso">Egreso</option>
-      </select>
-
-      <input id="descripcionMovimiento" class="input" type="text" placeholder="Descripción">
-      <input id="categoriaMovimiento" class="input" type="text" placeholder="Categoría">
-      <input id="montoMovimiento" class="input" type="number" step="0.01" placeholder="Monto">
-
-      <button class="btn" onclick="agregarMovimiento()">Registrar movimiento</button>
-    </div>
-
-    <h3>Movimientos de caja</h3>
-    <table class="tabla">
-      <thead>
-        <tr>
-          <th>Fecha/Hora</th>
-          <th>Tipo</th>
-          <th>Descripción</th>
-          <th>Categoría</th>
-          <th>Monto</th>
-          <th>Saldo después</th>
-          <th>Acciones</th>
-        </tr>
-      </thead>
-      <tbody id="tabla-movimientos-body"></tbody>
-    </table>
-
-    <div class="caja-cierre">
-      <h3>Cierre de caja</h3>
-      <button class="btn cierre-btn" onclick="cerrarCaja()">Registrar cierre de caja</button>
-
-      <table class="tabla">
-        <thead>
-          <tr>
-            <th>Fecha/Hora</th>
-            <th>Saldo al cierre</th>
-            <th>Observaciones</th>
-          </tr>
-        </thead>
-        <tbody id="tabla-cierres-body"></tbody>
-      </table>
-    </div>
-
-  </div>
-
-  <!-- Scripts centrales -->
-  <script src="alex-storage.js"></script>
-  <script src="alex-dev.js"></script>
-  <script src="alex-roles.js"></script>
 
   <script>
-    const usuarioActual = getUsuarioActualObligatorio();
-    aplicarPermisosYProteger("caja");
+    const btnMenuMobile = document.getElementById('btnMenuMobile');
+    const sidebar = document.querySelector('.sidebar');
 
-    let saldoInicial = load("saldoInicial", 0);
-    let movimientos = load("movimientosCaja", []);
-    let cierres = load("cierresCaja", []);
-
-    // Usar la moneda del sistema
-    function formatearMoneda(n) {
-      return alex3FormatearMoneda(n);
-    }
-
-    function actualizarSaldoInicial() {
-      const valor = parseFloat(document.getElementById("saldoInicialInput").value);
-
-      if (isNaN(valor) || valor < 0) {
-        alert("Ingresa un saldo inicial válido.");
-        return;
-      }
-
-      saldoInicial = valor;
-      save("saldoInicial", saldoInicial);
-
-      document.getElementById("saldoInicialTexto").innerText = formatearMoneda(saldoInicial);
-      recalcularResumenYTabla();
-      alert("Saldo inicial actualizado.");
-    }
-
-    function agregarMovimiento() {
-      const tipo = document.getElementById("tipoMovimiento").value;
-      const descripcion = document.getElementById("descripcionMovimiento").value;
-      const categoria = document.getElementById("categoriaMovimiento").value;
-      const monto = parseFloat(document.getElementById("montoMovimiento").value);
-
-      if (descripcion.trim() === "" || categoria.trim() === "" || isNaN(monto) || monto <= 0) {
-        alert("Completa descripción, categoría y un monto mayor a 0.");
-        return;
-      }
-
-      const fecha = new Date().toLocaleString("es-GT");
-      const movimiento = { tipo, descripcion, categoria, monto, fecha };
-
-      movimientos.push(movimiento);
-      save("movimientosCaja", movimientos);
-
-      document.getElementById("descripcionMovimiento").value = "";
-      document.getElementById("categoriaMovimiento").value = "";
-      document.getElementById("montoMovimiento").value = "";
-      document.getElementById("descripcionMovimiento").focus();
-
-      recalcularResumenYTabla();
-    }
-
-    function recalcularResumenYTabla() {
-      const tbody = document.getElementById("tabla-movimientos-body");
-      tbody.innerHTML = "";
-
-      let totalIngresos = 0;
-      let totalEgresos = 0;
-      let saldoActual = saldoInicial;
-
-      movimientos.forEach((mov, index) => {
-        if (mov.tipo === "ingreso") {
-          totalIngresos += mov.monto;
-          saldoActual += mov.monto;
-        } else {
-          totalEgresos += mov.monto;
-          saldoActual -= mov.monto;
-        }
-
-        tbody.innerHTML += `
-          <tr>
-            <td>${mov.fecha}</td>
-            <td>${mov.tipo === "ingreso" ? "Ingreso" : "Egreso"}</td>
-            <td>${mov.descripcion}</td>
-            <td>${mov.categoria}</td>
-            <td>${mov.tipo === "ingreso" ? "+" : "-"}${formatearMoneda(mov.monto)}</td>
-            <td>${formatearMoneda(calcularSaldoHasta(index))}</td>
-            <td><button onclick="eliminarMovimiento(${index})">🗑️</button></td>
-          </tr>
-        `;
-      });
-
-      document.getElementById("totalIngresosTexto").innerText = formatearMoneda(totalIngresos);
-      document.getElementById("totalEgresosTexto").innerText = formatearMoneda(totalEgresos);
-      document.getElementById("saldoActualTexto").innerText = formatearMoneda(saldoActual);
-    }
-
-    function calcularSaldoHasta(i) {
-      let saldo = saldoInicial;
-      for (let x = 0; x <= i; x++) {
-        const mov = movimientos[x];
-        if (mov.tipo === "ingreso") saldo += mov.monto;
-        else saldo -= mov.monto;
-      }
-      return saldo;
-    }
-
-    function eliminarMovimiento(index) {
-      movimientos.splice(index, 1);
-      save("movimientosCaja", movimientos);
-      recalcularResumenYTabla();
-    }
-
-    function cerrarCaja() {
-      let totalIngresos = movimientos
-        .filter(m => m.tipo === "ingreso")
-        .reduce((a, b) => a + b.monto, 0);
-
-      let totalEgresos = movimientos
-        .filter(m => m.tipo === "egreso")
-        .reduce((a, b) => a + b.monto, 0);
-
-      const saldoFinal = saldoInicial + totalIngresos - totalEgresos;
-      const fecha = new Date().toLocaleString("es-GT");
-      const observaciones = prompt("Observaciones del cierre:", "") || "";
-
-      cierres.push({ fecha, saldoFinal, observaciones });
-      save("cierresCaja", cierres);
-
-      renderCierres();
-
-      alert("Cierre de caja registrado. Saldo final: " + formatearMoneda(saldoFinal));
-    }
-
-    function renderCierres() {
-      const tbody = document.getElementById("tabla-cierres-body");
-      tbody.innerHTML = "";
-
-      cierres.forEach(c => {
-        tbody.innerHTML += `
-          <tr>
-            <td>${c.fecha}</td>
-            <td>${formatearMoneda(c.saldoFinal)}</td>
-            <td>${c.observaciones}</td>
-          </tr>
-        `;
-      });
-    }
-
-    // Inicializar
-    document.getElementById("saldoInicialTexto").innerText = formatearMoneda(saldoInicial);
-    renderCierres();
-    recalcularResumenYTabla();
+    btnMenuMobile.addEventListener('click', () => {
+      sidebar.classList.toggle('sidebar-open');
+    });
   </script>
-
 </body>
 </html>
