@@ -2,133 +2,75 @@
 <html lang="es">
 <head>
   <meta charset="UTF-8">
-  <title>Configuración - ALEX 3.0</title>
+  <title>ALEX 3.0 - Configuración</title>
   <link rel="stylesheet" href="styles.css">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
 </head>
 
 <body class="dashboard-body">
-
-  <div class="sidebar">
-    <h2 class="logo">ALEX 3.0</h2>
-    <ul class="menu">
-      <li id="menu-dashboard"><a href="dashboard.html">🏠 Inicio</a></li>
-      <li id="menu-inventario"><a href="inventario.html">📦 Inventario</a></li>
-      <li id="menu-ventas"><a href="ventas.html">💵 Ventas</a></li>
-      <li id="menu-caja"><a href="caja.html">💰 Caja</a></li>
-      <li id="menu-usuarios"><a href="usuarios.html">👤 Usuarios</a></li>
-      <li id="menu-reportes"><a href="reportes.html">📊 Reportes</a></li>
-      <li id="menu-configuracion"><a href="configuracion.html">⚙️ Configuración</a></li>
-    </ul>
-  </div>
-
-  <div class="main-content">
-    <h1>Configuración de ALEX 3.0</h1>
-
-    <div class="config-card">
-      <h3>Moneda principal del sistema</h3>
-      <p>Esta moneda se usará para mostrar precios, ventas, caja, etc.</p>
-
-      <label for="monedaSelect">Selecciona la moneda:</label>
-      <select id="monedaSelect" class="input">
-        <option value="GTQ">🇬🇹 Quetzal guatemalteco (GTQ)</option>
-        <option value="MXN">🇲🇽 Peso mexicano (MXN)</option>
-        <option value="USD">🇺🇸 Dólar estadounidense (USD)</option>
-        <option value="COP">🇨🇴 Peso colombiano (COP)</option>
-        <option value="PEN">🇵🇪 Sol peruano (PEN)</option>
-        <option value="CLP">🇨🇱 Peso chileno (CLP)</option>
-        <option value="BRL">🇧🇷 Real brasileño (BRL)</option>
-        <option value="ARS">🇦🇷 Peso argentino (ARS)</option>
-        <option value="EUR">🇪🇺 Euro (EUR)</option>
-      </select>
-
-      <p style="margin-top:8px;">
-        Vista previa: <strong id="previewMoneda">Q 123.45</strong>
-      </p>
+  <aside class="sidebar">
+    <div class="sidebar-header">
+      <span class="logo-badge">A</span>
+      <div class="sidebar-logo-text">
+        <span class="sidebar-logo-main">ALEX 3.0</span>
+        <span class="sidebar-logo-sub">Panel del negocio</span>
+      </div>
     </div>
 
-    <div class="config-card">
-      <h3>Modo desarrollador</h3>
-      <p>Solo para ti / pruebas. Puede mostrar datos de ejemplo o atajos de pruebas.</p>
+    <nav class="sidebar-nav">
+      <a href="dashboard.html" class="sidebar-link">📊 Dashboard</a>
+      <a href="ventas.html" class="sidebar-link">💵 Ventas</a>
+      <a href="inventario.html" class="sidebar-link">📦 Inventario</a>
+      <a href="caja.html" class="sidebar-link">💰 Caja</a>
+      <a href="compras.html" class="sidebar-link">🧾 Compras</a>
+      <a href="gastos.html" class="sidebar-link">📉 Gastos</a>
+      <a href="clientes.html" class="sidebar-link">👥 Clientes</a>
+      <a href="proveedores.html" class="sidebar-link">🚚 Proveedores</a>
+      <a href="contabilidad.html" class="sidebar-link">📚 Contabilidad</a>
+      <a href="sat.html" class="sidebar-link">🇬🇹 SAT Guatemala</a>
+      <a href="ia.html" class="sidebar-link">🤖 IA empresarial</a>
+      <a href="configuracion.html" class="sidebar-link active">⚙️ Configuración</a>
+    </nav>
 
-      <label>
-        <input type="checkbox" id="modoDevCheck">
-        Activar modo desarrollador
-      </label>
+    <div class="sidebar-footer">
+      <span class="sidebar-footer-title">Empresa demo</span>
+      <span class="sidebar-footer-sub">Versión 1.0</span>
     </div>
+  </aside>
 
-    <button class="btn" onclick="guardarConfiguracion()">Guardar configuración</button>
+  <div class="main-layout">
+    <header class="topbar">
+      <button class="btn-menu-mobile" id="btnMenuMobile">☰</button>
+
+      <div class="topbar-left">
+        <h1 class="topbar-title">Configuración</h1>
+        <p class="topbar-subtitle">Datos del negocio, usuarios y preferencias del sistema.</p>
+      </div>
+
+      <div class="topbar-right">
+        <span class="topbar-company">Mi tienda demo</span>
+        <span class="topbar-divider">•</span>
+        <span class="topbar-user">Brayan (Dueño)</span>
+      </div>
+    </header>
+
+    <main class="main-content">
+      <section class="card">
+        <h2 class="card-title">Opciones de configuración (demo)</h2>
+        <p class="card-description">
+          Aquí podrás ajustar información del negocio, moneda, impuestos, usuarios y más
+          cuando se integre la configuración completa.
+        </p>
+      </section>
+    </main>
   </div>
-
-  <script src="alex-storage.js"></script>
-  <script src="alex-dev.js"></script>
-  <script src="alex-roles.js"></script>
 
   <script>
-    const usuarioActual = getUsuarioActualObligatorio();
-    aplicarPermisosYProteger("configuracion");
-
-    const MONEDAS = [
-      { codigo: "GTQ", simbolo: "Q", ejemplo: "Q 123.45" },
-      { codigo: "MXN", simbolo: "$", ejemplo: "$ 123.45 MXN" },
-      { codigo: "USD", simbolo: "$", ejemplo: "$ 123.45" },
-      { codigo: "COP", simbolo: "$", ejemplo: "$ 123.45 COP" },
-      { codigo: "PEN", simbolo: "S/", ejemplo: "S/ 123.45" },
-      { codigo: "CLP", simbolo: "$", ejemplo: "$ 123.45 CLP" },
-      { codigo: "BRL", simbolo: "R$", ejemplo: "R$ 123.45" },
-      { codigo: "ARS", simbolo: "$", ejemplo: "$ 123.45 ARS" },
-      { codigo: "EUR", simbolo: "€", ejemplo: "€ 123.45" },
-    ];
-
-    function cargarConfiguracion() {
-      let config = {};
-      try {
-        config = JSON.parse(localStorage.getItem("alex3_config") || "{}");
-      } catch (e) {
-        config = {};
-      }
-
-      const select = document.getElementById("monedaSelect");
-      const checkDev = document.getElementById("modoDevCheck");
-
-      if (config.monedaCodigo) {
-        select.value = config.monedaCodigo;
-      }
-
-      if (typeof config.modoDesarrollador === "boolean") {
-        checkDev.checked = config.modoDesarrollador;
-      }
-
-      actualizarPreview();
-    }
-
-    function actualizarPreview() {
-      const codigo = document.getElementById("monedaSelect").value;
-      const moneda = MONEDAS.find(m => m.codigo === codigo) || MONEDAS[0];
-      document.getElementById("previewMoneda").innerText = moneda.ejemplo;
-    }
-
-    document.getElementById("monedaSelect").addEventListener("change", actualizarPreview);
-
-    function guardarConfiguracion() {
-      const codigo = document.getElementById("monedaSelect").value;
-      const modoDev = document.getElementById("modoDevCheck").checked;
-
-      const moneda = MONEDAS.find(m => m.codigo === codigo) || MONEDAS[0];
-
-      const config = {
-        monedaCodigo: moneda.codigo,
-        monedaSimbolo: moneda.simbolo,
-        modoDesarrollador: modoDev
-      };
-
-      localStorage.setItem("alex3_config", JSON.stringify(config));
-
-      alert("Configuración guardada. Recarga las páginas para aplicar los cambios.");
-    }
-
-    // Inicializar
-    cargarConfiguracion();
+    const btnMenuMobile = document.getElementById('btnMenuMobile');
+    const sidebar = document.querySelector('.sidebar');
+    btnMenuMobile.addEventListener('click', () => {
+      sidebar.classList.toggle('sidebar-open');
+    });
   </script>
-
 </body>
 </html>
