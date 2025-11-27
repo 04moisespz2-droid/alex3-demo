@@ -7,7 +7,6 @@
 </head>
 <body class="dashboard-body">
 
-  <!-- Sidebar igual que el resto -->
   <div class="sidebar">
     <h2 class="logo">ALEX 3.0</h2>
     <ul class="menu">
@@ -25,10 +24,10 @@
     <h1>⚙️ Configuración de ALEX 3.0</h1>
     <p>Administra las opciones generales del sistema.</p>
 
-    <!-- BLOQUE: Moneda del sistema -->
+    <!-- 🔵 MONEDA DEL SISTEMA -->
     <div class="settings-box">
       <h2>💵 Moneda del sistema</h2>
-      <label for="monedaSistema">Moneda principal que usarán los precios del sistema:</label>
+      <label for="monedaSistema">Moneda principal:</label>
       <select id="monedaSistema" onchange="guardarMonedaSistema()">
         <option value="GTQ">GTQ – Quetzal (Guatemala)</option>
         <option value="MXN">MXN – Peso mexicano</option>
@@ -39,145 +38,134 @@
         <option value="BRL">BRL – Real brasileño</option>
         <option value="ARS">ARS – Peso argentino</option>
       </select>
-      <p id="monedaSistemaInfo" style="margin-top:6px; font-size:0.9rem; color:#ccc;"></p>
+      <p id="monedaSistemaInfo" style="margin-top:6px;"></p>
     </div>
 
-    <!-- BLOQUE: Respaldos -->
+    <!-- 🔥 MODO DESARROLLADOR -->
     <div class="settings-box">
-      <h2>🗂️ Respaldos del sistema</h2>
-      <p style="font-size:0.9rem; color:#ccc;">Exporta o importa todos los datos guardados en este navegador.</p>
+      <h2>🛠️ Modo desarrollador</h2>
+      <p>Desactiva caché y fuerza recarga instantánea al actualizar archivos.</p>
+
+      <label for="modoDevSwitch">Activar modo desarrollador:</label>
+      <select id="modoDevSwitch" onchange="guardarModoDev()">
+        <option value="0">Desactivado</option>
+        <option value="1">Activado</option>
+      </select>
+
+      <p id="infoModoDev" style="margin-top:6px; font-size:0.9rem;"></p>
+    </div>
+
+    <!-- RESPALDOS -->
+    <div class="settings-box">
+      <h2>🗂️ Respaldos</h2>
       <button onclick="exportarRespaldoALEX3()">💾 Exportar respaldo</button>
-      <button onclick="document.getElementById('archivoRespaldoALEX3').click()">📂 Importar respaldo</button>
-      <input type="file" id="archivoRespaldoALEX3" accept="application/json" style="display:none"
-             onchange="importarRespaldoALEX3(this.files[0])">
+      <button onclick="document.getElementById('archivoRespaldo').click()">📂 Importar respaldo</button>
+      <input type="file" id="archivoRespaldo" accept="application/json" style="display:none" onchange="importarRespaldoALEX3(this.files[0])">
     </div>
 
-    <!-- BLOQUE: Restaurar -->
+    <!-- REINICIO -->
     <div class="settings-box">
-      <h2>⚠️ Restaurar ALEX 3.0</h2>
-      <p style="font-size:0.9rem; color:#ccc;">
-        Esta opción borra todos los datos guardados (inventario, ventas, caja, usuarios, etc.) en este navegador.
-      </p>
-      <button onclick="restaurarFabrica()">🔄 Restaurar a fábrica</button>
+      <h2>⚠️ Restaurar sistema</h2>
+      <button onclick="restaurarFabrica()">🔄 Restaurar ALEX 3.0</button>
     </div>
 
-    <p style="margin-top:24px; font-size:0.85rem; color:#777;">
-      ALEX 3.0 — Configuración general (moneda, respaldos y restauración).
-    </p>
   </div>
 
+  <script src="alex-storage.js"></script>
+  <script src="alex-dev.js"></script>
+
   <script>
-    // ==========================
-    // MONEDA DEL SISTEMA (CONFIG)
-    // ==========================
+    // =======================
+    // MONEDA
+    // =======================
     const MONEDAS_SISTEMA = {
-      GTQ: { simbolo: "Q", nombre: "Quetzal (Guatemala)", sufijo: "" },
-      MXN: { simbolo: "$", nombre: "Peso mexicano", sufijo: " MXN" },
-      USD: { simbolo: "$", nombre: "Dólar estadounidense", sufijo: " USD" },
-      COP: { simbolo: "$", nombre: "Peso colombiano", sufijo: " COP" },
-      PEN: { simbolo: "S/", nombre: "Sol peruano", sufijo: "" },
-      CLP: { simbolo: "$", nombre: "Peso chileno", sufijo: " CLP" },
-      BRL: { simbolo: "R$", nombre: "Real brasileño", sufijo: "" },
-      ARS: { simbolo: "$", nombre: "Peso argentino", sufijo: " ARS" }
+      GTQ: { simbolo: "Q", nombre: "Quetzal" },
+      MXN: { simbolo: "$", nombre: "Peso mexicano" },
+      USD: { simbolo: "$", nombre: "Dólar" },
+      COP: { simbolo: "$", nombre: "Peso colombiano" },
+      PEN: { simbolo: "S/", nombre: "Sol peruano" },
+      CLP: { simbolo: "$", nombre: "Peso chileno" },
+      BRL: { simbolo: "R$", nombre: "Real brasileño" },
+      ARS: { simbolo: "$", nombre: "Peso argentino" }
     };
 
     function cargarMonedaSistema() {
       const sel = document.getElementById("monedaSistema");
-      if (!sel) return;
-
       let codigo = localStorage.getItem("alex3_moneda_sistema") || "GTQ";
-      if (!MONEDAS_SISTEMA[codigo]) codigo = "GTQ";
-
       sel.value = codigo;
-      actualizarTextoMoneda();
+
+      const m = MONEDAS_SISTEMA[codigo];
+      document.getElementById("monedaSistemaInfo").innerText =
+        "Moneda actual: " + m.simbolo + " (" + m.nombre + ")";
     }
 
     function guardarMonedaSistema() {
-      const sel = document.getElementById("monedaSistema");
-      const codigo = sel.value;
-      localStorage.setItem("alex3_moneda_sistema", codigo);
-      actualizarTextoMoneda();
-      alert("✅ Moneda del sistema actualizada.");
+      const val = document.getElementById("monedaSistema").value;
+      localStorage.setItem("alex3_moneda_sistema", val);
+      alert("Moneda del sistema actualizada.");
+      cargarMonedaSistema();
     }
 
-    function actualizarTextoMoneda() {
-      const info = document.getElementById("monedaSistemaInfo");
-      if (!info) return;
+    // =======================
+    // MODO DESARROLLADOR
+    // =======================
+    function cargarModoDev() {
+      const estado = localStorage.getItem("alex3_modo_dev") || "0";
+      document.getElementById("modoDevSwitch").value = estado;
 
-      let codigo = localStorage.getItem("alex3_moneda_sistema") || "GTQ";
-      if (!MONEDAS_SISTEMA[codigo]) codigo = "GTQ";
-
-      const m = MONEDAS_SISTEMA[codigo];
-      info.textContent =
-        `Moneda actual: ${m.simbolo} (${m.nombre}). Todos los precios se consideran en esta moneda.`;
+      document.getElementById("infoModoDev").innerText =
+        estado === "1"
+          ? "Modo desarrollador ACTIVADO. La caché está deshabilitada."
+          : "Modo desarrollador desactivado.";
     }
 
-    // ==========================
-    // RESPALDOS Y RESTAURAR
-    // (estas funciones estarán en alex-storage.js, pero
-    // si ya las tienes ahí, puedes borrarlas de aquí)
-    // ==========================
+    function guardarModoDev() {
+      const val = document.getElementById("modoDevSwitch").value;
+      localStorage.setItem("alex3_modo_dev", val);
+      alert("Modo desarrollador actualizado. Recarga la página.");
+      location.reload();
+    }
 
+    // =======================
+    // RESPALDOS / RESET
+    // =======================
     function exportarRespaldoALEX3() {
-      try {
-        const data = {};
-        for (let i = 0; i < localStorage.length; i++) {
-          const key = localStorage.key(i);
-          const value = localStorage.getItem(key);
-          data[key] = value;
-        }
-        const blob = new Blob([JSON.stringify(data, null, 2)], {
-          type: "application/json",
-        });
-        const url = URL.createObjectURL(blob);
-        const a = document.createElement("a");
-        a.href = url;
-        a.download = "alex3-respaldo.json";
-        document.body.appendChild(a);
-        a.click();
-        document.body.removeChild(a);
-        URL.revokeObjectURL(url);
-        alert("✅ Respaldo generado correctamente.");
-      } catch (error) {
-        console.error("Error al exportar respaldo:", error);
-        alert("❌ Ocurrió un error al exportar el respaldo.");
-      }
+      const data = {};
+      Object.keys(localStorage).forEach(k => data[k] = localStorage.getItem(k));
+      const blob = new Blob([JSON.stringify(data, null, 2)], { type: "application/json" });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = "alex3-respaldo.json";
+      a.click();
+      URL.revokeObjectURL(url);
     }
 
     function importarRespaldoALEX3(file) {
-      if (!file) return;
       const reader = new FileReader();
-      reader.onload = function (event) {
-        try {
-          const contenido = event.target.result;
-          const data = JSON.parse(contenido);
-          if (typeof data !== "object" || data === null) {
-            alert("❌ El archivo no tiene un formato válido.");
-            return;
-          }
-          localStorage.clear();
-          Object.keys(data).forEach((key) => {
-            localStorage.setItem(key, data[key]);
-          });
-          alert("✅ Respaldo importado correctamente. Recarga la página.");
-          location.reload();
-        } catch (error) {
-          console.error("Error al importar respaldo:", error);
-          alert("❌ Ocurrió un error al importar el respaldo.");
-        }
+      reader.onload = (evt) => {
+        const data = JSON.parse(evt.target.result);
+        localStorage.clear();
+        Object.keys(data).forEach(k => localStorage.setItem(k, data[k]));
+        alert("Respaldo importado. Recarga la página.");
+        location.reload();
       };
       reader.readAsText(file);
     }
 
     function restaurarFabrica() {
-      if (confirm("¿Seguro? Perderás todos los datos guardados en este navegador.")) {
+      if (confirm("¿Seguro? Esto borra todo.")) {
         localStorage.clear();
-        alert("✅ ALEX 3.0 restaurado a fábrica.");
+        alert("Sistema restaurado.");
         location.reload();
       }
     }
 
-    window.addEventListener("load", cargarMonedaSistema);
+    // =======================
+    // INICIAR
+    // =======================
+    cargarMonedaSistema();
+    cargarModoDev();
   </script>
 
 </body>
