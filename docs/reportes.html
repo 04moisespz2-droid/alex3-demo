@@ -151,7 +151,7 @@
         tbody.innerHTML += `
           <tr>
             <td>${c.fecha}</td>
-            <td>Q${q2(c.saldoFinal || 0)}</td>
+            <td>${alex3FormatearMoneda(c.saldoFinal || 0)}</td>
             <td>${c.observaciones || ""}</td>
           </tr>
         `;
@@ -163,4 +163,3 @@
 
 </body>
 </html>
-
