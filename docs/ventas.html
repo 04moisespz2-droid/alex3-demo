@@ -2,128 +2,126 @@
 <html lang="es">
 <head>
   <meta charset="UTF-8">
-  <title>Ventas - ALEX 3.0</title>
+  <title>ALEX 3.0 - Ventas</title>
   <link rel="stylesheet" href="styles.css">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
 </head>
 
 <body class="dashboard-body">
-
-  <div class="sidebar">
-    <h2 class="logo">ALEX 3.0</h2>
-    <ul class="menu">
-      <li id="menu-dashboard"><a href="dashboard.html">🏠 Inicio</a></li>
-      <li id="menu-inventario"><a href="inventario.html">📦 Inventario</a></li>
-      <li id="menu-ventas"><a href="ventas.html">💵 Ventas</a></li>
-      <li id="menu-caja"><a href="caja.html">💰 Caja</a></li>
-      <li id="menu-usuarios"><a href="usuarios.html">👤 Usuarios</a></li>
-      <li id="menu-reportes"><a href="reportes.html">📊 Reportes</a></li>
-    </ul>
-  </div>
-
-  <div class="main-content">
-    <h1>Ventas (POS)</h1>
-
-    <div class="inventario-form">
-      <h3>Agregar producto a la venta</h3>
-
-      <input id="ventaNombre" class="input" type="text" placeholder="Nombre del producto">
-      <input id="ventaPrecio" class="input" type="number" step="0.01" placeholder="Precio unitario">
-      <input id="ventaCantidad" class="input" type="number" step="1" placeholder="Cantidad">
-
-      <button class="btn" onclick="agregarLineaVenta()">Agregar a la venta</button>
+  <!-- Sidebar (MISMO DISEÑO, SOLO CAMBIA LA PESTAÑA ACTIVA) -->
+  <aside class="sidebar">
+    <div class="sidebar-header">
+      <span class="logo-badge">A</span>
+      <div class="sidebar-logo-text">
+        <span class="sidebar-logo-main">ALEX 3.0</span>
+        <span class="sidebar-logo-sub">Panel del negocio</span>
+      </div>
     </div>
 
-    <table class="tabla">
-      <thead>
-        <tr>
-          <th>Producto</th>
-          <th>Precio</th>
-          <th>Cantidad</th>
-          <th>Subtotal</th>
-          <th>Acciones</th>
-        </tr>
-      </thead>
-      <tbody id="tabla-ventas-body"></tbody>
-    </table>
+    <nav class="sidebar-nav">
+      <a href="dashboard.html" class="sidebar-link">📊 Dashboard</a>
+      <a href="ventas.html" class="sidebar-link active">💵 Ventas</a>
+      <a href="inventario.html" class="sidebar-link">📦 Inventario</a>
+      <a href="caja.html" class="sidebar-link">💰 Caja</a>
+      <a href="compras.html" class="sidebar-link">🧾 Compras</a>
+      <a href="gastos.html" class="sidebar-link">📉 Gastos</a>
+      <a href="clientes.html" class="sidebar-link">👥 Clientes</a>
+      <a href="proveedores.html" class="sidebar-link">🚚 Proveedores</a>
+      <a href="contabilidad.html" class="sidebar-link">📚 Contabilidad</a>
+      <a href="sat.html" class="sidebar-link">🇬🇹 SAT Guatemala</a>
+      <a href="ia.html" class="sidebar-link">🤖 IA empresarial</a>
+      <a href="configuracion.html" class="sidebar-link">⚙️ Configuración</a>
+    </nav>
 
-    <h2>Total: <span id="totalVenta">0.00</span></h2>
+    <div class="sidebar-footer">
+      <span class="sidebar-footer-title">Empresa demo</span>
+      <span class="sidebar-footer-sub">Versión 1.0</span>
+    </div>
+  </aside>
+
+  <!-- Layout principal -->
+  <div class="main-layout">
+    <!-- Topbar -->
+    <header class="topbar">
+      <button class="btn-menu-mobile" id="btnMenuMobile">☰</button>
+
+      <div class="topbar-left">
+        <h1 class="topbar-title">Ventas</h1>
+        <p class="topbar-subtitle">Registra y revisa todas las ventas del negocio.</p>
+      </div>
+
+      <div class="topbar-right">
+        <span class="topbar-company">Mi tienda demo</span>
+        <span class="topbar-divider">•</span>
+        <span class="topbar-user">Brayan (Dueño)</span>
+      </div>
+    </header>
+
+    <!-- Contenido principal -->
+    <main class="main-content">
+      <!-- Resumen de ventas -->
+      <section class="cards-grid">
+        <article class="card kpi-card">
+          <h2 class="card-title">Ventas de hoy</h2>
+          <p class="card-kpi">Q 0.00</p>
+          <p class="card-kpi-sub">Incluye efectivo, tarjeta y transferencias.</p>
+        </article>
+
+        <article class="card kpi-card">
+          <h2 class="card-title">Ventas del mes</h2>
+          <p class="card-kpi">Q 0.00</p>
+          <p class="card-kpi-sub">Resumen de todas las ventas facturadas.</p>
+        </article>
+
+        <article class="card kpi-card">
+          <h2 class="card-title">Tickets emitidos</h2>
+          <p class="card-kpi">0</p>
+          <p class="card-kpi-sub">Cantidad de comprobantes en el sistema.</p>
+        </article>
+
+        <article class="card kpi-card">
+          <h2 class="card-title">Promedio por venta</h2>
+          <p class="card-kpi">Q 0.00</p>
+          <p class="card-kpi-sub">Total vendido / número de ventas.</p>
+        </article>
+      </section>
+
+      <!-- Tabla de ventas -->
+      <section class="card">
+        <h2 class="card-title">Últimas ventas registradas</h2>
+        <p class="card-description">
+          Aquí aparecerán las ventas más recientes una vez se integre el backend.
+        </p>
+
+        <table class="table">
+          <thead>
+            <tr>
+              <th>Fecha</th>
+              <th>Documento</th>
+              <th>Cliente</th>
+              <th>Forma de pago</th>
+              <th>Total</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td colspan="5" class="table-empty">
+                Aún no hay ventas registradas en esta versión demo.
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </section>
+    </main>
   </div>
 
-  <script src="alex-storage.js"></script>
-  <script src="alex-dev.js"></script>
-  <script src="alex-roles.js"></script>
-
   <script>
-    const usuarioActual = getUsuarioActualObligatorio();
-    aplicarPermisosYProteger("ventas");
+    const btnMenuMobile = document.getElementById('btnMenuMobile');
+    const sidebar = document.querySelector('.sidebar');
 
-    let lineasVenta = load("ventasActivas", []);
-
-    function formatearMoneda(n) {
-      return alex3FormatearMoneda(n);
-    }
-
-    function agregarLineaVenta() {
-      const nombre = document.getElementById("ventaNombre").value.trim();
-      const precio = parseFloat(document.getElementById("ventaPrecio").value);
-      const cantidad = parseInt(document.getElementById("ventaCantidad").value);
-
-      if (!nombre || isNaN(precio) || precio <= 0 || isNaN(cantidad) || cantidad <= 0) {
-        alert("Ingresa un nombre válido, un precio mayor a 0 y una cantidad mayor a 0.");
-        return;
-      }
-
-      const subtotal = precio * cantidad;
-      const linea = { nombre, precio, cantidad, subtotal };
-
-      lineasVenta.push(linea);
-      save("ventasActivas", lineasVenta);
-
-      limpiarFormularioVenta();
-      renderTablaVentas();
-    }
-
-    function limpiarFormularioVenta() {
-      document.getElementById("ventaNombre").value = "";
-      document.getElementById("ventaPrecio").value = "";
-      document.getElementById("ventaCantidad").value = "";
-      document.getElementById("ventaNombre").focus();
-    }
-
-    function renderTablaVentas() {
-      const tbody = document.getElementById("tabla-ventas-body");
-      if (!tbody) return;
-
-      tbody.innerHTML = "";
-      let total = 0;
-
-      lineasVenta.forEach((l, index) => {
-        total += l.subtotal;
-
-        tbody.innerHTML += `
-          <tr>
-            <td>${l.nombre}</td>
-            <td>${formatearMoneda(l.precio)}</td>
-            <td>${l.cantidad}</td>
-            <td>${formatearMoneda(l.subtotal)}</td>
-            <td><button onclick="eliminarLinea(${index})">🗑️</button></td>
-          </tr>
-        `;
-      });
-
-      document.getElementById("totalVenta").innerText = formatearMoneda(total);
-    }
-
-    function eliminarLinea(index) {
-      if (!confirm("¿Eliminar esta línea de venta?")) return;
-      lineasVenta.splice(index, 1);
-      save("ventasActivas", lineasVenta);
-      renderTablaVentas();
-    }
-
-    // Inicializar tabla
-    renderTablaVentas();
+    btnMenuMobile.addEventListener('click', () => {
+      sidebar.classList.toggle('sidebar-open');
+    });
   </script>
-
 </body>
 </html>
