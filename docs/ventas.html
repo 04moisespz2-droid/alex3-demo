@@ -98,7 +98,10 @@
             <td>${l.nombre}</td>
             <td>Q${l.precio.toFixed(2)}</td>
             <td>${l.cantidad}</td>
-            <td>Q${l.subtotal.toFixed(2)}</td>
+
+            <!-- LÍNEA EDITADA -->
+            <td>${alex3FormatearMoneda(l.subtotal)}</td>
+
             <td><button onclick="eliminarLinea(${index})">🗑️</button></td>
           </tr>
         `;
@@ -118,4 +121,3 @@
 
 </body>
 </html>
-
