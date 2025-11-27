@@ -1,0 +1,217 @@
+body {
+  margin: 0;
+  padding: 0;
+  font-family: Arial, sans-serif;
+  background: linear-gradient(to bottom right, #0d6efd, #6cb2ff);
+  height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.login-container {
+  text-align: center;
+  color: white;
+}
+
+.title {
+  font-size: 48px;
+  font-weight: bold;
+  margin-bottom: 20px;
+}
+
+.login-box {
+  background: rgba(255, 255, 255, 0.15);
+  padding: 30px;
+  border-radius: 15px;
+  width: 300px;
+  backdrop-filter: blur(10px);
+}
+
+.input {
+  width: 100%;
+  padding: 12px;
+  margin: 10px 0;
+  border: none;
+  border-radius: 8px;
+  font-size: 16px;
+}
+
+.btn {
+  width: 100%;
+  padding: 12px;
+  margin-top: 10px;
+  background: #ffffff;
+  color: #0d6efd;
+  border: none;
+  border-radius: 8px;
+  font-size: 18px;
+  font-weight: bold;
+  cursor: pointer;
+}
+
+.btn:hover {
+  background: #dceaff;
+}
+/* ====== DASHBOARD ====== */
+
+.dashboard-body {
+  margin: 0;
+  padding: 0;
+  font-family: Arial, sans-serif;
+  display: flex;
+  background: #f3f6ff;
+}
+
+/* Sidebar */
+.sidebar {
+  width: 250px;
+  background: #0d6efd;
+  color: white;
+  height: 100vh;
+  padding: 20px;
+  box-sizing: border-box;
+}
+
+.logo {
+  font-size: 28px;
+  font-weight: bold;
+  margin-bottom: 30px;
+}
+
+.menu {
+  list-style: none;
+  padding: 0;
+}
+
+.menu li {
+  margin: 15px 0;
+}
+
+.menu a {
+  text-decoration: none;
+  color: white;
+  font-size: 18px;
+  padding: 10px;
+  display: block;
+  border-radius: 5px;
+}
+
+.menu a:hover {
+  background: rgba(255, 255, 255, 0.2);
+}
+
+/* Contenido principal */
+.main-content {
+  flex: 1;
+  padding: 40px;
+}
+/* ====== INVENTARIO ====== */
+
+.inventario-form {
+  background: white;
+  padding: 20px;
+  border-radius: 12px;
+  width: 350px;
+  margin-bottom: 20px;
+}
+
+.tabla {
+  width: 100%;
+  border-collapse: collapse;
+  background: white;
+  border-radius: 12px;
+  overflow: hidden;
+}
+
+.tabla th {
+  background: #0d6efd;
+  color: white;
+  padding: 10px;
+}
+
+.tabla td {
+  padding: 10px;
+  border-bottom: 1px solid #ddd;
+}
+
+.tabla tr:hover {
+  background: #f1f5ff;
+}
+
+.tabla button {
+  background: #dc3545;
+  border: none;
+  padding: 5px 10px;
+  color: white;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+.tabla button:hover {
+  background: #b02a37;
+}
+/* ====== CAJA ====== */
+
+.caja-config {
+  background: white;
+  padding: 20px;
+  border-radius: 12px;
+  margin-bottom: 20px;
+  max-width: 400px;
+}
+
+.resumen-caja {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 15px;
+  margin-bottom: 25px;
+}
+
+.card-resumen {
+  background: white;
+  padding: 15px 20px;
+  border-radius: 12px;
+  min-width: 180px;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.08);
+}
+
+.card-resumen h4 {
+  margin: 0 0 5px 0;
+  font-size: 14px;
+  color: #555;
+}
+
+.card-resumen p {
+  margin: 0;
+  font-size: 20px;
+  font-weight: bold;
+}
+
+.card-resumen.ingreso p {
+  color: green;
+}
+
+.card-resumen.egreso p {
+  color: red;
+}
+
+.card-resumen.saldo p {
+  color: #0d6efd;
+}
+
+.caja-form {
+  background: white;
+  padding: 20px;
+  border-radius: 12px;
+  margin-bottom: 20px;
+  max-width: 600px;
+}
+
+.caja-cierre {
+  margin-top: 30px;
+}
+
+.cierre-btn {
+  margin-bottom: 15px;
+}
