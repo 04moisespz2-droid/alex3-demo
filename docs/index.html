@@ -2,78 +2,45 @@
 <html lang="es">
 <head>
   <meta charset="UTF-8">
-  <title>ALEX 3.0 - Login</title>
+  <title>ALEX 3.0 - Iniciar sesión</title>
   <link rel="stylesheet" href="styles.css">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
 </head>
 
-<body>
-  <div class="login-container">
-    <h1 class="title">ALEX 3.0</h1>
+<body class="auth-body">
+  <div class="auth-wrapper">
+    <div class="auth-card">
+      <div class="auth-logo">
+        <span class="logo-badge">A</span>
+        <div class="logo-text-group">
+          <h1 class="logo-title">ALEX 3.0</h1>
+          <p class="logo-subtitle">Contador y administrador digital para tu negocio</p>
+        </div>
+      </div>
 
-    <div class="login-box">
-      <h2>Iniciar Sesión</h2>
+      <h2 class="auth-title">Iniciar sesión</h2>
+      <p class="auth-subtitle">Ingresa a tu panel para ver ventas, gastos y caja en tiempo real.</p>
 
-      <input id="loginUsuario" type="text" placeholder="Usuario" class="input">
-      <input id="loginPassword" type="password" placeholder="Contraseña" class="input">
+      <form class="auth-form" onsubmit="event.preventDefault(); window.location.href='dashboard.html';">
+        <label class="form-label">
+          Correo o usuario
+          <input type="email" class="form-input" placeholder="ejemplo@tu-negocio.com" required>
+        </label>
 
-      <button class="btn" onclick="iniciarSesion()">Ingresar</button>
+        <label class="form-label">
+          Contraseña
+          <input type="password" class="form-input" placeholder="••••••••" required>
+        </label>
 
-      <p id="loginError" style="color: #ffdddd; margin-top: 10px;"></p>
+        <button type="submit" class="btn btn-primary btn-full">
+          Ingresar
+        </button>
+      </form>
+
+      <p class="auth-footer-text">
+        Versión demo en la nube (MVP ampliado) para pequeños y medianos negocios.
+      </p>
     </div>
   </div>
-
-  <!-- Sistema de guardado -->
-  <script src="alex-storage.js"></script>
-
-  <script>
-    function iniciarSesion() {
-      const usuarioInput = document.getElementById("loginUsuario").value;
-      const passwordInput = document.getElementById("loginPassword").value;
-      const errorLabel = document.getElementById("loginError");
-
-      errorLabel.textContent = "";
-
-      if (usuarioInput.trim() === "" || passwordInput.trim() === "") {
-        errorLabel.textContent = "Por favor ingresa usuario y contraseña.";
-        return;
-      }
-
-      const usuarios = load("usuarios", []);
-
-      if (usuarios.length === 0) {
-        if (!confirm("No hay usuarios registrados. ¿Quieres crear este usuario como DUEÑO/ADMIN?")) {
-          return;
-        }
-
-        const nuevo = {
-          nombre: usuarioInput,
-          usuario: usuarioInput,
-          rol: "dueno",
-          password: passwordInput,
-          creadoEn: new Date().toLocaleString("es-GT")
-        };
-
-        usuarios.push(nuevo);
-        save("usuarios", usuarios);
-        save("usuarioActual", nuevo);
-
-        window.location.href = "dashboard.html";
-        return;
-      }
-
-      const encontrado = usuarios.find(u =>
-        u.usuario === usuarioInput && u.password === passwordInput
-      );
-
-      if (!encontrado) {
-        errorLabel.textContent = "Usuario o contraseña incorrectos.";
-        return;
-      }
-
-      save("usuarioActual", encontrado);
-      window.location.href = "dashboard.html";
-    }
-  </script>
 </body>
 </html>
-
