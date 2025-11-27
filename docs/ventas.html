@@ -4,7 +4,6 @@
   <meta charset="UTF-8">
   <title>Ventas - ALEX 3.0</title>
   <link rel="stylesheet" href="styles.css">
-
 </head>
 
 <body class="dashboard-body">
@@ -18,7 +17,6 @@
       <li id="menu-caja"><a href="caja.html">💰 Caja</a></li>
       <li id="menu-usuarios"><a href="usuarios.html">👤 Usuarios</a></li>
       <li id="menu-reportes"><a href="reportes.html">📊 Reportes</a></li>
-
     </ul>
   </div>
 
@@ -29,7 +27,7 @@
       <h3>Agregar producto a la venta</h3>
 
       <input id="ventaNombre" class="input" type="text" placeholder="Nombre del producto">
-      <input id="ventaPrecio" class="input" type="number" step="0.01" placeholder="Precio unitario (Q)">
+      <input id="ventaPrecio" class="input" type="number" step="0.01" placeholder="Precio unitario">
       <input id="ventaCantidad" class="input" type="number" step="1" placeholder="Cantidad">
 
       <button class="btn" onclick="agregarLineaVenta()">Agregar a la venta</button>
@@ -39,25 +37,30 @@
       <thead>
         <tr>
           <th>Producto</th>
-          <th>Precio (Q)</th>
+          <th>Precio</th>
           <th>Cantidad</th>
-          <th>Subtotal (Q)</th>
+          <th>Subtotal</th>
           <th>Acciones</th>
         </tr>
       </thead>
       <tbody id="tabla-ventas-body"></tbody>
     </table>
 
-    <h2>Total: Q<span id="totalVenta">0.00</span></h2>
+    <h2>Total: <span id="totalVenta">0.00</span></h2>
   </div>
 
   <script src="alex-storage.js"></script>
   <script src="alex-roles.js"></script>
+
   <script>
     const usuarioActual = getUsuarioActualObligatorio();
     aplicarPermisosYProteger("ventas");
 
     let lineasVenta = load("ventasActivas", []);
+
+    function formatearMoneda(v) {
+      return alex3FormatearMoneda(v);
+    }
 
     function agregarLineaVenta() {
       const nombre = document.getElementById("ventaNombre").value;
@@ -75,19 +78,18 @@
       lineasVenta.push(linea);
       save("ventasActivas", lineasVenta);
 
-      renderTablaVentas();
-
       document.getElementById("ventaNombre").value = "";
       document.getElementById("ventaPrecio").value = "";
       document.getElementById("ventaCantidad").value = "";
       document.getElementById("ventaNombre").focus();
+
+      renderTablaVentas();
     }
 
     function renderTablaVentas() {
       const tbody = document.getElementById("tabla-ventas-body");
-      if (!tbody) return;
-
       tbody.innerHTML = "";
+
       let total = 0;
 
       lineasVenta.forEach((l, index) => {
@@ -96,18 +98,15 @@
         tbody.innerHTML += `
           <tr>
             <td>${l.nombre}</td>
-            <td>Q${l.precio.toFixed(2)}</td>
+            <td>${formatearMoneda(l.precio)}</td>
             <td>${l.cantidad}</td>
-
-            <!-- LÍNEA EDITADA -->
-            <td>${alex3FormatearMoneda(l.subtotal)}</td>
-
+            <td>${formatearMoneda(l.subtotal)}</td>
             <td><button onclick="eliminarLinea(${index})">🗑️</button></td>
           </tr>
         `;
       });
 
-      document.getElementById("totalVenta").innerText = total.toFixed(2);
+      document.getElementById("totalVenta").innerText = formatearMoneda(total);
     }
 
     function eliminarLinea(index) {
