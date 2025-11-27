@@ -2,53 +2,144 @@
 <html lang="es">
 <head>
   <meta charset="UTF-8">
-  <title>ALEX 3.0 - Panel</title>
+  <title>ALEX 3.0 - Dashboard</title>
   <link rel="stylesheet" href="styles.css">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
 </head>
 
 <body class="dashboard-body">
-  
-  <div class="sidebar">
-    <h2 class="logo">ALEX 3.0</h2>
+  <!-- Sidebar -->
+  <aside class="sidebar">
+    <div class="sidebar-header">
+      <span class="logo-badge">A</span>
+      <div class="sidebar-logo-text">
+        <span class="sidebar-logo-main">ALEX 3.0</span>
+        <span class="sidebar-logo-sub">Panel del negocio</span>
+      </div>
+    </div>
 
-    <ul class="menu">
-      <li id="menu-dashboard"><a href="dashboard.html">🏠 Inicio</a></li>
-      <li id="menu-inventario"><a href="inventario.html">📦 Inventario</a></li>
-      <li id="menu-ventas"><a href="ventas.html">💵 Ventas</a></li>
-      <li id="menu-caja"><a href="caja.html">💰 Caja</a></li>
-      <li id="menu-usuarios"><a href="usuarios.html">👤 Usuarios</a></li>
-      <li id="menu-reportes"><a href="reportes.html">📊 Reportes</a></li>
+    <nav class="sidebar-nav">
+      <a href="dashboard.html" class="sidebar-link active">📊 Dashboard</a>
+      <a href="#" class="sidebar-link">💵 Ventas</a>
+      <a href="#" class="sidebar-link">📦 Inventario</a>
+      <a href="#" class="sidebar-link">💰 Caja</a>
+      <a href="#" class="sidebar-link">🧾 Compras</a>
+      <a href="#" class="sidebar-link">📉 Gastos</a>
+      <a href="#" class="sidebar-link">👥 Clientes</a>
+      <a href="#" class="sidebar-link">🚚 Proveedores</a>
+      <a href="#" class="sidebar-link">📚 Contabilidad</a>
+      <a href="#" class="sidebar-link">🇬🇹 SAT Guatemala</a>
+      <a href="#" class="sidebar-link">🤖 IA empresarial</a>
+      <a href="#" class="sidebar-link">⚙️ Configuración</a>
+    </nav>
 
-      <li><a href="#" onclick="cerrarSesion()">🚪 Cerrar sesión</a></li>
-    </ul>
+    <div class="sidebar-footer">
+      <span class="sidebar-footer-title">Empresa demo</span>
+      <span class="sidebar-footer-sub">Versión 1.0</span>
+    </div>
+  </aside>
+
+  <!-- Área principal -->
+  <div class="main-layout">
+    <!-- Topbar -->
+    <header class="topbar">
+      <button class="btn-menu-mobile" id="btnMenuMobile">☰</button>
+
+      <div class="topbar-left">
+        <h1 class="topbar-title">Resumen del día</h1>
+        <p class="topbar-subtitle">Ventas, gastos, utilidad y caja al instante.</p>
+      </div>
+
+      <div class="topbar-right">
+        <span class="topbar-company">Mi tienda demo</span>
+        <span class="topbar-divider">•</span>
+        <span class="topbar-user">Brayan (Dueño)</span>
+      </div>
+    </header>
+
+    <!-- Contenido -->
+    <main class="main-content">
+      <!-- Cards principales -->
+      <section class="cards-grid">
+        <article class="card kpi-card">
+          <h2 class="card-title">Ventas de hoy</h2>
+          <p class="card-kpi">Q 0.00</p>
+          <p class="card-kpi-sub">Objetivo diario: Q 1,000</p>
+        </article>
+
+        <article class="card kpi-card">
+          <h2 class="card-title">Gastos de hoy</h2>
+          <p class="card-kpi gasto">Q 0.00</p>
+          <p class="card-kpi-sub">Incluye compras y egresos de caja</p>
+        </article>
+
+        <article class="card kpi-card">
+          <h2 class="card-title">Utilidad estimada</h2>
+          <p class="card-kpi utilidad">Q 0.00</p>
+          <p class="card-kpi-sub">Ventas - costo estimado - gastos</p>
+        </article>
+
+        <article class="card kpi-card">
+          <h2 class="card-title">Caja actual</h2>
+          <p class="card-kpi caja">Q 0.00</p>
+          <p class="card-kpi-sub">Control por billetes y movimientos</p>
+        </article>
+      </section>
+
+      <!-- Sección secundaria -->
+      <section class="grid-2">
+        <article class="card">
+          <h2 class="card-title">Productos más vendidos</h2>
+          <p class="card-description">
+            Aquí se mostrarán los productos con mayor rotación en el período seleccionado.
+          </p>
+          <table class="table">
+            <thead>
+              <tr>
+                <th>Producto</th>
+                <th>Vendidos</th>
+                <th>Ingresos</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td colspan="3" class="table-empty">
+                  Aún no hay datos en esta versión demo.
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </article>
+
+        <article class="card">
+          <h2 class="card-title">Alertas rápidas</h2>
+          <ul class="alerts-list">
+            <li class="alert-item">
+              🔔 <strong>Stock bajo:</strong> Se mostrarán productos por debajo del mínimo.
+            </li>
+            <li class="alert-item">
+              🔔 <strong>Fiados elevados:</strong> ALEX avisará cuando las cuentas por cobrar sean muy altas.
+            </li>
+            <li class="alert-item">
+              🔔 <strong>Días flojos:</strong> Días con ventas muy por debajo del promedio.
+            </li>
+          </ul>
+          <p class="card-description">
+            Estas alertas serán generadas automáticamente por la IA empresarial en la versión completa.
+          </p>
+        </article>
+      </section>
+    </main>
   </div>
 
-  <div class="main-content">
-    <h1 id="bienvenidaTitulo">Bienvenido al Panel Principal</h1>
-    <p id="bienvenidaTexto">Selecciona un módulo del menú izquierdo.</p>
-  </div>
-
-  <script src="alex-storage.js"></script>
-  <script src="alex-roles.js"></script>
   <script>
-    const usuarioActual = getUsuarioActualObligatorio();
+    // Menú móvil: solo muestra/oculta el sidebar en pantallas pequeñas
+    const btnMenuMobile = document.getElementById('btnMenuMobile');
+    const sidebar = document.querySelector('.sidebar');
 
-    const titulo = document.getElementById("bienvenidaTitulo");
-    const texto = document.getElementById("bienvenidaTexto");
-
-    if (usuarioActual) {
-      titulo.textContent = "Bienvenido, " + usuarioActual.nombre;
-      texto.textContent = "Rol: " + usuarioActual.rol + ". Selecciona un módulo del menú izquierdo.";
-    }
-
-    aplicarPermisosYProteger("dashboard");
-
-    function cerrarSesion() {
-      save("usuarioActual", null);
-      window.location.href = "index.html";
-    }
+    btnMenuMobile.addEventListener('click', () => {
+      sidebar.classList.toggle('sidebar-open');
+    });
   </script>
-
 </body>
 </html>
-
