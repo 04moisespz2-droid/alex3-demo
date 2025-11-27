@@ -28,9 +28,9 @@
 
       <input id="codigo" class="input" type="text" placeholder="Código del producto">
       <input id="nombre" class="input" type="text" placeholder="Nombre del producto">
-      <input id="compra" class="input" type="number" step="0.01" placeholder="Precio de compra (moneda del sistema)">
-      <input id="venta" class="input" type="number" step="0.01" placeholder="Precio de venta (moneda del sistema)">
-      <input id="stock" class="input" type="number" placeholder="Stock inicial">
+      <input id="compra" class="input" type="number" step="0.01" placeholder="Precio de compra">
+      <input id="venta" class="input" type="number" step="0.01" placeholder="Precio de venta">
+      <input id="stock" class="input" type="number" step="1" placeholder="Stock inicial">
 
       <button class="btn" onclick="agregarProducto()">Agregar</button>
     </div>
@@ -54,32 +54,33 @@
   </div>
 
   <script src="alex-storage.js"></script>
+  <script src="alex-dev.js"></script>
   <script src="alex-roles.js"></script>
+
   <script>
     const usuarioActual = getUsuarioActualObligatorio();
     aplicarPermisosYProteger("inventario");
 
     let productos = load("productos", []);
 
-    // Usar la moneda configurada en el sistema
-    function formatearMoneda(valor) {
-      return alex3FormatearMoneda(valor);
+    function formatearMoneda(n) {
+      return alex3FormatearMoneda(n);
     }
 
     function agregarProducto() {
-      const codigo = document.getElementById("codigo").value;
-      const nombre = document.getElementById("nombre").value;
+      const codigo = document.getElementById("codigo").value.trim();
+      const nombre = document.getElementById("nombre").value.trim();
       const compra = parseFloat(document.getElementById("compra").value);
       const venta = parseFloat(document.getElementById("venta").value);
       const stock = parseInt(document.getElementById("stock").value);
 
       if (!codigo || !nombre || isNaN(compra) || isNaN(venta) || isNaN(stock)) {
-        alert("Por favor completa todos los campos.");
+        alert("Por favor completa todos los campos con valores válidos.");
         return;
       }
 
       const ganancia = venta - compra;
-      const margen = ((ganancia / compra) * 100).toFixed(1);
+      const margen = compra > 0 ? ((ganancia / compra) * 100).toFixed(1) : "0.0";
 
       const nuevo = { codigo, nombre, compra, venta, ganancia, margen, stock };
       productos.push(nuevo);
@@ -119,11 +120,13 @@
     }
 
     function eliminarProducto(index) {
+      if (!confirm("¿Eliminar este producto del inventario?")) return;
       productos.splice(index, 1);
       save("productos", productos);
       renderTabla();
     }
 
+    // Inicializar tabla al cargar
     renderTabla();
   </script>
 
