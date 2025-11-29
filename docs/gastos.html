@@ -46,8 +46,10 @@
       <button class="btn-menu-mobile" id="btnMenuMobile">☰</button>
 
       <div class="topbar-left">
-        <h1 class="topbar-title">Gastos del negocio</h1>
-        <p class="topbar-subtitle">Registra y controla todos los egresos de tu empresa.</p>
+        <h1 class="topbar-title">Gastos</h1>
+        <p class="topbar-subtitle">
+          Registra gastos del negocio y que ALEX los refleje en caja y reportes.
+        </p>
       </div>
 
       <div class="topbar-right">
@@ -62,66 +64,106 @@
 
     <!-- Contenido principal -->
     <main class="main-content">
-      <!-- Formulario para registrar gasto -->
+      <!-- KPIs de gastos -->
+      <section class="cards-grid">
+        <article class="card kpi-card">
+          <h2 class="card-title">Gastos de hoy</h2>
+          <p class="card-kpi" id="kpi-gastos-hoy">Q 0.00</p>
+          <p class="card-kpi-sub">Total de egresos registrados hoy.</p>
+        </article>
+
+        <article class="card kpi-card">
+          <h2 class="card-title">Gastos del mes</h2>
+          <p class="card-kpi" id="kpi-gastos-mes">Q 0.00</p>
+          <p class="card-kpi-sub">Sumatoria del mes actual.</p>
+        </article>
+
+        <article class="card kpi-card">
+          <h2 class="card-title">Gastos registrados</h2>
+          <p class="card-kpi" id="kpi-gastos-cantidad">0</p>
+          <p class="card-kpi-sub">Número de gastos guardados.</p>
+        </article>
+
+        <article class="card kpi-card">
+          <h2 class="card-title">Promedio por gasto</h2>
+          <p class="card-kpi" id="kpi-gastos-promedio">Q 0.00</p>
+          <p class="card-kpi-sub">Total mes / cantidad de gastos.</p>
+        </article>
+      </section>
+
+      <!-- Formulario de gasto -->
       <section class="card">
-        <h2 class="card-title">Registrar nuevo gasto</h2>
+        <h2 class="card-title">1. Registrar un nuevo gasto</h2>
         <p class="card-description">
-          Usa este formulario para registrar rentas, pagos de servicios, compras menores, nómina y otros egresos.
-          Si el gasto se paga en efectivo de caja, se registrará automáticamente como <strong>EGRESO</strong> en la caja.
+          Usa este formulario para registrar pagos de servicios, renta, transporte, comida,
+          sueldos u otros egresos del negocio.
         </p>
 
         <div class="form-grid">
           <div class="form-field">
-            <label for="gCategoria">Categoría del gasto</label>
+            <label for="gFecha">Fecha y hora</label>
+            <input id="gFecha" class="input" type="datetime-local">
+          </div>
+
+          <div class="form-field">
+            <label for="gCategoria">Categoría</label>
             <select id="gCategoria" class="input">
-              <option value="">Selecciona una categoría</option>
-              <option value="Renta local">Renta de local</option>
               <option value="Servicios básicos">Servicios básicos (luz, agua, internet)</option>
-              <option value="Mercancía / Proveedor">Mercancía / Proveedor</option>
-              <option value="Nómina / Sueldos">Nómina / Sueldos</option>
-              <option value="Publicidad / Marketing">Publicidad / Marketing</option>
-              <option value="Transporte / Envíos">Transporte / Envíos</option>
-              <option value="Impuestos / Bancos">Impuestos / Bancos</option>
+              <option value="Renta">Renta / alquiler</option>
+              <option value="Transporte">Transporte / envíos</option>
+              <option value="Sueldos">Sueldos / honorarios</option>
+              <option value="Comida">Comida / viáticos</option>
+              <option value="Publicidad">Publicidad / marketing</option>
+              <option value="Mantenimiento">Mantenimiento / reparaciones</option>
+              <option value="Impuestos">Impuestos / tasas</option>
               <option value="Otros">Otros gastos</option>
             </select>
           </div>
 
           <div class="form-field">
             <label for="gDescripcion">Descripción</label>
-            <input id="gDescripcion" class="input" type="text" placeholder="Ej: Pago de luz, pago a proveedor, etc.">
+            <input id="gDescripcion" class="input" type="text"
+                   placeholder="Ej: Luz del local, internet del mes, Uber de entregas, etc.">
           </div>
 
           <div class="form-field">
             <label for="gMonto">Monto (Q)</label>
-            <input id="gMonto" class="input" type="number" step="0.01" min="0" placeholder="0.00">
+            <input id="gMonto" class="input" type="number" min="0" step="0.01">
           </div>
 
           <div class="form-field">
             <label for="gFormaPago">Forma de pago</label>
             <select id="gFormaPago" class="input">
-              <option value="EFECTIVO_CAJA">Efectivo en caja</option>
-              <option value="TRANSFERENCIA">Transferencia / Depósito</option>
+              <option value="EFECTIVO">Efectivo</option>
+              <option value="TRANSFERENCIA">Transferencia</option>
               <option value="TARJETA">Tarjeta</option>
-              <option value="OTRO">Otro</option>
+              <option value="CREDITO">Crédito</option>
             </select>
+          </div>
+
+          <div class="form-field" style="grid-column: 1 / -1;">
+            <label for="gNotas">Notas (opcional)</label>
+            <input id="gNotas" class="input" type="text"
+                   placeholder="Ej: Mes de noviembre, pagado con descuento, etc.">
           </div>
         </div>
 
-        <button class="btn" id="btnGuardarGasto">Guardar gasto</button>
+        <button class="btn" id="btnGuardarGasto" style="margin-top: 0.75rem;">
+          Guardar gasto y actualizar caja
+        </button>
       </section>
 
-      <!-- Tabla de gastos -->
+      <!-- Historial de gastos -->
       <section class="card">
-        <h2 class="card-title">Historial de gastos</h2>
+        <h2 class="card-title">2. Historial de gastos</h2>
         <p class="card-description">
-          Lista de los gastos registrados en el sistema. Estos movimientos se consideran en
-          el cálculo de utilidad y, cuando son en efectivo, en el saldo de caja.
+          Los gastos más recientes aparecen primero.
         </p>
 
         <table class="table">
           <thead>
             <tr>
-              <th>Fecha / Hora</th>
+              <th>Fecha</th>
               <th>Categoría</th>
               <th>Descripción</th>
               <th>Forma de pago</th>
@@ -145,17 +187,16 @@
   <script src="alex-roles.js"></script>
 
   <script>
-    // Menú móvil
+    // ===== Menú móvil =====
     const btnMenuMobile = document.getElementById('btnMenuMobile');
     const sidebar = document.querySelector('.sidebar');
-
     if (btnMenuMobile) {
       btnMenuMobile.addEventListener('click', () => {
         sidebar.classList.toggle('sidebar-open');
       });
     }
 
-    // Usuario y permisos
+    // ===== Usuario y permisos =====
     const usuarioActual = typeof getUsuarioActualObligatorio === "function"
       ? getUsuarioActualObligatorio()
       : null;
@@ -164,43 +205,27 @@
       aplicarPermisosYProteger("gastos");
     }
 
-    // Pintar nombre y rol en el topbar
     const labelUser = document.getElementById("topbar-user-label");
     if (usuarioActual && labelUser) {
       const rolTexto = usuarioActual.rol === "dueno" ? "Dueño" : "Empleado";
-      labelUser.textContent = usuarioActual.nombre + " (" + rolTexto + ")";
+      labelUser.textContent = `${usuarioActual.nombre} (${rolTexto})`;
     }
 
-    // Botón Cerrar sesión
+    // Cerrar sesión
     const btnLogout = document.getElementById("btnLogout");
     if (btnLogout) {
       btnLogout.addEventListener("click", () => {
         if (!confirm("¿Quieres cerrar sesión?")) return;
-
         if (typeof save === "function") {
           save("usuarioActual", null);
         } else {
           localStorage.removeItem("usuarioActual");
         }
-
         window.location.href = "index.html";
       });
     }
 
-    // ====== LÓGICA DE GASTOS ======
-
-    // Cargar datos
-    let gastos = [];
-    let cajaMovimientos = [];
-
-    if (typeof load === "function") {
-      const gData = load("gastos", []);
-      gastos = Array.isArray(gData) ? gData : [];
-
-      const cData = load("caja_movimientos", []);
-      cajaMovimientos = Array.isArray(cData) ? cData : [];
-    }
-
+    // ===== Helpers =====
     function alex3FormatearMonedaSeguro(valor) {
       if (typeof alex3FormatearMoneda === "function") {
         return alex3FormatearMoneda(valor);
@@ -210,31 +235,98 @@
       return "Q " + num.toFixed(2);
     }
 
-    function formatearFechaBonita(fechaIso) {
-      const d = new Date(fechaIso);
-      if (isNaN(d.getTime())) return fechaIso || "-";
-      const dia = String(d.getDate()).padStart(2, "0");
-      const mes = String(d.getMonth() + 1).padStart(2, "0");
-      const anio = d.getFullYear();
-      const horas = String(d.getHours()).padStart(2, "0");
-      const mins = String(d.getMinutes()).padStart(2, "0");
-      return `${dia}/${mes}/${anio} ${horas}:${mins}`;
+    function esMismoDia(a, b) {
+      return a.getFullYear() === b.getFullYear() &&
+             a.getMonth() === b.getMonth() &&
+             a.getDate() === b.getDate();
     }
 
+    function esMismoMes(a, b) {
+      return a.getFullYear() === b.getFullYear() &&
+             a.getMonth() === b.getMonth();
+    }
+
+    function formatearFechaLocal(fechaIso) {
+      const d = new Date(fechaIso);
+      if (isNaN(d.getTime())) return "-";
+      return d.toLocaleString("es-GT");
+    }
+
+    // ===== Datos base (gastos, caja) =====
+    let gastos = [];
+    let movimientosCaja = [];
+
+    if (typeof load === "function") {
+      const gData = load("gastos", []);
+      gastos = Array.isArray(gData) ? gData : [];
+
+      const mData = load("caja_movimientos", []);
+      movimientosCaja = Array.isArray(mData) ? mData : [];
+    }
+
+    function guardarGastos() {
+      if (typeof save === "function") {
+        save("gastos", gastos);
+      }
+    }
+
+    function guardarMovimientosCaja() {
+      if (typeof save === "function") {
+        save("caja_movimientos", movimientosCaja);
+        save("movimientosCaja", movimientosCaja); // compatibilidad con otros módulos
+      }
+    }
+
+    // ===== KPIs de gastos =====
+    function recalcularKPIsGastos() {
+      const hoy = new Date();
+      let totalHoy = 0;
+      let totalMes = 0;
+
+      gastos.forEach(g => {
+        const fecha = new Date(g.fechaHora || g.fecha || Date.now());
+        const monto = Number(g.monto) || 0;
+
+        if (esMismoDia(fecha, hoy)) {
+          totalHoy += monto;
+        }
+        if (esMismoMes(fecha, hoy)) {
+          totalMes += monto;
+        }
+      });
+
+      const cantidad = gastos.length;
+      const promedio = cantidad > 0 ? totalMes / cantidad : 0;
+
+      const elHoy = document.getElementById("kpi-gastos-hoy");
+      const elMes = document.getElementById("kpi-gastos-mes");
+      const elCant = document.getElementById("kpi-gastos-cantidad");
+      const elProm = document.getElementById("kpi-gastos-promedio");
+
+      if (elHoy) elHoy.textContent = alex3FormatearMonedaSeguro(totalHoy);
+      if (elMes) elMes.textContent = alex3FormatearMonedaSeguro(totalMes);
+      if (elCant) elCant.textContent = String(cantidad);
+      if (elProm) elProm.textContent = alex3FormatearMonedaSeguro(promedio);
+    }
+
+    // ===== Tabla de gastos =====
     function renderTablaGastos() {
       const tbody = document.getElementById("tabla-gastos-body");
+      if (!tbody) return;
+
       tbody.innerHTML = "";
 
       if (!gastos.length) {
         tbody.innerHTML = `
           <tr>
-            <td colspan="5" class="table-empty">Aún no hay gastos registrados.</td>
+            <td colspan="5" class="table-empty">
+              Aún no hay gastos registrados.
+            </td>
           </tr>
         `;
         return;
       }
 
-      // Ordenar del más reciente al más antiguo
       const ordenados = [...gastos].sort((a, b) => {
         const fa = new Date(a.fechaHora || a.fecha || 0).getTime();
         const fb = new Date(b.fechaHora || b.fecha || 0).getTime();
@@ -242,94 +334,130 @@
       });
 
       ordenados.forEach(g => {
-        const fecha = formatearFechaBonita(g.fechaHora || g.fecha || "");
-        const categoria = g.categoria || "";
-        const descripcion = g.descripcion || "";
-        const formaPagoTexto = (function(fp) {
-          switch (fp) {
-            case "EFECTIVO_CAJA": return "Efectivo en caja";
-            case "TRANSFERENCIA": return "Transferencia / Depósito";
-            case "TARJETA": return "Tarjeta";
-            case "OTRO": return "Otro";
-            default: return fp || "";
-          }
-        })(g.formaPago);
-        const monto = alex3FormatearMonedaSeguro(g.monto);
+        const fechaTxt = g.fecha || formatearFechaLocal(g.fechaHora || "");
+        const categoria = g.categoria || "-";
+        const descripcion = g.descripcion || "-";
+        const formaPago = g.formaPago || "-";
+        const montoTxt = alex3FormatearMonedaSeguro(g.monto);
 
         tbody.innerHTML += `
           <tr>
-            <td>${fecha}</td>
+            <td>${fechaTxt}</td>
             <td>${categoria}</td>
             <td>${descripcion}</td>
-            <td>${formaPagoTexto}</td>
-            <td>${monto}</td>
+            <td>${formaPago}</td>
+            <td>${montoTxt}</td>
           </tr>
         `;
       });
     }
 
-    function registrarGasto() {
-      const categoria = document.getElementById("gCategoria").value;
-      const descripcion = document.getElementById("gDescripcion").value.trim();
-      const monto = parseFloat(document.getElementById("gMonto").value);
-      const formaPago = document.getElementById("gFormaPago").value;
+    // ===== Guardar gasto =====
+    const inpGFecha = document.getElementById("gFecha");
+    const inpGCategoria = document.getElementById("gCategoria");
+    const inpGDescripcion = document.getElementById("gDescripcion");
+    const inpGMonto = document.getElementById("gMonto");
+    const inpGFormaPago = document.getElementById("gFormaPago");
+    const inpGNotas = document.getElementById("gNotas");
+    const btnGuardarGasto = document.getElementById("btnGuardarGasto");
 
-      if (!categoria || !descripcion || isNaN(monto) || monto <= 0) {
-        alert("Por favor completa categoría, descripción y un monto válido.");
+    function guardarGasto() {
+      const fechaVal = inpGFecha.value;
+      let fechaObj;
+      if (fechaVal) {
+        fechaObj = new Date(fechaVal);
+      } else {
+        fechaObj = new Date();
+      }
+      if (isNaN(fechaObj.getTime())) fechaObj = new Date();
+
+      const fechaLocal = fechaObj.toLocaleString("es-GT");
+      const fechaIso = fechaObj.toISOString();
+
+      const categoria = inpGCategoria.value;
+      const descripcion = (inpGDescripcion.value || "").trim();
+      const monto = parseFloat(inpGMonto.value);
+      const formaPago = inpGFormaPago.value;
+      const notas = (inpGNotas.value || "").trim();
+
+      if (!categoria || !descripcion || isNaN(monto) || monto <= 0 || !formaPago) {
+        alert("Completa categoría, descripción, monto válido y forma de pago.");
         return;
       }
 
-      const ahora = new Date().toISOString();
-
-      const nuevoGasto = {
-        id: Date.now(),
-        fechaHora: ahora,
+      const gasto = {
+        id: "gasto_" + Date.now(),
+        fecha: fechaLocal,
+        fechaHora: fechaIso,
         categoria,
         descripcion,
         monto,
         formaPago,
+        notas,
+        origen: "gasto_operativo",
         usuario: usuarioActual ? usuarioActual.usuario : null
       };
 
-      gastos.push(nuevoGasto);
-      if (typeof save === "function") {
-        save("gastos", gastos);
-      }
+      gastos.push(gasto);
+      guardarGastos();
 
-      // Si el gasto fue en efectivo de caja, registramos EGRESO en caja_movimientos
-      if (formaPago === "EFECTIVO_CAJA") {
-        const movimiento = {
-          id: "gasto_" + Date.now(),
-          fechaHora: ahora,
+      // Si es efectivo, registrar egreso en caja
+      if (formaPago === "EFECTIVO") {
+        const mov = {
+          id: "caja_gasto_" + Date.now(),
+          fechaHora: fechaIso,
+          fecha: fechaLocal,
           tipo: "EGRESO",
-          categoria: "Gasto - " + categoria,
-          descripcion: descripcion,
+          categoria: "Gastos",
+          descripcion: `${categoria}: ${descripcion}`,
           monto: monto,
           origen: "gasto",
+          gastoId: gasto.id,
           usuario: usuarioActual ? usuarioActual.usuario : null
         };
-        cajaMovimientos.push(movimiento);
-        if (typeof save === "function") {
-          save("caja_movimientos", cajaMovimientos);
-        }
+        movimientosCaja.push(mov);
+        guardarMovimientosCaja();
       }
 
       // Limpiar formulario
-      document.getElementById("gCategoria").value = "";
-      document.getElementById("gDescripcion").value = "";
-      document.getElementById("gMonto").value = "";
-      document.getElementById("gFormaPago").value = "EFECTIVO_CAJA";
+      inpGDescripcion.value = "";
+      inpGMonto.value = "";
+      inpGNotas.value = "";
+      inpGFormaPago.value = "EFECTIVO";
+      // Fecha la dejamos como está para seguir usando el mismo día/hora
 
+      // Refrescar KPIs y tabla
+      recalcularKPIsGastos();
       renderTablaGastos();
+
       alert("Gasto registrado correctamente.");
     }
 
-    const btnGuardarGasto = document.getElementById("btnGuardarGasto");
     if (btnGuardarGasto) {
-      btnGuardarGasto.addEventListener("click", registrarGasto);
+      btnGuardarGasto.addEventListener("click", guardarGasto);
     }
 
-    // Primera carga
+    // Enter en monto → guardar gasto
+    if (inpGMonto) {
+      inpGMonto.addEventListener("keydown", (e) => {
+        if (e.key === "Enter") {
+          e.preventDefault();
+          guardarGasto();
+        }
+      });
+    }
+
+    // ===== Primera carga =====
+    // Prellenar fecha con ahora
+    if (inpGFecha) {
+      const ahora = new Date();
+      const isoLocal = new Date(ahora.getTime() - ahora.getTimezoneOffset() * 60000)
+        .toISOString()
+        .slice(0, 16);
+      inpGFecha.value = isoLocal;
+    }
+
+    recalcularKPIsGastos();
     renderTablaGastos();
   </script>
 </body>
