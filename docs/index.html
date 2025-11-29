@@ -19,119 +19,162 @@
       </div>
 
       <h2 class="auth-title">Iniciar sesión</h2>
-      <p class="auth-subtitle">Ingresa a tu panel para ver ventas, gastos y caja en tiempo real.</p>
+      <p class="auth-subtitle">
+        Ingresa con tu usuario y contraseña. En esta versión demo puedes crear usuarios desde el módulo <strong>Usuarios</strong>.
+      </p>
 
-      <form class="auth-form" id="login-form">
+      <form class="auth-form" id="loginForm">
         <label class="form-label">
-          Correo o usuario
-          <!-- type="text" para permitir usuario normal (no obliga a tener @) -->
-          <input id="login-usuario" type="text" class="form-input" placeholder="ejemplo@tu-negocio.com o usuario" required>
+          Usuario
+          <input
+            type="text"
+            id="loginUsuario"
+            class="form-input"
+            placeholder="Ej: admin"
+            autocomplete="username"
+            required
+          >
         </label>
 
         <label class="form-label">
           Contraseña
-          <input id="login-password" type="password" class="form-input" placeholder="••••••••" required>
+          <input
+            type="password"
+            id="loginPassword"
+            class="form-input"
+            placeholder="••••••••"
+            autocomplete="current-password"
+            required
+          >
         </label>
 
         <button type="submit" class="btn btn-primary btn-full">
           Ingresar
         </button>
-
-        <p id="login-error" class="auth-error" style="margin-top: 0.75rem; color: #e11d48; font-size: 0.9rem; display: none;">
-          Usuario o contraseña incorrectos.
-        </p>
       </form>
 
-      <p class="auth-footer-text">
-        Versión demo en la nube (MVP ampliado) para pequeños y medianos negocios.
+      <p class="auth-footer-text" id="demoInfo">
+        Versión demo en la nube para pequeños y medianos negocios.
       </p>
     </div>
   </div>
 
   <!-- Scripts base -->
   <script src="alex-storage.js"></script>
-  <script src="alex-roles.js"></script>
 
   <script>
-    // Al cargar la página, preparamos todo el login
-    document.addEventListener("DOMContentLoaded", () => {
-      let usuarios = [];
-      if (typeof load === "function") {
-        const data = load("usuarios", []);
-        usuarios = Array.isArray(data) ? data : [];
-      }
+    // Helper por si aún no existe
+    function alex3FormatearMonedaSeguro(valor) {
+      const num = Number(valor);
+      if (isNaN(num)) return "Q 0.00";
+      return "Q " + num.toFixed(2);
+    }
 
-      // Si no hay usuarios, creamos uno por defecto (dueño)
-      if (!usuarios.length) {
-        const duenoDemo = {
-          nombre: "Dueño demo",
+    // Cargar usuarioActual y usuarios desde almacenamiento
+    let usuarioActual = null;
+    let usuarios = [];
+
+    if (typeof load === "function") {
+      usuarioActual = load("usuarioActual", null);
+      const uData = load("usuarios", []);
+      usuarios = Array.isArray(uData) ? uData : [];
+    }
+
+    // 1) Si ya hay usuario logueado, ir directo al dashboard
+    if (usuarioActual && usuarioActual.usuario && usuarioActual.rol) {
+      window.location.href = "dashboard.html";
+    }
+
+    // 2) Si NO hay usuarios, crear uno demo por defecto (admin / 1234)
+    (function crearUsuarioDemoSiHaceFalta() {
+      if (!Array.isArray(usuarios) || usuarios.length === 0) {
+        const ahora = new Date();
+        const demo = {
+          nombre: "Demo ALEX (Dueño)",
           usuario: "admin",
-          rol: "dueno",
+          rol: "dueno", // Dueño
           password: "1234",
-          creadoEn: new Date().toLocaleString("es-GT")
+          creadoEn: ahora.toLocaleString("es-GT")
         };
-        usuarios.push(duenoDemo);
+        usuarios = [demo];
         if (typeof save === "function") {
           save("usuarios", usuarios);
         }
+        const demoInfo = document.getElementById("demoInfo");
+        if (demoInfo) {
+          demoInfo.innerHTML = `
+            Usuario demo creado automáticamente:<br>
+            <strong>Usuario:</strong> admin &nbsp;|&nbsp; <strong>Contraseña:</strong> 1234
+          `;
+        }
+      } else {
+        const demoInfo = document.getElementById("demoInfo");
+        if (demoInfo) {
+          demoInfo.textContent =
+            "Si olvidas un usuario, puedes gestionarlos desde el módulo Usuarios dentro de ALEX 3.0.";
+        }
+      }
+    })();
+
+    // 3) Lógica de login real
+    function encontrarUsuarioPorLogin(loginText) {
+      const login = (loginText || "").trim().toLowerCase();
+      if (!login) return null;
+
+      // Buscamos por "usuario" (campo principal)
+      let u = usuarios.find(u => (u.usuario || "").toLowerCase() === login);
+      if (u) return u;
+
+      // Extra: intentamos por nombre por si alguien prueba
+      u = usuarios.find(u => (u.nombre || "").toLowerCase() === login);
+      return u || null;
+    }
+
+    function manejarLogin(event) {
+      event.preventDefault();
+
+      const inputUsuario = document.getElementById("loginUsuario");
+      const inputPassword = document.getElementById("loginPassword");
+
+      const loginText = inputUsuario.value;
+      const passText = inputPassword.value;
+
+      if (!loginText.trim() || !passText.trim()) {
+        alert("Por favor ingresa usuario y contraseña.");
+        return;
       }
 
-      const form = document.getElementById("login-form");
-      const inputUsuario = document.getElementById("login-usuario");
-      const inputPassword = document.getElementById("login-password");
-      const errorEl = document.getElementById("login-error");
+      const usuario = encontrarUsuarioPorLogin(loginText);
+      if (!usuario) {
+        alert("Usuario no encontrado. Verifica el usuario o crea uno nuevo en el módulo Usuarios.");
+        return;
+      }
 
-      if (!form) return;
+      if ((usuario.password || "") !== passText) {
+        alert("Contraseña incorrecta. Intenta de nuevo.");
+        return;
+      }
 
-      form.addEventListener("submit", (e) => {
-        e.preventDefault();
-        if (errorEl) {
-          errorEl.style.display = "none";
-        }
+      // Armar objeto ligero para usuarioActual
+      const usuarioSesion = {
+        nombre: usuario.nombre,
+        usuario: usuario.usuario,
+        rol: usuario.rol
+      };
 
-        const userInput = inputUsuario.value.trim();
-        const passInput = inputPassword.value.trim();
+      if (typeof save === "function") {
+        save("usuarioActual", usuarioSesion);
+      } else {
+        localStorage.setItem("usuarioActual", JSON.stringify(usuarioSesion));
+      }
 
-        if (!userInput || !passInput) {
-          if (errorEl) {
-            errorEl.textContent = "Ingresa usuario y contraseña.";
-            errorEl.style.display = "block";
-          }
-          return;
-        }
+      window.location.href = "dashboard.html";
+    }
 
-        // Buscar usuario por campo "usuario" (puede ser texto o correo)
-        const encontrado = usuarios.find(u =>
-          (u.usuario && u.usuario.toLowerCase() === userInput.toLowerCase())
-        );
-
-        if (!encontrado || encontrado.password !== passInput) {
-          if (errorEl) {
-            errorEl.textContent = "Usuario o contraseña incorrectos.";
-            errorEl.style.display = "block";
-          }
-          return;
-        }
-
-        // Guardar usuarioActual (sin contraseña por seguridad básica)
-        const usuarioActual = {
-          nombre: encontrado.nombre,
-          usuario: encontrado.usuario,
-          rol: encontrado.rol || "empleado",
-          creadoEn: encontrado.creadoEn || new Date().toISOString()
-        };
-
-        if (typeof save === "function") {
-          save("usuarioActual", usuarioActual);
-        } else {
-          // fallback si por alguna razón no existe save
-          localStorage.setItem("usuarioActual", JSON.stringify(usuarioActual));
-        }
-
-        // Redirigir al dashboard
-        window.location.href = "dashboard.html";
-      });
-    });
+    const loginForm = document.getElementById("loginForm");
+    if (loginForm) {
+      loginForm.addEventListener("submit", manejarLogin);
+    }
   </script>
 </body>
 </html>
