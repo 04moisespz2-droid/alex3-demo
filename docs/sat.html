@@ -34,157 +34,454 @@
     </nav>
 
     <div class="sidebar-footer">
-      <span class="sidebar-footer-title">Empresa demo</span>
-      <span class="sidebar-footer-sub">Versión 1.0</span>
+      <span class="sidebar-footer-title">Mi negocio</span>
+      <span class="sidebar-footer-sub">Simulador SAT</span>
     </div>
   </aside>
 
-  <!-- Layout -->
+  <!-- Layout principal -->
   <div class="main-layout">
     <!-- Topbar -->
     <header class="topbar">
       <button class="btn-menu-mobile" id="btnMenuMobile">☰</button>
 
       <div class="topbar-left">
-        <h1 class="topbar-title">SAT Guatemala</h1>
-        <p class="topbar-subtitle">Información, regímenes y futuras integraciones DTE.</p>
+        <h1 class="topbar-title">SAT Guatemala (simulador)</h1>
+        <p class="topbar-subtitle">
+          Cálculo aproximado de impuestos mensuales según tus ventas y compras registradas.
+        </p>
       </div>
 
       <div class="topbar-right">
-        <span class="topbar-company">Mi tienda demo</span>
+        <span class="topbar-company">Mi negocio</span>
         <span class="topbar-divider">•</span>
-        <span class="topbar-user" id="topbar-user-label">Usuario</span>
-        <button class="btn" id="btnLogout" style="margin-left: 0.75rem;">Cerrar sesión</button>
+        <span class="topbar-user" id="topbar-user-label">Usuario (Rol)</span>
       </div>
     </header>
 
     <!-- Contenido principal -->
     <main class="main-content">
-      
-      <!-- Sección regímenes -->
-      <section class="cards-grid">
-        <article class="card">
-          <h2 class="card-title">Pequeño Contribuyente</h2>
-          <p class="card-description">
-            Ideal para negocios con ingresos hasta <strong>Q150,000 al año</strong>.
-          </p>
-          <ul class="alerts-list">
-            <li class="alert-item">➡️ Impuesto del <strong>5%</strong> mensual sobre ventas.</li>
-            <li class="alert-item">➡️ No requiere contabilidad avanzada.</li>
-            <li class="alert-item">➡️ Puede emitir <strong>Factura Electrónica</strong> (FEL).</li>
-            <li class="alert-item">➡️ No maneja crédito fiscal.</li>
-          </ul>
-        </article>
-
-        <article class="card">
-          <h2 class="card-title">Régimen General</h2>
-          <p class="card-description">
-            Para negocios más grandes o con facturación completa.
-          </p>
-          <ul class="alerts-list">
-            <li class="alert-item">➡️ Pago de IVA (12%).</li>
-            <li class="alert-item">➡️ Declaración mensual o trimestral.</li>
-            <li class="alert-item">➡️ Manejo de costos, crédito fiscal y compras.</li>
-            <li class="alert-item">➡️ Requiere contabilidad profesional.</li>
-          </ul>
-        </article>
-
-        <article class="card">
-          <h2 class="card-title">¿Cuál me conviene?</h2>
-          <p class="card-description">
-            ALEX analizará tus ventas y te recomendará automáticamente el mejor régimen.
-          </p>
-          <ul class="alerts-list">
-            <li class="alert-item">📌 Si tus ventas superan Q150,000 → Régimen General.</li>
-            <li class="alert-item">📌 Si quieres emitir facturas con crédito fiscal → General.</li>
-            <li class="alert-item">📌 Para pequeños negocios → Pequeño Contribuyente.</li>
-          </ul>
-        </article>
-      </section>
-
-      <!-- Integración DTE -->
+      <!-- Selector de mes -->
       <section class="card">
-        <h2 class="card-title">Integración DTE (Próximamente)</h2>
+        <h2 class="card-title">1. Selecciona el mes a analizar</h2>
         <p class="card-description">
-          En una versión futura, ALEX 3.0 podrá conectarse directamente con SAT para emitir:
+          ALEX usará tus <strong>ventas</strong> y <strong>compras</strong> guardadas para ese mes
+          y simulará cuánto pagarías en cada régimen.
         </p>
-
-        <ul class="alerts-list">
-          <li class="alert-item">📄 Factura electrónica FEL</li>
-          <li class="alert-item">📄 Recibos</li>
-          <li class="alert-item">📄 Notas de crédito</li>
-          <li class="alert-item">📄 Facturas especiales</li>
-        </ul>
-
-        <button class="btn btn-primary" disabled>
-          Conectar con SAT (Próximamente)
-        </button>
-      </section>
-
-      <!-- Explicador IA -->
-      <section class="card">
-        <h2 class="card-title">Explicador de impuestos (IA)</h2>
-        <p class="card-description">
-          En la versión avanzada podrás escribir aquí preguntas como:
-        </p>
-
-        <ul class="alerts-list">
-          <li class="alert-item">❓ ¿Qué impuesto debo pagar este mes?</li>
-          <li class="alert-item">❓ ¿Cuánto debo pagar si vendí Q8,000?</li>
-          <li class="alert-item">❓ ¿Qué beneficios tengo en régimen pequeño contribuyente?</li>
-        </ul>
 
         <div class="form-grid">
-          <input type="text" class="input" disabled placeholder="Escribe tu pregunta aquí (Próximamente)">
+          <div class="form-field">
+            <label for="satMes">Mes</label>
+            <input id="satMes" class="input" type="month">
+          </div>
         </div>
-      </section>
 
-      <!-- Advertencias -->
-      <section class="card">
-        <h2 class="card-title">Advertencias comunes de SAT</h2>
-        <ul class="alerts-list">
-          <li class="alert-item">⚠️ Multas por no declarar a tiempo.</li>
-          <li class="alert-item">⚠️ Cierre temporal del negocio por incumplimiento.</li>
-          <li class="alert-item">⚠️ Bloqueo de NIT.</li>
-          <li class="alert-item">⚠️ Problemas para emitir facturas.</li>
-        </ul>
-        <p class="card-description">
-          ALEX 3.0 te alertará cuando falte poco para tu declaración mensual o trimestral.
+        <p style="font-size: 0.85rem; margin-top: 0.5rem;">
+          ⚠️ <strong>Nota:</strong> Esto es un simulador educativo. No es una declaración oficial ni reemplaza al contador.
         </p>
       </section>
 
+      <!-- KPIs de resumen SAT -->
+      <section class="cards-grid">
+        <article class="card kpi-card">
+          <h2 class="card-title">Ventas del mes (base)</h2>
+          <p class="card-kpi" id="sat-kpi-ventas">Q 0.00</p>
+          <p class="card-kpi-sub">Total de ventas registradas en el mes seleccionado.</p>
+        </article>
+
+        <article class="card kpi-card">
+          <h2 class="card-title">Compras del mes</h2>
+          <p class="card-kpi gasto" id="sat-kpi-compras">Q 0.00</p>
+          <p class="card-kpi-sub">Usadas como referencia de costo / IVA crédito.</p>
+        </article>
+
+        <article class="card kpi-card">
+          <h2 class="card-title">Pequeño contribuyente</h2>
+          <p class="card-kpi" id="sat-kpi-peq">Q 0.00</p>
+          <p class="card-kpi-sub">
+            Estimación 5% sobre ventas del mes (solo referencia).
+          </p>
+        </article>
+
+        <article class="card kpi-card">
+          <h2 class="card-title">IVA régimen general</h2>
+          <p class="card-kpi" id="sat-kpi-iva-pagar">Q 0.00</p>
+          <p class="card-kpi-sub">
+            IVA por pagar ≈ débito (ventas) - crédito (compras).
+          </p>
+        </article>
+      </section>
+
+      <!-- Desglose de regímenes -->
+      <section class="grid-2">
+        <!-- Pequeño contribuyente -->
+        <article class="card">
+          <h2 class="card-title">2. Escenario: Pequeño contribuyente</h2>
+          <p class="card-description">
+            Cálculo básico tomando el total de ventas del mes. No considera facturas exentas ni
+            detalles avanzados, solo una guía rápida.
+          </p>
+
+          <table class="table">
+            <thead>
+              <tr>
+                <th>Concepto</th>
+                <th>Monto</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>Ventas del mes (base)</td>
+                <td id="sat-peq-base"></td>
+              </tr>
+              <tr>
+                <td>Tasa usada (aprox.)</td>
+                <td>5 %</td>
+              </tr>
+              <tr>
+                <td><strong>Impuesto estimado</strong></td>
+                <td id="sat-peq-impuesto"></td>
+              </tr>
+            </tbody>
+          </table>
+        </article>
+
+        <!-- Régimen general IVA -->
+        <article class="card">
+          <h2 class="card-title">3. Escenario: Régimen general (IVA)</h2>
+          <p class="card-description">
+            Estimación del IVA usando tus ventas y compras del mes. No contempla
+            toda la normativa, solo una aproximación:
+          </p>
+
+          <table class="table">
+            <thead>
+              <tr>
+                <th>Concepto</th>
+                <th>Monto</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>Ventas gravadas (base IVA débito)</td>
+                <td id="sat-iva-base-ventas"></td>
+              </tr>
+              <tr>
+                <td>Compras gravadas (base IVA crédito)</td>
+                <td id="sat-iva-base-compras"></td>
+              </tr>
+              <tr>
+                <td>IVA sobre ventas (12%)</td>
+                <td id="sat-iva-debito"></td>
+              </tr>
+              <tr>
+                <td>IVA sobre compras (12%)</td>
+                <td id="sat-iva-credito"></td>
+              </tr>
+              <tr>
+                <td><strong>IVA estimado por pagar</strong></td>
+                <td id="sat-iva-por-pagar"></td>
+              </tr>
+            </tbody>
+          </table>
+        </article>
+      </section>
+
+      <!-- Listado de movimientos usados -->
+      <section class="card">
+        <h2 class="card-title">4. Movimientos usados para el cálculo</h2>
+        <p class="card-description">
+          Estas tablas muestran las ventas y compras del mes seleccionado que ALEX toma en cuenta
+          para los cálculos de arriba.
+        </p>
+
+        <div class="grid-2">
+          <article>
+            <h3>Ventas del mes</h3>
+            <table class="table">
+              <thead>
+                <tr>
+                  <th>Fecha</th>
+                  <th>Cliente</th>
+                  <th>Documento</th>
+                  <th>Total</th>
+                </tr>
+              </thead>
+              <tbody id="sat-tabla-ventas">
+                <tr>
+                  <td colspan="4" class="table-empty">
+                    No hay ventas registradas en este mes.
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </article>
+
+          <article>
+            <h3>Compras del mes</h3>
+            <table class="table">
+              <thead>
+                <tr>
+                  <th>Fecha</th>
+                  <th>Proveedor</th>
+                  <th>Documento</th>
+                  <th>Monto</th>
+                </tr>
+              </thead>
+              <tbody id="sat-tabla-compras">
+                <tr>
+                  <td colspan="4" class="table-empty">
+                    No hay compras registradas en este mes.
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </article>
+        </div>
+      </section>
     </main>
   </div>
 
-  <!-- Scripts -->
+  <!-- Scripts base -->
   <script src="alex-storage.js"></script>
   <script src="alex-roles.js"></script>
 
   <script>
-    // Menú móvil
+    // ===== Menú móvil =====
     const btnMenuMobile = document.getElementById('btnMenuMobile');
     const sidebar = document.querySelector('.sidebar');
-    btnMenuMobile.addEventListener('click', () => {
-      sidebar.classList.toggle('sidebar-open');
-    });
-
-    // Usuario actual
-    const usuario = getUsuarioActualObligatorio();
-    const labelUser = document.getElementById("topbar-user-label");
-
-    if (usuario && labelUser) {
-      const rolTexto = usuario.rol === "dueno" ? "Dueño" : "Empleado";
-      labelUser.textContent = `${usuario.nombre} (${rolTexto})`;
+    if (btnMenuMobile) {
+      btnMenuMobile.addEventListener('click', () => {
+        sidebar.classList.toggle('sidebar-open');
+      });
     }
 
-    aplicarPermisosYProteger("sat");
+    // ===== Usuario y permisos =====
+    const usuarioActual = typeof getUsuarioActualObligatorio === "function"
+      ? getUsuarioActualObligatorio()
+      : null;
 
-    // Cerrar sesión
-    document.getElementById("btnLogout").onclick = () => {
-      if (!confirm("¿Deseas cerrar sesión?")) return;
-      save("usuarioActual", null);
-      window.location.href = "index.html";
-    };
+    if (typeof aplicarPermisosYProteger === "function") {
+      aplicarPermisosYProteger("sat");
+    }
+
+    const labelUser = document.getElementById("topbar-user-label");
+    if (usuarioActual && labelUser) {
+      const rolTexto = usuarioActual.rol === "dueno" ? "Dueño" : "Empleado";
+      labelUser.textContent = `${usuarioActual.nombre} (${rolTexto})`;
+    }
+
+    // ===== Helpers =====
+    function alex3FormatearMonedaSeguro(valor) {
+      if (typeof alex3FormatearMoneda === "function") {
+        return alex3FormatearMoneda(valor);
+      }
+      const num = Number(valor);
+      if (isNaN(num)) return "Q 0.00";
+      return "Q " + num.toFixed(2);
+    }
+
+    function esMismoMesReferencia(fecha, referencia) {
+      return fecha.getFullYear() === referencia.getFullYear() &&
+             fecha.getMonth() === referencia.getMonth();
+    }
+
+    function formatearFechaLocal(fechaIso) {
+      const d = new Date(fechaIso);
+      if (isNaN(d.getTime())) return "-";
+      return d.toLocaleString("es-GT");
+    }
+
+    // ===== Cargar datos =====
+    let ventas = [];
+    let compras = [];
+
+    if (typeof load === "function") {
+      const vData = load("ventas", []);
+      ventas = Array.isArray(vData) ? vData : [];
+
+      const cData = load("compras", []);
+      compras = Array.isArray(cData) ? cData : [];
+    }
+
+    const inputMes = document.getElementById("satMes");
+
+    const kpiVentas = document.getElementById("sat-kpi-ventas");
+    const kpiCompras = document.getElementById("sat-kpi-compras");
+    const kpiPeq = document.getElementById("sat-kpi-peq");
+    const kpiIvaPagar = document.getElementById("sat-kpi-iva-pagar");
+
+    const peqBase = document.getElementById("sat-peq-base");
+    const peqImpuesto = document.getElementById("sat-peq-impuesto");
+
+    const ivaBaseVentas = document.getElementById("sat-iva-base-ventas");
+    const ivaBaseCompras = document.getElementById("sat-iva-base-compras");
+    const ivaDebitoEl = document.getElementById("sat-iva-debito");
+    const ivaCreditoEl = document.getElementById("sat-iva-credito");
+    const ivaPorPagarEl = document.getElementById("sat-iva-por-pagar");
+
+    const tablaVentasBody = document.getElementById("sat-tabla-ventas");
+    const tablaComprasBody = document.getElementById("sat-tabla-compras");
+
+    function obtenerFechaReferencia() {
+      if (inputMes && inputMes.value) {
+        // valor tipo "YYYY-MM"
+        const [year, month] = inputMes.value.split("-").map(Number);
+        if (!isNaN(year) && !isNaN(month)) {
+          return new Date(year, month - 1, 1);
+        }
+      }
+      return new Date(); // mes actual
+    }
+
+    function recalcularSAT() {
+      const ref = obtenerFechaReferencia();
+
+      // Filtrar por mes de referencia
+      const ventasMes = ventas.filter(v => {
+        const f = new Date(v.fechaHora || v.fecha || Date.now());
+        return esMismoMesReferencia(f, ref);
+      });
+
+      const comprasMes = compras.filter(c => {
+        const f = new Date(c.fechaHora || c.fecha || Date.now());
+        return esMismoMesReferencia(f, ref);
+      });
+
+      // Totales base
+      const totalVentas = ventasMes.reduce((acc, v) => acc + (Number(v.total) || 0), 0);
+      const totalCompras = comprasMes.reduce((acc, c) => acc + (Number(c.monto) || 0), 0);
+
+      // Pequeño contribuyente (aprox 5% sobre ventas)
+      const tasaPeq = 0.05;
+      const impuestoPeq = totalVentas * tasaPeq;
+
+      // IVA régimen general (12%)
+      const tasaIVA = 0.12;
+      const ivaDebito = totalVentas * tasaIVA;
+      const ivaCredito = totalCompras * tasaIVA;
+      const ivaPorPagar = Math.max(0, ivaDebito - ivaCredito);
+
+      // Actualizar KPIs
+      if (kpiVentas) kpiVentas.textContent = alex3FormatearMonedaSeguro(totalVentas);
+      if (kpiCompras) kpiCompras.textContent = alex3FormatearMonedaSeguro(totalCompras);
+      if (kpiPeq) kpiPeq.textContent = alex3FormatearMonedaSeguro(impuestoPeq);
+      if (kpiIvaPagar) kpiIvaPagar.textContent = alex3FormatearMonedaSeguro(ivaPorPagar);
+
+      // Detalle pequeño contribuyente
+      if (peqBase) peqBase.textContent = alex3FormatearMonedaSeguro(totalVentas);
+      if (peqImpuesto) peqImpuesto.textContent = alex3FormatearMonedaSeguro(impuestoPeq);
+
+      // Detalle IVA
+      if (ivaBaseVentas) ivaBaseVentas.textContent = alex3FormatearMonedaSeguro(totalVentas);
+      if (ivaBaseCompras) ivaBaseCompras.textContent = alex3FormatearMonedaSeguro(totalCompras);
+      if (ivaDebitoEl) ivaDebitoEl.textContent = alex3FormatearMonedaSeguro(ivaDebito);
+      if (ivaCreditoEl) ivaCreditoEl.textContent = alex3FormatearMonedaSeguro(ivaCredito);
+      if (ivaPorPagarEl) ivaPorPagarEl.textContent = alex3FormatearMonedaSeguro(ivaPorPagar);
+
+      // Tablas detalle
+      renderTablaVentasMes(ventasMes);
+      renderTablaComprasMes(comprasMes);
+    }
+
+    function renderTablaVentasMes(lista) {
+      if (!tablaVentasBody) return;
+      tablaVentasBody.innerHTML = "";
+
+      if (!lista.length) {
+        tablaVentasBody.innerHTML = `
+          <tr>
+            <td colspan="4" class="table-empty">
+              No hay ventas registradas en este mes.
+            </td>
+          </tr>
+        `;
+        return;
+      }
+
+      const ordenadas = [...lista].sort((a, b) => {
+        const fa = new Date(a.fechaHora || a.fecha || 0).getTime();
+        const fb = new Date(b.fechaHora || b.fecha || 0).getTime();
+        return fb - fa;
+      });
+
+      ordenadas.forEach(v => {
+        const fechaTxt = v.fecha || (v.fechaHora ? formatearFechaLocal(v.fechaHora) : "-");
+        const clienteTxt = v.clienteNombre || "Cliente general";
+        const docTxt = v.documentoTipo
+          ? (v.documentoNumero ? \`\${v.documentoTipo} \${v.documentoNumero}\` : v.documentoTipo)
+          : (v.documentoNumero || "-");
+        const totalTxt = alex3FormatearMonedaSeguro(v.total);
+
+        tablaVentasBody.innerHTML += `
+          <tr>
+            <td>${fechaTxt}</td>
+            <td>${clienteTxt}</td>
+            <td>${docTxt}</td>
+            <td>${totalTxt}</td>
+          </tr>
+        `;
+      });
+    }
+
+    function renderTablaComprasMes(lista) {
+      if (!tablaComprasBody) return;
+      tablaComprasBody.innerHTML = "";
+
+      if (!lista.length) {
+        tablaComprasBody.innerHTML = `
+          <tr>
+            <td colspan="4" class="table-empty">
+              No hay compras registradas en este mes.
+            </td>
+          </tr>
+        `;
+        return;
+      }
+
+      const ordenadas = [...lista].sort((a, b) => {
+        const fa = new Date(a.fechaHora || a.fecha || 0).getTime();
+        const fb = new Date(b.fechaHora || b.fecha || 0).getTime();
+        return fb - fa;
+      });
+
+      ordenadas.forEach(c => {
+        const fechaTxt = c.fecha || (c.fechaHora ? formatearFechaLocal(c.fechaHora) : "-");
+        const provTxt = c.proveedorNombre || "-";
+        const docTxt = c.documentoTipo
+          ? (c.documentoNumero ? \`\${c.documentoTipo} \${c.documentoNumero}\` : c.documentoTipo)
+          : (c.documentoNumero || "-");
+        const montoTxt = alex3FormatearMonedaSeguro(c.monto);
+
+        tablaComprasBody.innerHTML += `
+          <tr>
+            <td>${fechaTxt}</td>
+            <td>${provTxt}</td>
+            <td>${docTxt}</td>
+            <td>${montoTxt}</td>
+          </tr>
+        `;
+      });
+    }
+
+    // Cambiar mes → recalcular
+    if (inputMes) {
+      inputMes.addEventListener("change", () => {
+        recalcularSAT();
+      });
+    }
+
+    // Primera carga: dejar mes actual seleccionado
+    (function initMesActual() {
+      if (!inputMes) return;
+      const hoy = new Date();
+      const year = hoy.getFullYear();
+      const month = String(hoy.getMonth() + 1).padStart(2, "0");
+      inputMes.value = \`\${year}-\${month}\`;
+    })();
+
+    // Recalcular al entrar a la página
+    recalcularSAT();
   </script>
 </body>
 </html>
