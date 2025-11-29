@@ -2,138 +2,155 @@
 <html lang="es">
 <head>
   <meta charset="UTF-8">
-  <title>ALEX 3.0 - Inventario</title>
+  <title>Inventario - ALEX 3.0</title>
   <link rel="stylesheet" href="styles.css">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
 </head>
 
 <body class="dashboard-body">
-  <!-- Sidebar -->
-  <aside class="sidebar">
-    <div class="sidebar-header">
-      <span class="logo-badge">A</span>
-      <div class="sidebar-logo-text">
-        <span class="sidebar-logo-main">ALEX 3.0</span>
-        <span class="sidebar-logo-sub">Panel del negocio</span>
-      </div>
-    </div>
 
-    <nav class="sidebar-nav">
-      <a href="dashboard.html" class="sidebar-link">📊 Dashboard</a>
-      <a href="ventas.html" class="sidebar-link">💵 Ventas</a>
-      <a href="inventario.html" class="sidebar-link active">📦 Inventario</a>
-      <a href="caja.html" class="sidebar-link">💰 Caja</a>
-      <a href="compras.html" class="sidebar-link">🧾 Compras</a>
-      <a href="gastos.html" class="sidebar-link">📉 Gastos</a>
-      <a href="clientes.html" class="sidebar-link">👥 Clientes</a>
-      <a href="proveedores.html" class="sidebar-link">🚚 Proveedores</a>
-      <a href="contabilidad.html" class="sidebar-link">📚 Contabilidad</a>
-      <a href="sat.html" class="sidebar-link">🇬🇹 SAT Guatemala</a>
-      <a href="ia.html" class="sidebar-link">🤖 IA empresarial</a>
-      <a href="configuracion.html" class="sidebar-link">⚙️ Configuración</a>
-    </nav>
-
-    <div class="sidebar-footer">
-      <span class="sidebar-footer-title">Empresa demo</span>
-      <span class="sidebar-footer-sub">Versión 1.0</span>
-    </div>
-  </aside>
-
-  <!-- Layout principal -->
-  <div class="main-layout">
-    <!-- Topbar -->
-    <header class="topbar">
-      <button class="btn-menu-mobile" id="btnMenuMobile">☰</button>
-
-      <div class="topbar-left">
-        <h1 class="topbar-title">Inventario</h1>
-        <p class="topbar-subtitle">Control de productos y servicios del negocio.</p>
-      </div>
-
-      <div class="topbar-right">
-        <span class="topbar-company">Mi tienda demo</span>
-        <span class="topbar-divider">•</span>
-        <span class="topbar-user">Brayan (Dueño)</span>
-      </div>
-    </header>
-
-    <!-- Contenido principal -->
-    <main class="main-content">
-      <!-- Resumen inventario -->
-      <section class="cards-grid">
-        <article class="card kpi-card">
-          <h2 class="card-title">Productos activos</h2>
-          <p class="card-kpi" id="kpi-productos">0</p>
-          <p class="card-kpi-sub">Cantidad de productos registrados.</p>
-        </article>
-
-        <article class="card kpi-card">
-          <h2 class="card-title">Stock bajo</h2>
-          <p class="card-kpi" id="kpi-stock-bajo">0</p>
-          <p class="card-kpi-sub">Productos por debajo del mínimo.</p>
-        </article>
-
-        <article class="card kpi-card">
-          <h2 class="card-title">Servicios activos</h2>
-          <p class="card-kpi" id="kpi-servicios">0</p>
-          <p class="card-kpi-sub">Servicios que se pueden vender.</p>
-        </article>
-
-        <article class="card kpi-card">
-          <h2 class="card-title">Valor estimado del inventario</h2>
-          <p class="card-kpi" id="kpi-valor-inventario">Q 0.00</p>
-          <p class="card-kpi-sub">Costo total aproximado.</p>
-        </article>
-      </section>
-
-      <!-- Tabla de productos -->
-      <section class="card">
-        <h2 class="card-title">Listado de productos</h2>
-        <p class="card-description">
-          Aquí verás tus productos con stock, costo y precio. De momento se cargan datos de ejemplo.
-        </p>
-
-        <table class="table">
-          <thead>
-            <tr>
-              <th>Código</th>
-              <th>Producto</th>
-              <th>Categoría</th>
-              <th>Stock</th>
-              <th>Precio venta</th>
-            </tr>
-          </thead>
-          <tbody id="tabla-productos">
-            <!-- Aquí llenará inventario.js -->
-          </tbody>
-        </table>
-      </section>
-    </main>
+  <div class="sidebar">
+    <h2 class="logo">ALEX 3.0</h2>
+    <ul class="menu">
+      <li id="menu-dashboard"><a href="dashboard.html">🏠 Inicio</a></li>
+      <li id="menu-inventario"><a href="inventario.html">📦 Inventario</a></li>
+      <li id="menu-ventas"><a href="ventas.html">💵 Ventas</a></li>
+      <li id="menu-caja"><a href="caja.html">💰 Caja</a></li>
+      <li id="menu-usuarios"><a href="usuarios.html">👤 Usuarios</a></li>
+      <li id="menu-reportes"><a href="reportes.html">📊 Reportes</a></li>
+    </ul>
   </div>
 
+  <div class="main-content">
+    <h1>Inventario</h1>
+
+    <div class="inventario-form">
+      <h3>Agregar producto</h3>
+
+      <input id="codigo" class="input" type="text" placeholder="Código del producto">
+      <input id="nombre" class="input" type="text" placeholder="Nombre del producto">
+      <input id="compra" class="input" type="number" placeholder="Precio de compra (Q)">
+      <input id="venta" class="input" type="number" placeholder="Precio de venta (Q)">
+      <input id="stock" class="input" type="number" placeholder="Stock inicial">
+
+      <button class="btn" onclick="agregarProducto()">Agregar</button>
+    </div>
+
+    <table class="tabla">
+      <thead>
+        <tr>
+          <th>Código</th>
+          <th>Nombre</th>
+          <th>Compra (Q)</th>
+          <th>Venta (Q)</th>
+          <th>Ganancia (Q)</th>
+          <th>Margen (%)</th>
+          <th>Stock</th>
+          <th>Acciones</th>
+        </tr>
+      </thead>
+      <tbody id="tabla-body"></tbody>
+    </table>
+
+  </div>
+
+  <script src="alex-storage.js"></script>
+  <script src="alex-roles.js"></script>
   <script>
-    // Menú móvil (mismo script en todas las pantallas)
-    const btnMenuMobile = document.getElementById('btnMenuMobile');
-    const sidebar = document.querySelector('.sidebar');
-    if (btnMenuMobile && sidebar) {
-      btnMenuMobile.addEventListener('click', () => {
-        sidebar.classList.toggle('sidebar-open');
+    // Usuario y permisos
+    const usuarioActual = getUsuarioActualObligatorio();
+    aplicarPermisosYProteger("inventario");
+
+    // Cargar productos desde almacenamiento
+    let productos = load("productos", []);
+    if (!Array.isArray(productos)) {
+      productos = [];
+    }
+
+    // Formateador de moneda seguro
+    function alex3FormatearMonedaSeguro(valor) {
+      if (typeof alex3FormatearMoneda === "function") {
+        return alex3FormatearMoneda(valor);
+      }
+      const num = Number(valor);
+      if (isNaN(num)) return "Q0.00";
+      return "Q" + num.toFixed(2);
+    }
+
+    function limpiarFormulario() {
+      document.getElementById("codigo").value = "";
+      document.getElementById("nombre").value = "";
+      document.getElementById("compra").value = "";
+      document.getElementById("venta").value = "";
+      document.getElementById("stock").value = "";
+    }
+
+    function agregarProducto() {
+      const codigo = document.getElementById("codigo").value.trim();
+      const nombre = document.getElementById("nombre").value.trim();
+      const compra = parseFloat(document.getElementById("compra").value);
+      const venta = parseFloat(document.getElementById("venta").value);
+      const stock = parseInt(document.getElementById("stock").value);
+
+      if (!codigo || !nombre || isNaN(compra) || isNaN(venta) || isNaN(stock)) {
+        alert("Por favor completa todos los campos.");
+        return;
+      }
+
+      const ganancia = venta - compra;
+      const margen = compra > 0 ? ((ganancia / compra) * 100) : 0;
+
+      const nuevo = {
+        codigo,
+        nombre,
+        compra,
+        venta,
+        ganancia,
+        margen: Number(margen.toFixed(1)),
+        stock
+      };
+
+      productos.push(nuevo);
+      save("productos", productos);
+      limpiarFormulario();
+      renderTabla();
+    }
+
+    function renderTabla() {
+      const tbody = document.getElementById("tabla-body");
+      tbody.innerHTML = "";
+
+      productos.forEach((p, index) => {
+        const compraFmt = alex3FormatearMonedaSeguro(p.compra);
+        const ventaFmt = alex3FormatearMonedaSeguro(p.venta);
+        const gananciaFmt = alex3FormatearMonedaSeguro(p.ganancia);
+
+        const fila = `
+          <tr>
+            <td>${p.codigo}</td>
+            <td>${p.nombre}</td>
+            <td>${compraFmt}</td>
+            <td>${ventaFmt}</td>
+            <td>${gananciaFmt}</td>
+            <td>${p.margen}%</td>
+            <td>${p.stock}</td>
+            <td>
+              <button onclick="eliminarProducto(${index})">🗑️</button>
+            </td>
+          </tr>
+        `;
+        tbody.innerHTML += fila;
       });
     }
+
+    function eliminarProducto(index) {
+      productos.splice(index, 1);
+      save("productos", productos);
+      renderTabla();
+    }
+
+    // Primera carga
+    renderTabla();
   </script>
-  <script src="inventario.js"></script>
-  <script>
-  const btnMenuMobile = document.getElementById('btnMenuMobile');
-  const sidebar = document.querySelector('.sidebar');
-  btnMenuMobile.addEventListener('click', () => {
-    sidebar.classList.toggle('sidebar-open');
-  });
-</script>
-
-<script src="inventario.js"></script>
-</body>
-</html>
 
 </body>
 </html>
-
