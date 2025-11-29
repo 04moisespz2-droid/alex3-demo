@@ -8,6 +8,7 @@
 </head>
 
 <body class="dashboard-body">
+  <!-- Sidebar -->
   <aside class="sidebar">
     <div class="sidebar-header">
       <span class="logo-badge">A</span>
@@ -38,65 +39,328 @@
     </div>
   </aside>
 
+  <!-- Layout principal -->
   <div class="main-layout">
+    <!-- Topbar -->
     <header class="topbar">
       <button class="btn-menu-mobile" id="btnMenuMobile">☰</button>
 
       <div class="topbar-left">
-        <h1 class="topbar-title">Contabilidad</h1>
-        <p class="topbar-subtitle">Estados financieros básicos del negocio.</p>
+        <h1 class="topbar-title">Resumen contable</h1>
+        <p class="topbar-subtitle">
+          Resumen de ventas, compras, gastos y caja por período contable.
+        </p>
       </div>
 
       <div class="topbar-right">
         <span class="topbar-company">Mi tienda demo</span>
         <span class="topbar-divider">•</span>
-        <span class="topbar-user">Brayan (Dueño)</span>
+        <span class="topbar-user" id="topbar-user-label">Usuario (Rol)</span>
+        <button class="btn" id="btnLogout" type="button" style="margin-left: 0.75rem;">
+          Cerrar sesión
+        </button>
       </div>
     </header>
 
+    <!-- Contenido principal -->
     <main class="main-content">
+      <!-- Filtros -->
+      <section class="card">
+        <h2 class="card-title">Período contable</h2>
+        <p class="card-description">
+          Selecciona un rango rápido para ver el resumen contable del negocio.
+        </p>
+
+        <div class="form-grid">
+          <div class="form-field">
+            <label for="filtroPeriodo">Rango rápido</label>
+            <select id="filtroPeriodo" class="input">
+              <option value="HOY">Hoy</option>
+              <option value="MES">Este mes</option>
+              <option value="ANIO">Este año</option>
+              <option value="TODO" selected>Todo el historial</option>
+            </select>
+          </div>
+        </div>
+
+        <button class="btn" id="btnAplicarFiltro">Aplicar filtro</button>
+      </section>
+
+      <!-- Resumen principal -->
       <section class="cards-grid">
         <article class="card kpi-card">
-          <h2 class="card-title">Activos</h2>
-          <p class="card-kpi">Q 0.00</p>
-          <p class="card-kpi-sub">Total de activos registrados.</p>
+          <h2 class="card-title">Ventas del período</h2>
+          <p class="card-kpi" id="cont-ventas">Q 0.00</p>
+          <p class="card-kpi-sub">Total facturado / vendido.</p>
         </article>
 
         <article class="card kpi-card">
-          <h2 class="card-title">Pasivos</h2>
-          <p class="card-kpi gasto">Q 0.00</p>
-          <p class="card-kpi-sub">Deudas y obligaciones.</p>
+          <h2 class="card-title">Compras del período</h2>
+          <p class="card-kpi gasto" id="cont-compras">Q 0.00</p>
+          <p class="card-kpi-sub">Compras a proveedores, mercancía y otros.</p>
         </article>
 
         <article class="card kpi-card">
-          <h2 class="card-title">Patrimonio</h2>
-          <p class="card-kpi utilidad">Q 0.00</p>
-          <p class="card-kpi-sub">Diferencia entre activos y pasivos.</p>
+          <h2 class="card-title">Gastos del período</h2>
+          <p class="card-kpi gasto" id="cont-gastos">Q 0.00</p>
+          <p class="card-kpi-sub">Renta, servicios, nómina, envíos, etc.</p>
         </article>
 
         <article class="card kpi-card">
-          <h2 class="card-title">Utilidad del período</h2>
-          <p class="card-kpi utilidad">Q 0.00</p>
-          <p class="card-kpi-sub">Resultado del período actual.</p>
+          <h2 class="card-title">Resultado del período</h2>
+          <p class="card-kpi utilidad" id="cont-resultado">Q 0.00</p>
+          <p class="card-kpi-sub">Ventas - Compras - Gastos.</p>
         </article>
       </section>
 
-      <section class="card">
-        <h2 class="card-title">Resumen contable</h2>
-        <p class="card-description">
-          Aquí se mostrarán reportes como Balance General y Estado de Resultados
-          generados automáticamente a partir de tus movimientos.
-        </p>
+      <!-- Caja e info extra -->
+      <section class="grid-2">
+        <article class="card">
+          <h2 class="card-title">Resumen de caja</h2>
+          <p class="card-description">
+            Ingresos y egresos registrados en la caja profesional. Esto no reemplaza el corte físico,
+            pero te da una referencia rápida.
+          </p>
+
+          <table class="table">
+            <tbody>
+              <tr>
+                <th>Ingresos en caja (histórico)</th>
+                <td id="cont-caja-ingresos">Q 0.00</td>
+              </tr>
+              <tr>
+                <th>Egresos en caja (histórico)</th>
+                <td id="cont-caja-egresos">Q 0.00</td>
+              </tr>
+              <tr>
+                <th>Saldo caja (estimado)</th>
+                <td id="cont-caja-saldo">Q 0.00</td>
+              </tr>
+            </tbody>
+          </table>
+        </article>
+
+        <article class="card">
+          <h2 class="card-title">Notas contables</h2>
+          <ul class="alerts-list">
+            <li class="alert-item">
+              📌 <strong>Ventas del período:</strong> Se calculan con las ventas registradas en el sistema.
+            </li>
+            <li class="alert-item">
+              📌 <strong>Compras del período:</strong> Basadas en el módulo de compras.
+            </li>
+            <li class="alert-item">
+              📌 <strong>Gastos del período:</strong> Basados en el módulo de gastos.
+            </li>
+            <li class="alert-item">
+              📌 <strong>Caja:</strong> Se alimenta de ingresos/egresos de la caja y egresos de gastos/compras.
+            </li>
+          </ul>
+          <p class="card-description">
+            En versiones futuras, este módulo se conectará con SAT Guatemala y generará estados financieros
+            más avanzados (balance general, estado de resultados, etc.).
+          </p>
+        </article>
       </section>
     </main>
   </div>
 
+  <!-- Scripts base -->
+  <script src="alex-storage.js"></script>
+  <script src="alex-roles.js"></script>
+
   <script>
+    // Menú móvil
     const btnMenuMobile = document.getElementById('btnMenuMobile');
     const sidebar = document.querySelector('.sidebar');
-    btnMenuMobile.addEventListener('click', () => {
-      sidebar.classList.toggle('sidebar-open');
-    });
+
+    if (btnMenuMobile) {
+      btnMenuMobile.addEventListener('click', () => {
+        sidebar.classList.toggle('sidebar-open');
+      });
+    }
+
+    // Usuario y permisos
+    const usuarioActual = typeof getUsuarioActualObligatorio === "function"
+      ? getUsuarioActualObligatorio()
+      : null;
+
+    if (typeof aplicarPermisosYProteger === "function") {
+      aplicarPermisosYProteger("contabilidad");
+    }
+
+    // Pintar nombre y rol en el topbar
+    const labelUser = document.getElementById("topbar-user-label");
+    if (usuarioActual && labelUser) {
+      const rolTexto = usuarioActual.rol === "dueno" ? "Dueño" : "Empleado";
+      labelUser.textContent = `${usuarioActual.nombre} (${rolTexto})`;
+    }
+
+    // Botón Cerrar sesión
+    const btnLogout = document.getElementById("btnLogout");
+    if (btnLogout) {
+      btnLogout.addEventListener("click", () => {
+        if (!confirm("¿Quieres cerrar sesión?")) return;
+
+        if (typeof save === "function") {
+          save("usuarioActual", null);
+        } else {
+          localStorage.removeItem("usuarioActual");
+        }
+
+        window.location.href = "index.html";
+      });
+    }
+
+    // ====== DATOS BASE ======
+    let ventas = [];
+    let compras = [];
+    let gastos = [];
+    let cajaMovs = [];
+
+    if (typeof load === "function") {
+      const vData = load("ventas", []);
+      ventas = Array.isArray(vData) ? vData : [];
+
+      const cData = load("compras", []);
+      compras = Array.isArray(cData) ? cData : [];
+
+      const gData = load("gastos", []);
+      gastos = Array.isArray(gData) ? gData : [];
+
+      const mData = load("caja_movimientos", []);
+      cajaMovs = Array.isArray(mData) ? mData : [];
+    }
+
+    // ====== HELPERS ======
+    function alex3FormatearMonedaSeguro(valor) {
+      if (typeof alex3FormatearMoneda === "function") {
+        return alex3FormatearMoneda(valor);
+      }
+      const num = Number(valor);
+      if (isNaN(num)) return "Q 0.00";
+      return "Q " + num.toFixed(2);
+    }
+
+    function getFecha(obj) {
+      if (!obj) return null;
+      const f = obj.fechaHora || obj.fecha || null;
+      if (!f) return null;
+      const d = new Date(f);
+      if (isNaN(d.getTime())) return null;
+      return d;
+    }
+
+    function esMismoDia(a, b) {
+      return a.getFullYear() === b.getFullYear() &&
+             a.getMonth() === b.getMonth() &&
+             a.getDate() === b.getDate();
+    }
+
+    function esMismoMes(a, b) {
+      return a.getFullYear() === b.getFullYear() &&
+             a.getMonth() === b.getMonth();
+    }
+
+    function esMismoAnio(a, b) {
+      return a.getFullYear() === b.getFullYear();
+    }
+
+    function dentroDelPeriodo(fecha, periodo, referencia) {
+      if (!fecha) return false;
+      if (periodo === "HOY") {
+        return esMismoDia(fecha, referencia);
+      } else if (periodo === "MES") {
+        return esMismoMes(fecha, referencia);
+      } else if (periodo === "ANIO") {
+        return esMismoAnio(fecha, referencia);
+      } else {
+        // TODO = todo historial
+        return true;
+      }
+    }
+
+    // ====== CÁLCULOS PRINCIPALES ======
+    function recalcularContabilidad() {
+      const selectPeriodo = document.getElementById("filtroPeriodo");
+      const periodo = selectPeriodo ? selectPeriodo.value : "TODO";
+      const hoy = new Date();
+
+      let totalVentas = 0;
+      let totalCompras = 0;
+      let totalGastos = 0;
+
+      // Ventas del período
+      ventas.forEach(v => {
+        const fecha = getFecha(v) || hoy;
+        if (!dentroDelPeriodo(fecha, periodo, hoy)) return;
+        const total = Number(v.total) || 0;
+        totalVentas += total;
+      });
+
+      // Compras del período
+      compras.forEach(c => {
+        const fecha = getFecha(c) || hoy;
+        if (!dentroDelPeriodo(fecha, periodo, hoy)) return;
+        const monto = Number(c.monto) || 0;
+        totalCompras += monto;
+      });
+
+      // Gastos del período
+      gastos.forEach(g => {
+        const fecha = getFecha(g) || hoy;
+        if (!dentroDelPeriodo(fecha, periodo, hoy)) return;
+        const monto = Number(g.monto) || 0;
+        totalGastos += monto;
+      });
+
+      // Resultado del período
+      const resultado = totalVentas - totalCompras - totalGastos;
+
+      // Resumen de caja (histórico, no por período)
+      let ingresosCaja = 0;
+      let egresosCaja = 0;
+
+      cajaMovs.forEach(m => {
+        const monto = Number(m.monto) || 0;
+        const tipo = (m.tipo || "").toUpperCase();
+        if (tipo === "INGRESO") {
+          ingresosCaja += monto;
+        } else if (tipo === "EGRESO") {
+          egresosCaja += monto;
+        }
+      });
+
+      const saldoCaja = ingresosCaja - egresosCaja;
+
+      // Pintar resultados
+      const elVentas = document.getElementById("cont-ventas");
+      const elCompras = document.getElementById("cont-compras");
+      const elGastos = document.getElementById("cont-gastos");
+      const elResultado = document.getElementById("cont-resultado");
+
+      const elCajaIng = document.getElementById("cont-caja-ingresos");
+      const elCajaEgr = document.getElementById("cont-caja-egresos");
+      const elCajaSaldo = document.getElementById("cont-caja-saldo");
+
+      if (elVentas) elVentas.textContent = alex3FormatearMonedaSeguro(totalVentas);
+      if (elCompras) elCompras.textContent = alex3FormatearMonedaSeguro(totalCompras);
+      if (elGastos) elGastos.textContent = alex3FormatearMonedaSeguro(totalGastos);
+      if (elResultado) elResultado.textContent = alex3FormatearMonedaSeguro(resultado);
+
+      if (elCajaIng) elCajaIng.textContent = alex3FormatearMonedaSeguro(ingresosCaja);
+      if (elCajaEgr) elCajaEgr.textContent = alex3FormatearMonedaSeguro(egresosCaja);
+      if (elCajaSaldo) elCajaSaldo.textContent = alex3FormatearMonedaSeguro(saldoCaja);
+    }
+
+    // Evento del botón de filtro
+    const btnAplicarFiltro = document.getElementById("btnAplicarFiltro");
+    if (btnAplicarFiltro) {
+      btnAplicarFiltro.addEventListener("click", recalcularContabilidad);
+    }
+
+    // Primera carga
+    recalcularContabilidad();
   </script>
 </body>
 </html>
