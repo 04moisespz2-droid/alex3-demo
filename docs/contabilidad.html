@@ -35,7 +35,7 @@
 
     <div class="sidebar-footer">
       <span class="sidebar-footer-title">Mi negocio</span>
-      <span class="sidebar-footer-sub">Resumen contable</span>
+      <span class="sidebar-footer-sub">Contabilidad básica</span>
     </div>
   </aside>
 
@@ -46,9 +46,9 @@
       <button class="btn-menu-mobile" id="btnMenuMobile">☰</button>
 
       <div class="topbar-left">
-        <h1 class="topbar-title">Contabilidad básica</h1>
+        <h1 class="topbar-title">Contabilidad del negocio</h1>
         <p class="topbar-subtitle">
-          Resumen simple de ingresos, costos, gastos y utilidad del mes actual.
+          Vista contable (devengado) y vista de caja para el mes seleccionado.
         </p>
       </div>
 
@@ -61,164 +61,259 @@
 
     <!-- Contenido principal -->
     <main class="main-content">
-      <!-- KPIs principales del mes -->
+      <!-- Selección de mes -->
+      <section class="card">
+        <h2 class="card-title">1. Selecciona el mes a analizar</h2>
+        <p class="card-description">
+          ALEX tomará tus ventas, compras, gastos y movimientos de caja de ese mes
+          para generar libro diario, estado de resultados, balance y flujo de efectivo.
+        </p>
+
+        <div class="form-grid">
+          <div class="form-field">
+            <label for="contaMes">Mes</label>
+            <input id="contaMes" class="input" type="month">
+          </div>
+        </div>
+
+        <p style="font-size: 0.85rem; margin-top: 0.5rem;">
+          ℹ️ <strong>Devengado</strong> = contabilidad clásica (ventas, compras, gastos).  
+          💸 <strong>Caja</strong> = entradas y salidas de efectivo (lo que realmente se cobró y pagó).
+        </p>
+      </section>
+
+      <!-- KPIs principales -->
       <section class="cards-grid">
         <article class="card kpi-card">
-          <h2 class="card-title">Ingresos del mes</h2>
+          <h2 class="card-title">Ingresos por ventas (devengado)</h2>
           <p class="card-kpi" id="kpi-conta-ingresos">Q 0.00</p>
-          <p class="card-kpi-sub">Ventas totales del mes (todas las formas de pago).</p>
+          <p class="card-kpi-sub">Ventas registradas del mes.</p>
         </article>
 
         <article class="card kpi-card">
           <h2 class="card-title">Costos (compras)</h2>
           <p class="card-kpi gasto" id="kpi-conta-costos">Q 0.00</p>
-          <p class="card-kpi-sub">Compras registradas en el mes.</p>
+          <p class="card-kpi-sub">Compras de mercadería del mes.</p>
         </article>
 
         <article class="card kpi-card">
-          <h2 class="card-title">Gastos del mes</h2>
+          <h2 class="card-title">Gastos operativos</h2>
           <p class="card-kpi gasto" id="kpi-conta-gastos">Q 0.00</p>
-          <p class="card-kpi-sub">Gastos operativos (luz, renta, nómina, etc.).</p>
+          <p class="card-kpi-sub">Luz, renta, nómina, envíos, etc.</p>
         </article>
 
         <article class="card kpi-card">
-          <h2 class="card-title">Utilidad bruta</h2>
+          <h2 class="card-title">Utilidad bruta (devengado)</h2>
           <p class="card-kpi utilidad" id="kpi-conta-utilidad-bruta">Q 0.00</p>
-          <p class="card-kpi-sub">Ingresos - costos (ventas - compras).</p>
+          <p class="card-kpi-sub">Ingresos - costos.</p>
         </article>
 
         <article class="card kpi-card">
-          <h2 class="card-title">Utilidad neta</h2>
+          <h2 class="card-title">Utilidad neta (devengado)</h2>
           <p class="card-kpi utilidad" id="kpi-conta-utilidad-neta">Q 0.00</p>
           <p class="card-kpi-sub">Ingresos - costos - gastos.</p>
         </article>
+
+        <article class="card kpi-card">
+          <h2 class="card-title">Flujo de caja neto</h2>
+          <p class="card-kpi" id="kpi-conta-caja-neta">Q 0.00</p>
+          <p class="card-kpi-sub">Ingresos de caja - egresos de caja (método de caja).</p>
+        </article>
       </section>
 
-      <!-- Resumen numérico -->
+      <!-- Resumen contable -->
       <section class="card">
-        <h2 class="card-title">1. Resumen contable del mes actual</h2>
+        <h2 class="card-title">2. Resumen contable del mes</h2>
         <p class="card-description">
-          Este resumen NO es todavía un estado financiero oficial para SAT, pero te da una idea
-          clara de cómo va el negocio.
+          Aquí ves el estado de resultados (devengado) y un resumen de flujo de caja para
+          comparar lo que “debería” vs lo que realmente entró y salió de efectivo.
         </p>
 
         <table class="table">
           <thead>
             <tr>
               <th>Concepto</th>
-              <th>Monto</th>
-              <th>Detalle</th>
+              <th>Método devengado</th>
+              <th>Vista caja (si aplica)</th>
             </tr>
           </thead>
           <tbody>
             <tr>
               <td>Ingresos por ventas</td>
-              <td id="tbl-ingresos"></td>
-              <td>Sumatoria de todas las ventas del mes.</td>
+              <td id="tbl-dev-ingresos"></td>
+              <td>-</td>
             </tr>
             <tr>
-              <td>Costos por compras</td>
-              <td id="tbl-costos"></td>
-              <td>Compras a proveedores (inventario, mercadería, etc.).</td>
+              <td>Costos de compras</td>
+              <td id="tbl-dev-costos"></td>
+              <td>-</td>
             </tr>
             <tr>
               <td>Gastos operativos</td>
-              <td id="tbl-gastos"></td>
-              <td>Servicios básicos, renta, nómina, publicidad, otros.</td>
+              <td id="tbl-dev-gastos"></td>
+              <td id="tbl-caja-egresos"></td>
             </tr>
             <tr>
               <td><strong>Utilidad bruta</strong></td>
-              <td id="tbl-utilidad-bruta"></td>
-              <td>Ingresos - costos.</td>
+              <td id="tbl-dev-ub"></td>
+              <td>-</td>
             </tr>
             <tr>
               <td><strong>Utilidad neta</strong></td>
-              <td id="tbl-utilidad-neta"></td>
-              <td>Ingresos - costos - gastos.</td>
+              <td id="tbl-dev-un"></td>
+              <td id="tbl-caja-neta"></td>
             </tr>
           </tbody>
         </table>
       </section>
 
-      <!-- Detalle de movimientos del mes -->
-      <section class="grid-2">
-        <article class="card">
-          <h2 class="card-title">2. Ventas del mes</h2>
-          <p class="card-description">
-            Listado de todas las ventas del mes actual que se usan para el cálculo de ingresos.
-          </p>
-
-          <table class="table">
-            <thead>
-              <tr>
-                <th>Fecha</th>
-                <th>Cliente</th>
-                <th>Documento</th>
-                <th>Forma de pago</th>
-                <th>Total</th>
-              </tr>
-            </thead>
-            <tbody id="tabla-conta-ventas">
-              <tr>
-                <td colspan="5" class="table-empty">
-                  Aún no hay ventas registradas en este mes.
-                </td>
-              </tr>
-            </tbody>
-          </table>
-        </article>
-
-        <article class="card">
-          <h2 class="card-title">3. Compras del mes</h2>
-          <p class="card-description">
-            Todas las compras del mes actual que se consideran como costo.
-          </p>
-
-          <table class="table">
-            <thead>
-              <tr>
-                <th>Fecha</th>
-                <th>Proveedor</th>
-                <th>Documento</th>
-                <th>Forma de pago</th>
-                <th>Monto</th>
-              </tr>
-            </thead>
-            <tbody id="tabla-conta-compras">
-              <tr>
-                <td colspan="5" class="table-empty">
-                  Aún no hay compras registradas en este mes.
-                </td>
-              </tr>
-            </tbody>
-          </table>
-        </article>
-      </section>
-
+      <!-- Balance básico -->
       <section class="card">
-        <h2 class="card-title">4. Gastos del mes</h2>
+        <h2 class="card-title">3. Balance general básico</h2>
         <p class="card-description">
-          Todos los gastos operativos del mes actual.
+          Esta es una versión muy simplificada del balance (solo para entender cómo se reparte el dinero).
         </p>
 
         <table class="table">
           <thead>
             <tr>
-              <th>Fecha</th>
-              <th>Categoría</th>
-              <th>Descripción</th>
-              <th>Forma de pago</th>
+              <th>Grupo</th>
+              <th>Cuenta</th>
               <th>Monto</th>
             </tr>
           </thead>
-          <tbody id="tabla-conta-gastos">
+          <tbody id="tabla-balance">
             <tr>
-              <td colspan="5" class="table-empty">
-                Aún no hay gastos registrados en este mes.
+              <td colspan="3" class="table-empty">
+                Aún no hay datos contables para este mes.
               </td>
             </tr>
           </tbody>
         </table>
+      </section>
+
+      <!-- Libro diario -->
+      <section class="card">
+        <h2 class="card-title">4. Libro diario (devengado simple)</h2>
+        <p class="card-description">
+          ALEX genera asientos automáticos a partir de ventas, compras y gastos.
+          Cada línea representa un movimiento contable (doble partida).
+        </p>
+
+        <div class="form-grid" style="margin-bottom: 0.75rem;">
+          <button class="btn" id="btnExportLibro">
+            📤 Exportar libro diario (CSV)
+          </button>
+        </div>
+
+        <table class="table">
+          <thead>
+            <tr>
+              <th>Fecha</th>
+              <th>Descripción</th>
+              <th>Cuenta</th>
+              <th>Debe</th>
+              <th>Haber</th>
+            </tr>
+          </thead>
+          <tbody id="tabla-libro-diario">
+            <tr>
+              <td colspan="5" class="table-empty">
+                Aún no hay asientos contables en este mes.
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </section>
+
+      <!-- Detalle de origen (ventas / compras / gastos) -->
+      <section class="grid-2">
+        <article class="card">
+          <h2 class="card-title">5. Ventas y compras del mes</h2>
+          <p class="card-description">
+            Movimientos que alimentan el motor contable.
+          </p>
+
+          <h3>Ventas</h3>
+          <table class="table">
+            <thead>
+              <tr>
+                <th>Fecha</th>
+                <th>Cliente</th>
+                <th>Total</th>
+              </tr>
+            </thead>
+            <tbody id="tabla-ventas-mes">
+              <tr>
+                <td colspan="3" class="table-empty">
+                  Aún no hay ventas en este mes.
+                </td>
+              </tr>
+            </tbody>
+          </table>
+
+          <h3>Compras</h3>
+          <table class="table">
+            <thead>
+              <tr>
+                <th>Fecha</th>
+                <th>Proveedor</th>
+                <th>Monto</th>
+              </tr>
+            </thead>
+            <tbody id="tabla-compras-mes">
+              <tr>
+                <td colspan="3" class="table-empty">
+                  Aún no hay compras en este mes.
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </article>
+
+        <article class="card">
+          <h2 class="card-title">6. Gastos y caja del mes</h2>
+          <p class="card-description">
+            Gastos operativos y movimientos de caja (para vista de caja).
+          </p>
+
+          <h3>Gastos</h3>
+          <table class="table">
+            <thead>
+              <tr>
+                <th>Fecha</th>
+                <th>Categoría</th>
+                <th>Monto</th>
+              </tr>
+            </thead>
+            <tbody id="tabla-gastos-mes">
+              <tr>
+                <td colspan="3" class="table-empty">
+                  Aún no hay gastos en este mes.
+                </td>
+              </tr>
+            </tbody>
+          </table>
+
+          <h3>Movimientos de caja</h3>
+          <table class="table">
+            <thead>
+              <tr>
+                <th>Fecha</th>
+                <th>Tipo</th>
+                <th>Descripción</th>
+                <th>Monto</th>
+              </tr>
+            </thead>
+            <tbody id="tabla-caja-mes">
+              <tr>
+                <td colspan="4" class="table-empty">
+                  Aún no hay movimientos de caja en este mes.
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </article>
       </section>
     </main>
   </div>
@@ -226,6 +321,7 @@
   <!-- Scripts base -->
   <script src="alex-storage.js"></script>
   <script src="alex-roles.js"></script>
+  <script src="alex-conta.js"></script>
 
   <script>
     // ===== Menú móvil =====
@@ -252,233 +348,363 @@
       labelUser.textContent = `${usuarioActual.nombre} (${rolTexto})`;
     }
 
-    // ===== Helpers =====
-    function alex3FormatearMonedaSeguro(valor) {
+    function contaMoneda(n) {
       if (typeof alex3FormatearMoneda === "function") {
-        return alex3FormatearMoneda(valor);
+        return alex3FormatearMoneda(n);
       }
-      const num = Number(valor);
+      const num = Number(n);
       if (isNaN(num)) return "Q 0.00";
       return "Q " + num.toFixed(2);
     }
 
-    function esMismoMes(a, b) {
-      return a.getFullYear() === b.getFullYear() &&
-             a.getMonth() === b.getMonth();
+    const inputMes = document.getElementById("contaMes");
+
+    const kpiIng = document.getElementById("kpi-conta-ingresos");
+    const kpiCos = document.getElementById("kpi-conta-costos");
+    const kpiGas = document.getElementById("kpi-conta-gastos");
+    const kpiUB  = document.getElementById("kpi-conta-utilidad-bruta");
+    const kpiUN  = document.getElementById("kpi-conta-utilidad-neta");
+    const kpiCaja = document.getElementById("kpi-conta-caja-neta");
+
+    const tblDevIng = document.getElementById("tbl-dev-ingresos");
+    const tblDevCos = document.getElementById("tbl-dev-costos");
+    const tblDevGas = document.getElementById("tbl-dev-gastos");
+    const tblDevUB  = document.getElementById("tbl-dev-ub");
+    const tblDevUN  = document.getElementById("tbl-dev-un");
+    const tblCajaEg = document.getElementById("tbl-caja-egresos");
+    const tblCajaNet= document.getElementById("tbl-caja-neta");
+
+    const tbodyBalance = document.getElementById("tabla-balance");
+    const tbodyLibro   = document.getElementById("tabla-libro-diario");
+
+    const tbodyVentasMes  = document.getElementById("tabla-ventas-mes");
+    const tbodyComprasMes = document.getElementById("tabla-compras-mes");
+    const tbodyGastosMes  = document.getElementById("tabla-gastos-mes");
+    const tbodyCajaMes    = document.getElementById("tabla-caja-mes");
+
+    const btnExportLibro = document.getElementById("btnExportLibro");
+
+    function obtenerFechaReferencia() {
+      if (inputMes && inputMes.value) {
+        const [year, month] = inputMes.value.split("-").map(Number);
+        if (!isNaN(year) && !isNaN(month)) {
+          return new Date(year, month - 1, 1);
+        }
+      }
+      return new Date();
     }
 
-    function formatearFechaLocal(fechaIso) {
-      const d = new Date(fechaIso);
-      if (isNaN(d.getTime())) return "-";
-      return d.toLocaleString("es-GT");
-    }
-
-    // ===== Cargar datos reales =====
-    let ventas = [];
-    let compras = [];
-    let gastos = [];
-
-    if (typeof load === "function") {
-      const vData = load("ventas", []);
-      ventas = Array.isArray(vData) ? vData : [];
-
-      const cData = load("compras", []);
-      compras = Array.isArray(cData) ? cData : [];
-
-      const gData = load("gastos", []);
-      gastos = Array.isArray(gData) ? gData : [];
-    }
-
-    // ===== Cálculo principal del mes =====
     function recalcularContabilidad() {
+      if (typeof alexContaCalcularMes !== "function") return;
+
+      const ref = obtenerFechaReferencia();
+      const resultado = alexContaCalcularMes(ref);
+      if (!resultado) return;
+
+      const {
+        ingresosVentas,
+        costosCompras,
+        gastosOperativos,
+        utilidadBruta,
+        utilidadNeta,
+        cajaIngresos,
+        cajaEgresos,
+        cajaNeta,
+        balance,
+        libroDiario,
+        ventasMes,
+        comprasMes,
+        gastosMes,
+        movCajaMes
+      } = resultado;
+
+      // KPIs
+      if (kpiIng) kpiIng.textContent = contaMoneda(ingresosVentas);
+      if (kpiCos) kpiCos.textContent = contaMoneda(costosCompras);
+      if (kpiGas) kpiGas.textContent = contaMoneda(gastosOperativos);
+      if (kpiUB)  kpiUB.textContent  = contaMoneda(utilidadBruta);
+      if (kpiUN)  kpiUN.textContent  = contaMoneda(utilidadNeta);
+      if (kpiCaja) kpiCaja.textContent = contaMoneda(cajaNeta);
+
+      // Resumen tabla devengado / caja
+      if (tblDevIng) tblDevIng.textContent = contaMoneda(ingresosVentas);
+      if (tblDevCos) tblDevCos.textContent = contaMoneda(costosCompras);
+      if (tblDevGas) tblDevGas.textContent = contaMoneda(gastosOperativos);
+      if (tblDevUB)  tblDevUB.textContent  = contaMoneda(utilidadBruta);
+      if (tblDevUN)  tblDevUN.textContent  = contaMoneda(utilidadNeta);
+      if (tblCajaEg) tblCajaEg.textContent = contaMoneda(cajaEgresos);
+      if (tblCajaNet) tblCajaNet.textContent = contaMoneda(cajaNeta);
+
+      // Balance
+      if (tbodyBalance) {
+        tbodyBalance.innerHTML = "";
+        if (!balance) {
+          tbodyBalance.innerHTML = `
+            <tr><td colspan="3" class="table-empty">Sin datos de balance.</td></tr>
+          `;
+        } else {
+          const act = balance.activos || {};
+          const pas = balance.pasivos || {};
+          const pat = balance.patrimonio || {};
+
+          const filas = [
+            ["Activos", "Caja / Bancos", act.caja || 0],
+            ["Activos", "Inventario mercaderías", act.inventario || 0],
+            ["Activos", "Total activos", act.total || 0],
+            ["Pasivos", "Total pasivos", pas.total || 0],
+            [
+              "Patrimonio",
+              "Utilidad acumulada / capital",
+              pat.utilidadAcumulada || pat.total || 0
+            ],
+            ["Patrimonio", "Total patrimonio", pat.total || 0],
+          ];
+
+          filas.forEach(([grupo, cuenta, monto]) => {
+            tbodyBalance.innerHTML += `
+              <tr>
+                <td>${grupo}</td>
+                <td>${cuenta}</td>
+                <td>${contaMoneda(monto)}</td>
+              </tr>
+            `;
+          });
+        }
+      }
+
+      // Libro diario
+      if (tbodyLibro) {
+        tbodyLibro.innerHTML = "";
+        if (!libroDiario || !libroDiario.length) {
+          tbodyLibro.innerHTML = `
+            <tr>
+              <td colspan="5" class="table-empty">
+                Aún no hay asientos contables en este mes.
+              </td>
+            </tr>
+          `;
+        } else {
+          libroDiario.forEach((asiento) => {
+            asiento.lineas.forEach((linea, idx) => {
+              const fechaTxt = asiento.fechaTexto || "-";
+              const desc = asiento.descripcion || "-";
+              const cuenta = linea.cuenta || "-";
+              const debe = Number(linea.debe) || 0;
+              const haber = Number(linea.haber) || 0;
+
+              tbodyLibro.innerHTML += `
+                <tr>
+                  <td>${idx === 0 ? fechaTxt : ""}</td>
+                  <td>${idx === 0 ? desc : ""}</td>
+                  <td>${cuenta}</td>
+                  <td>${debe ? contaMoneda(debe) : ""}</td>
+                  <td>${haber ? contaMoneda(haber) : ""}</td>
+                </tr>
+              `;
+            });
+          });
+        }
+      }
+
+      // Ventas
+      if (tbodyVentasMes) {
+        tbodyVentasMes.innerHTML = "";
+        if (!ventasMes || !ventasMes.length) {
+          tbodyVentasMes.innerHTML = `
+            <tr><td colspan="3" class="table-empty">Aún no hay ventas en este mes.</td></tr>
+          `;
+        } else {
+          ventasMes.forEach((v) => {
+            const fechaTxt =
+              v.fecha ||
+              (v.fechaHora
+                ? new Date(v.fechaHora).toLocaleString("es-GT")
+                : "-");
+            const cliente = v.clienteNombre || "Cliente general";
+            const total = contaMoneda(v.total || 0);
+            tbodyVentasMes.innerHTML += `
+              <tr>
+                <td>${fechaTxt}</td>
+                <td>${cliente}</td>
+                <td>${total}</td>
+              </tr>
+            `;
+          });
+        }
+      }
+
+      // Compras
+      if (tbodyComprasMes) {
+        tbodyComprasMes.innerHTML = "";
+        if (!comprasMes || !comprasMes.length) {
+          tbodyComprasMes.innerHTML = `
+            <tr><td colspan="3" class="table-empty">Aún no hay compras en este mes.</td></tr>
+          `;
+        } else {
+          comprasMes.forEach((c) => {
+            const fechaTxt =
+              c.fecha ||
+              (c.fechaHora
+                ? new Date(c.fechaHora).toLocaleString("es-GT")
+                : "-");
+            const prov = c.proveedorNombre || "-";
+            const monto = contaMoneda(c.monto || 0);
+            tbodyComprasMes.innerHTML += `
+              <tr>
+                <td>${fechaTxt}</td>
+                <td>${prov}</td>
+                <td>${monto}</td>
+              </tr>
+            `;
+          });
+        }
+      }
+
+      // Gastos
+      if (tbodyGastosMes) {
+        tbodyGastosMes.innerHTML = "";
+        if (!gastosMes || !gastosMes.length) {
+          tbodyGastosMes.innerHTML = `
+            <tr><td colspan="3" class="table-empty">Aún no hay gastos en este mes.</td></tr>
+          `;
+        } else {
+          gastosMes.forEach((g) => {
+            const fechaTxt =
+              g.fecha ||
+              (g.fechaHora
+                ? new Date(g.fechaHora).toLocaleString("es-GT")
+                : "-");
+            const cat = g.categoria || "-";
+            const monto = contaMoneda(g.monto || 0);
+            tbodyGastosMes.innerHTML += `
+              <tr>
+                <td>${fechaTxt}</td>
+                <td>${cat}</td>
+                <td>${monto}</td>
+              </tr>
+            `;
+          });
+        }
+      }
+
+      // Caja
+      if (tbodyCajaMes) {
+        tbodyCajaMes.innerHTML = "";
+        if (!movCajaMes || !movCajaMes.length) {
+          tbodyCajaMes.innerHTML = `
+            <tr><td colspan="4" class="table-empty">Aún no hay movimientos de caja en este mes.</td></tr>
+          `;
+        } else {
+          movCajaMes.forEach((m) => {
+            const fechaTxt =
+              m.fecha ||
+              (m.fechaHora
+                ? new Date(m.fechaHora).toLocaleString("es-GT")
+                : "-");
+            const tipo = m.tipo || "-";
+            const desc = m.descripcion || m.categoria || "-";
+            const monto = contaMoneda(m.monto || 0);
+            tbodyCajaMes.innerHTML += `
+              <tr>
+                <td>${fechaTxt}</td>
+                <td>${tipo}</td>
+                <td>${desc}</td>
+                <td>${monto}</td>
+              </tr>
+            `;
+          });
+        }
+      }
+
+      // Guardar libro en window para exportar
+      window.__alexLibroDiarioMes = libroDiario || [];
+    }
+
+    function descargarCSV(nombreArchivo, encabezados, filas) {
+      let contenido = encabezados.join(",") + "\n";
+      filas.forEach((fila) => {
+        const linea = fila
+          .map((v) => {
+            const str = (v ?? "").toString().replace(/"/g, '""');
+            if (
+              str.includes(",") ||
+              str.includes('"') ||
+              str.includes("\n")
+            ) {
+              return `"${str}"`;
+            }
+            return str;
+          })
+          .join(",");
+        contenido += linea + "\n";
+      });
+
+      const blob = new Blob([contenido], { type: "text/csv;charset=utf-8;" });
+      const url = URL.createObjectURL(blob);
+
+      const link = document.createElement("a");
+      link.href = url;
+      link.download = nombreArchivo;
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      URL.revokeObjectURL(url);
+    }
+
+    function exportarLibroDiarioCSV() {
+      const libro = window.__alexLibroDiarioMes || [];
+      if (!libro.length) {
+        alert("No hay asientos en el libro diario de este mes.");
+        return;
+      }
+
+      const ref = obtenerFechaReferencia();
+      const year = ref.getFullYear();
+      const month = String(ref.getMonth() + 1).padStart(2, "0");
+
+      const encabezados = ["Fecha", "Descripción", "Cuenta", "Debe", "Haber"];
+
+      const filas = [];
+      libro.forEach((as) => {
+        const fechaISO = as.fecha;
+        const fecha = alexConta_formatearYYYYMMDD(fechaISO);
+        const desc = as.descripcion || "";
+        as.lineas.forEach((l, idx) => {
+          filas.push([
+            idx === 0 ? fecha : "",
+            idx === 0 ? desc : "",
+            l.cuenta || "",
+            (Number(l.debe) || 0).toFixed(2),
+            (Number(l.haber) || 0).toFixed(2),
+          ]);
+        });
+      });
+
+      const nombreArchivo = `libro_diario_${year}_${month}.csv`;
+      descargarCSV(nombreArchivo, encabezados, filas);
+    }
+
+    if (btnExportLibro) {
+      btnExportLibro.addEventListener("click", exportarLibroDiarioCSV);
+    }
+
+    // Cambio de mes → recalcula
+    if (inputMes) {
+      inputMes.addEventListener("change", () => {
+        recalcularContabilidad();
+      });
+    }
+
+    // Inicializar mes actual
+    (function initMesActual() {
+      if (!inputMes) return;
       const hoy = new Date();
+      const year = hoy.getFullYear();
+      const month = String(hoy.getMonth() + 1).padStart(2, "0");
+      inputMes.value = `${year}-${month}`;
+    })();
 
-      // Filtrar por mes actual
-      const ventasMes = ventas.filter(v => {
-        const f = new Date(v.fechaHora || v.fecha || Date.now());
-        return esMismoMes(f, hoy);
-      });
-
-      const comprasMes = compras.filter(c => {
-        const f = new Date(c.fechaHora || c.fecha || Date.now());
-        return esMismoMes(f, hoy);
-      });
-
-      const gastosMes = gastos.filter(g => {
-        const f = new Date(g.fechaHora || g.fecha || Date.now());
-        return esMismoMes(f, hoy);
-      });
-
-      // Totales
-      const ingresos = ventasMes.reduce((acc, v) => acc + (Number(v.total) || 0), 0);
-      const costos = comprasMes.reduce((acc, c) => acc + (Number(c.monto) || 0), 0);
-      const gastosTot = gastosMes.reduce((acc, g) => acc + (Number(g.monto) || 0), 0);
-
-      const utilidadBruta = ingresos - costos;
-      const utilidadNeta = ingresos - costos - gastosTot;
-
-      // Actualizar KPIs
-      const elIng = document.getElementById("kpi-conta-ingresos");
-      const elCos = document.getElementById("kpi-conta-costos");
-      const elGas = document.getElementById("kpi-conta-gastos");
-      const elUB  = document.getElementById("kpi-conta-utilidad-bruta");
-      const elUN  = document.getElementById("kpi-conta-utilidad-neta");
-
-      if (elIng) elIng.textContent = alex3FormatearMonedaSeguro(ingresos);
-      if (elCos) elCos.textContent = alex3FormatearMonedaSeguro(costos);
-      if (elGas) elGas.textContent = alex3FormatearMonedaSeguro(gastosTot);
-      if (elUB)  elUB.textContent  = alex3FormatearMonedaSeguro(utilidadBruta);
-      if (elUN)  elUN.textContent  = alex3FormatearMonedaSeguro(utilidadNeta);
-
-      // Tabla resumen
-      const tIng = document.getElementById("tbl-ingresos");
-      const tCos = document.getElementById("tbl-costos");
-      const tGas = document.getElementById("tbl-gastos");
-      const tUB  = document.getElementById("tbl-utilidad-bruta");
-      const tUN  = document.getElementById("tbl-utilidad-neta");
-
-      if (tIng) tIng.textContent = alex3FormatearMonedaSeguro(ingresos);
-      if (tCos) tCos.textContent = alex3FormatearMonedaSeguro(costos);
-      if (tGas) tGas.textContent = alex3FormatearMonedaSeguro(gastosTot);
-      if (tUB)  tUB.textContent  = alex3FormatearMonedaSeguro(utilidadBruta);
-      if (tUN)  tUN.textContent  = alex3FormatearMonedaSeguro(utilidadNeta);
-
-      // Detalle tablas
-      renderTablaVentasMes(ventasMes);
-      renderTablaComprasMes(comprasMes);
-      renderTablaGastosMes(gastosMes);
-    }
-
-    // ===== Tablas de detalle =====
-    const tbodyVentas = document.getElementById("tabla-conta-ventas");
-    const tbodyCompras = document.getElementById("tabla-conta-compras");
-    const tbodyGastos = document.getElementById("tabla-conta-gastos");
-
-    function renderTablaVentasMes(lista) {
-      if (!tbodyVentas) return;
-      tbodyVentas.innerHTML = "";
-
-      if (!lista.length) {
-        tbodyVentas.innerHTML = `
-          <tr>
-            <td colspan="5" class="table-empty">
-              Aún no hay ventas registradas en este mes.
-            </td>
-          </tr>
-        `;
-        return;
-      }
-
-      const ordenadas = [...lista].sort((a, b) => {
-        const fa = new Date(a.fechaHora || a.fecha || 0).getTime();
-        const fb = new Date(b.fechaHora || b.fecha || 0).getTime();
-        return fb - fa;
-      });
-
-      ordenadas.forEach(v => {
-        const fechaTxt = v.fecha || (v.fechaHora ? formatearFechaLocal(v.fechaHora) : "-");
-        const clienteTxt = v.clienteNombre || "Cliente general";
-        const docTxt = v.documentoTipo
-          ? (v.documentoNumero ? `${v.documentoTipo} ${v.documentoNumero}` : v.documentoTipo)
-          : (v.documentoNumero || "-");
-        const formaPagoTxt = v.formaPago || "-";
-        const totalTxt = alex3FormatearMonedaSeguro(v.total);
-
-        tbodyVentas.innerHTML += `
-          <tr>
-            <td>${fechaTxt}</td>
-            <td>${clienteTxt}</td>
-            <td>${docTxt}</td>
-            <td>${formaPagoTxt}</td>
-            <td>${totalTxt}</td>
-          </tr>
-        `;
-      });
-    }
-
-    function renderTablaComprasMes(lista) {
-      if (!tbodyCompras) return;
-      tbodyCompras.innerHTML = "";
-
-      if (!lista.length) {
-        tbodyCompras.innerHTML = `
-          <tr>
-            <td colspan="5" class="table-empty">
-              Aún no hay compras registradas en este mes.
-            </td>
-          </tr>
-        `;
-        return;
-      }
-
-      const ordenadas = [...lista].sort((a, b) => {
-        const fa = new Date(a.fechaHora || a.fecha || 0).getTime();
-        const fb = new Date(b.fechaHora || b.fecha || 0).getTime();
-        return fb - fa;
-      });
-
-      ordenadas.forEach(c => {
-        const fechaTxt = c.fecha || (c.fechaHora ? formatearFechaLocal(c.fechaHora) : "-");
-        const proveedorTxt = c.proveedorNombre || "-";
-        const docTxt = c.documentoTipo
-          ? (c.documentoNumero ? `${c.documentoTipo} ${c.documentoNumero}` : c.documentoTipo)
-          : (c.documentoNumero || "-");
-        const formaPagoTxt = c.formaPago || "-";
-        const montoTxt = alex3FormatearMonedaSeguro(c.monto);
-
-        tbodyCompras.innerHTML += `
-          <tr>
-            <td>${fechaTxt}</td>
-            <td>${proveedorTxt}</td>
-            <td>${docTxt}</td>
-            <td>${formaPagoTxt}</td>
-            <td>${montoTxt}</td>
-          </tr>
-        `;
-      });
-    }
-
-    function renderTablaGastosMes(lista) {
-      if (!tbodyGastos) return;
-      tbodyGastos.innerHTML = "";
-
-      if (!lista.length) {
-        tbodyGastos.innerHTML = `
-          <tr>
-            <td colspan="5" class="table-empty">
-              Aún no hay gastos registrados en este mes.
-            </td>
-          </tr>
-        `;
-        return;
-      }
-
-      const ordenados = [...lista].sort((a, b) => {
-        const fa = new Date(a.fechaHora || a.fecha || 0).getTime();
-        const fb = new Date(b.fechaHora || b.fecha || 0).getTime();
-        return fb - fa;
-      });
-
-      ordenados.forEach(g => {
-        const fechaTxt = g.fecha || (g.fechaHora ? formatearFechaLocal(g.fechaHora) : "-");
-        const categoriaTxt = g.categoria || "-";
-        const descTxt = g.descripcion || "-";
-        const formaPagoTxt = g.formaPago || "-";
-        const montoTxt = alex3FormatearMonedaSeguro(g.monto);
-
-        tbodyGastos.innerHTML += `
-          <tr>
-            <td>${fechaTxt}</td>
-            <td>${categoriaTxt}</td>
-            <td>${descTxt}</td>
-            <td>${formaPagoTxt}</td>
-            <td>${montoTxt}</td>
-          </tr>
-        `;
-      });
-    }
-
-    // ===== Primera carga =====
+    // Primera carga
     recalcularContabilidad();
   </script>
 </body>
