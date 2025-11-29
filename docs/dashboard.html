@@ -34,8 +34,8 @@
     </nav>
 
     <div class="sidebar-footer">
-      <span class="sidebar-footer-title">Empresa demo</span>
-      <span class="sidebar-footer-sub">Versión 1.0</span>
+      <span class="sidebar-footer-title">Mi negocio</span>
+      <span class="sidebar-footer-sub">Panel activo</span>
     </div>
   </aside>
 
@@ -47,18 +47,13 @@
 
       <div class="topbar-left">
         <h1 class="topbar-title">Resumen del día</h1>
-        <p class="topbar-subtitle">Ventas, gastos, utilidad y caja al instante.</p>
+        <p class="topbar-subtitle">Ventas, gastos, utilidad y caja en tiempo real.</p>
       </div>
 
       <div class="topbar-right">
-        <span class="topbar-company">Mi tienda demo</span>
+        <span class="topbar-company">Mi negocio</span>
         <span class="topbar-divider">•</span>
-        <!-- Texto dinámico con nombre y rol -->
         <span class="topbar-user" id="topbar-user-label">Usuario (Rol)</span>
-        <!-- Botón de cerrar sesión -->
-        <button class="btn" id="btnLogout" type="button" style="margin-left: 0.75rem;">
-          Cerrar sesión
-        </button>
       </div>
     </header>
 
@@ -69,34 +64,34 @@
         <article class="card kpi-card">
           <h2 class="card-title">Ventas de hoy</h2>
           <p class="card-kpi" id="kpi-dashboard-ventas-hoy">Q 0.00</p>
-          <p class="card-kpi-sub">Objetivo diario: Q 1,000</p>
+          <p class="card-kpi-sub">Ventas registradas (todas las formas de pago).</p>
         </article>
 
         <article class="card kpi-card">
           <h2 class="card-title">Gastos de hoy</h2>
           <p class="card-kpi gasto" id="kpi-dashboard-gastos-hoy">Q 0.00</p>
-          <p class="card-kpi-sub">Incluye compras y egresos de caja</p>
+          <p class="card-kpi-sub">Incluye compras y gastos operativos.</p>
         </article>
 
         <article class="card kpi-card">
-          <h2 class="card-title">Utilidad estimada</h2>
+          <h2 class="card-title">Utilidad estimada hoy</h2>
           <p class="card-kpi utilidad" id="kpi-dashboard-utilidad">Q 0.00</p>
-          <p class="card-kpi-sub">Ventas - gastos (estimado rápido)</p>
+          <p class="card-kpi-sub">Ventas de hoy - gastos de hoy (visión rápida).</p>
         </article>
 
         <article class="card kpi-card">
           <h2 class="card-title">Caja actual</h2>
           <p class="card-kpi caja" id="kpi-dashboard-caja">Q 0.00</p>
-          <p class="card-kpi-sub">Control por billetes y movimientos</p>
+          <p class="card-kpi-sub">Saldo real según movimientos de caja.</p>
         </article>
       </section>
 
       <!-- Sección secundaria -->
       <section class="grid-2">
         <article class="card">
-          <h2 class="card-title">Productos más vendidos</h2>
+          <h2 class="card-title">Productos más vendidos (próximamente)</h2>
           <p class="card-description">
-            Aquí se mostrarán los productos con mayor rotación en el período seleccionado.
+            Aquí se mostrarán los productos con mayor rotación cuando se conecten los reportes de ventas por producto.
           </p>
           <table class="table">
             <thead>
@@ -109,7 +104,7 @@
             <tbody>
               <tr>
                 <td colspan="3" class="table-empty">
-                  Aún no hay datos en esta versión demo.
+                  Aún no hay datos detallados por producto.
                 </td>
               </tr>
             </tbody>
@@ -120,17 +115,17 @@
           <h2 class="card-title">Alertas rápidas</h2>
           <ul class="alerts-list">
             <li class="alert-item">
-              🔔 <strong>Stock bajo:</strong> Se mostrarán productos por debajo del mínimo.
+              🔔 <strong>Stock bajo:</strong> Próximamente se mostrarán productos con stock crítico.
             </li>
             <li class="alert-item">
-              🔔 <strong>Fiados elevados:</strong> ALEX avisará cuando las cuentas por cobrar sean muy altas.
+              🔔 <strong>Gastos altos:</strong> ALEX avisará cuando los gastos del mes sean muy altos.
             </li>
             <li class="alert-item">
-              🔔 <strong>Días flojos:</strong> Días con ventas muy por debajo del promedio.
+              🔔 <strong>Días flojos:</strong> Detectará días con ventas muy por debajo del promedio.
             </li>
           </ul>
           <p class="card-description">
-            Estas alertas serán generadas automáticamente por la IA empresarial en la versión completa.
+            Estas alertas serán generadas automáticamente por la IA empresarial en siguientes versiones.
           </p>
         </article>
       </section>
@@ -142,7 +137,7 @@
   <script src="alex-roles.js"></script>
 
   <script>
-    // Menú móvil: solo muestra/oculta el sidebar en pantallas pequeñas
+    // ===== Menú móvil =====
     const btnMenuMobile = document.getElementById('btnMenuMobile');
     const sidebar = document.querySelector('.sidebar');
 
@@ -152,7 +147,7 @@
       });
     }
 
-    // Usuario y permisos
+    // ===== Usuario y permisos =====
     const usuarioActual = typeof getUsuarioActualObligatorio === "function"
       ? getUsuarioActualObligatorio()
       : null;
@@ -161,47 +156,13 @@
       aplicarPermisosYProteger("dashboard");
     }
 
-    // Pintar nombre y rol en el topbar
     const labelUser = document.getElementById("topbar-user-label");
     if (usuarioActual && labelUser) {
       const rolTexto = usuarioActual.rol === "dueno" ? "Dueño" : "Empleado";
       labelUser.textContent = `${usuarioActual.nombre} (${rolTexto})`;
     }
 
-    // Botón Cerrar sesión
-    const btnLogout = document.getElementById("btnLogout");
-    if (btnLogout) {
-      btnLogout.addEventListener("click", () => {
-        if (!confirm("¿Quieres cerrar sesión?")) return;
-
-        if (typeof save === "function") {
-          save("usuarioActual", null); // limpiamos el usuarioActual
-        } else {
-          localStorage.removeItem("usuarioActual");
-        }
-
-        window.location.href = "index.html";
-      });
-    }
-
-    // Cargar datos desde almacenamiento
-    let ventas = [];
-    let movimientosCaja = [];
-    let gastos = [];
-
-    if (typeof load === "function") {
-      const vData = load("ventas", []);
-      ventas = Array.isArray(vData) ? vData : [];
-
-      const mData = load("caja_movimientos", []);
-      movimientosCaja = Array.isArray(mData) ? mData : [];
-
-      // En un futuro, puedes usar un módulo separado de gastos:
-      const gData = load("gastos", []);
-      gastos = Array.isArray(gData) ? gData : [];
-    }
-
-    // Helpers
+    // ===== Helpers =====
     function alex3FormatearMonedaSeguro(valor) {
       if (typeof alex3FormatearMoneda === "function") {
         return alex3FormatearMoneda(valor);
@@ -219,56 +180,72 @@
       );
     }
 
-    // Cálculo principal del dashboard
+    // ===== Cargar datos desde almacenamiento =====
+    let ventas = [];
+    let gastos = [];
+    let movimientosCaja = [];
+    let saldoInicial = 0;
+
+    if (typeof load === "function") {
+      const vData = load("ventas", []);
+      ventas = Array.isArray(vData) ? vData : [];
+
+      const gData = load("gastos", []);
+      gastos = Array.isArray(gData) ? gData : [];
+
+      const m1 = load("caja_movimientos", []);
+      const m2 = load("movimientosCaja", []);
+      if (Array.isArray(m1) && m1.length > 0) {
+        movimientosCaja = m1;
+      } else if (Array.isArray(m2)) {
+        movimientosCaja = m2;
+      }
+
+      saldoInicial = Number(load("saldoInicial", 0)) || 0;
+    }
+
+    // ===== Recalcular KPIs del dashboard =====
     function recalcularDashboard() {
       const hoy = new Date();
 
-      // Ventas de hoy
+      // Ventas de hoy (todas las formas de pago)
       let ventasHoy = 0;
       ventas.forEach(v => {
-        const fecha = new Date(v.fecha || v.fechaHora || Date.now());
+        const fecha = new Date(v.fechaHora || v.fecha || Date.now());
         const total = Number(v.total) || 0;
         if (mismaFecha(fecha, hoy)) {
           ventasHoy += total;
         }
       });
 
-      // Movimientos de caja (ingresos y egresos)
-      let ingresosTotales = 0;
-      let egresosTotales = 0;
-      let egresosHoy = 0;
-
-      movimientosCaja.forEach(m => {
-        const fecha = new Date(m.fecha || m.fechaHora || Date.now());
-        const monto = Number(m.monto) || 0;
-
-        if (m.tipo === "INGRESO") {
-          ingresosTotales += monto;
-        } else if (m.tipo === "EGRESO") {
-          egresosTotales += monto;
-          if (mismaFecha(fecha, hoy)) {
-            egresosHoy += monto;
-          }
-        }
-      });
-
-      // Gastos adicionales del módulo gastos (opcional/futuro)
-      let gastosHoyExtra = 0;
+      // Gastos de hoy (desde módulo de gastos + compras en efectivo YA están en caja)
+      let gastosHoy = 0;
       gastos.forEach(g => {
-        const fecha = new Date(g.fecha || g.fechaHora || Date.now());
+        const fecha = new Date(g.fechaHora || g.fecha || Date.now());
         const monto = Number(g.monto) || 0;
         if (mismaFecha(fecha, hoy)) {
-          gastosHoyExtra += monto;
+          gastosHoy += monto;
         }
       });
 
-      const gastosHoyTotal = egresosHoy + gastosHoyExtra;
+      // Caja actual: igual que en caja.html
+      let totalIngresos = 0;
+      let totalEgresos = 0;
 
-      // Caja actual (simple): ingresos + ventas - egresos
-      const cajaActual = ingresosTotales + ventasHoy - egresosTotales;
+      movimientosCaja.forEach(m => {
+        const tipo = (m.tipo || "").toUpperCase();
+        const monto = Number(m.monto) || 0;
+        if (tipo === "INGRESO") {
+          totalIngresos += monto;
+        } else if (tipo === "EGRESO") {
+          totalEgresos += monto;
+        }
+      });
 
-      // Utilidad estimada (versión simple): ventas hoy - gastos hoy
-      const utilidadEstim = ventasHoy - gastosHoyTotal;
+      const cajaActual = saldoInicial + totalIngresos - totalEgresos;
+
+      // Utilidad estimada simple del día
+      const utilidadEstim = ventasHoy - gastosHoy;
 
       // Pintar en pantalla
       const elVentasHoy = document.getElementById("kpi-dashboard-ventas-hoy");
@@ -277,7 +254,7 @@
       const elCaja = document.getElementById("kpi-dashboard-caja");
 
       if (elVentasHoy) elVentasHoy.textContent = alex3FormatearMonedaSeguro(ventasHoy);
-      if (elGastosHoy) elGastosHoy.textContent = alex3FormatearMonedaSeguro(gastosHoyTotal);
+      if (elGastosHoy) elGastosHoy.textContent = alex3FormatearMonedaSeguro(gastosHoy);
       if (elUtilidad) elUtilidad.textContent = alex3FormatearMonedaSeguro(utilidadEstim);
       if (elCaja) elCaja.textContent = alex3FormatearMonedaSeguro(cajaActual);
     }
