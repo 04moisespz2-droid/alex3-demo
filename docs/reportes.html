@@ -36,15 +36,15 @@
       </div>
       <div class="card-resumen ingreso">
         <h4>Ingresos caja (histórico)</h4>
-        <p><span id="rep-total-ingresos">0.00</span></p>
+        <p><span id="rep-total-ingresos">Q 0.00</span></p>
       </div>
       <div class="card-resumen egreso">
         <h4>Egresos caja (histórico)</h4>
-        <p><span id="rep-total-egresos">0.00</span></p>
+        <p><span id="rep-total-egresos">Q 0.00</span></p>
       </div>
       <div class="card-resumen saldo">
         <h4>Saldo actual estimado</h4>
-        <p><span id="rep-saldo-actual">0.00</span></p>
+        <p><span id="rep-saldo-actual">Q 0.00</span></p>
       </div>
     </div>
 
@@ -103,39 +103,79 @@
   <script src="alex-roles.js"></script>
 
   <script>
-    const usuarioActual = getUsuarioActualObligatorio();
-    aplicarPermisosYProteger("reportes");
+    // Usuario y permisos
+    const usuarioActual = typeof getUsuarioActualObligatorio === "function"
+      ? getUsuarioActualObligatorio()
+      : null;
 
-    function formatearMoneda(n) {
-      return alex3FormatearMoneda(n);
+    if (typeof aplicarPermisosYProteger === "function") {
+      aplicarPermisosYProteger("reportes");
     }
 
-    // Cargar datos guardados
-    const productos = load("productos", []);
-    const movimientos = load("movimientosCaja", []);
-    const saldoInicial = load("saldoInicial", 0);
-    const cierres = load("cierresCaja", []);
+    // Helpers
+    function alex3FormatearMonedaSeguro(n) {
+      if (typeof alex3FormatearMoneda === "function") {
+        return alex3FormatearMoneda(n);
+      }
+      const num = Number(n);
+      if (isNaN(num)) return "Q 0.00";
+      return "Q " + num.toFixed(2);
+    }
+
+    function formatearFechaBonita(fechaIso) {
+      const d = new Date(fechaIso);
+      if (isNaN(d.getTime())) return fechaIso || "-";
+      const dia = String(d.getDate()).padStart(2, "0");
+      const mes = String(d.getMonth() + 1).padStart(2, "0");
+      const anio = d.getFullYear();
+      const horas = String(d.getHours()).padStart(2, "0");
+      const mins = String(d.getMinutes()).padStart(2, "0");
+      return `${dia}/${mes}/${anio} ${horas}:${mins}`;
+    }
+
+    // Cargar datos guardados con las claves nuevas que usamos en el sistema
+    const productos = (typeof load === "function" ? load("productos", []) : []) || [];
+    const movimientos = (typeof load === "function" ? load("caja_movimientos", []) : []) || [];
+    const cierres = (typeof load === "function" ? load("caja_cortes", []) : []) || [];
+    const ventas = (typeof load === "function" ? load("ventas", []) : []) || [];
 
     // ===== RESUMEN PRINCIPAL =====
     function calcularResumen() {
-      const totalProductos = productos.length;
-      const stockTotal = productos.reduce((acc, p) => acc + (p.stock || 0), 0);
+      const totalProductos = Array.isArray(productos) ? productos.length : 0;
+      const stockTotal = Array.isArray(productos)
+        ? productos.reduce((acc, p) => acc + (Number(p.stock) || 0), 0)
+        : 0;
 
-      let totalIngresos = 0;
-      let totalEgresos = 0;
+      let totalIngresosMov = 0;
+      let totalEgresosMov = 0;
 
-      movimientos.forEach(m => {
-        if (m.tipo === "ingreso") totalIngresos += m.monto;
-        else if (m.tipo === "egreso") totalEgresos += m.monto;
-      });
+      if (Array.isArray(movimientos)) {
+        movimientos.forEach(m => {
+          const monto = Number(m.monto) || 0;
+          if (m.tipo === "INGRESO") {
+            totalIngresosMov += monto;
+          } else if (m.tipo === "EGRESO") {
+            totalEgresosMov += monto;
+          }
+        });
+      }
 
-      const saldoActual = saldoInicial + totalIngresos - totalEgresos;
+      let totalVentas = 0;
+      if (Array.isArray(ventas)) {
+        ventas.forEach(v => {
+          totalVentas += Number(v.total) || 0;
+        });
+      }
+
+      const totalIngresos = totalIngresosMov + totalVentas;
+      const totalEgresos = totalEgresosMov;
+      const saldoActual = totalIngresos - totalEgresos;
 
       document.getElementById("rep-total-productos").innerText = totalProductos;
       document.getElementById("rep-stock-total").innerText = stockTotal;
-      document.getElementById("rep-total-ingresos").innerText = formatearMoneda(totalIngresos);
-      document.getElementById("rep-total-egresos").innerText = formatearMoneda(totalEgresos);
-      document.getElementById("rep-saldo-actual").innerText = formatearMoneda(saldoActual);
+      document.getElementById("rep-total-ingresos").innerText = alex3FormatearMonedaSeguro(totalIngresos);
+      document.getElementById("rep-total-egresos").innerText = alex3FormatearMonedaSeguro(totalEgresos);
+      document.getElementById("rep-saldo-actual").innerText = alex3FormatearMonedaSeguro(saldoActual);
     }
 
     // ===== TABLA DE INVENTARIO =====
@@ -143,16 +183,30 @@
       const tbody = document.getElementById("tabla-inventario-reporte");
       tbody.innerHTML = "";
 
+      if (!Array.isArray(productos) || !productos.length) {
+        tbody.innerHTML = `
+          <tr>
+            <td colspan="7" class="table-empty">No hay productos registrados.</td>
+          </tr>
+        `;
+        return;
+      }
+
       productos.forEach(p => {
+        const compra = alex3FormatearMonedaSeguro(p.compra);
+        const venta = alex3FormatearMonedaSeguro(p.venta);
+        const ganancia = alex3FormatearMonedaSeguro(p.ganancia);
+        const margen = (p.margen != null ? p.margen : 0) + "%";
+
         tbody.innerHTML += `
           <tr>
-            <td>${p.codigo}</td>
-            <td>${p.nombre}</td>
-            <td>${formatearMoneda(p.compra)}</td>
-            <td>${formatearMoneda(p.venta)}</td>
-            <td>${formatearMoneda(p.ganancia)}</td>
-            <td>${p.margen}%</td>
-            <td>${p.stock}</td>
+            <td>${p.codigo || ""}</td>
+            <td>${p.nombre || ""}</td>
+            <td>${compra}</td>
+            <td>${venta}</td>
+            <td>${ganancia}</td>
+            <td>${margen}</td>
+            <td>${p.stock != null ? p.stock : 0}</td>
           </tr>
         `;
       });
@@ -163,14 +217,36 @@
       const tbody = document.getElementById("tabla-movimientos-reporte");
       tbody.innerHTML = "";
 
-      movimientos.forEach(m => {
+      if (!Array.isArray(movimientos) || !movimientos.length) {
+        tbody.innerHTML = `
+          <tr>
+            <td colspan="5" class="table-empty">No hay movimientos de caja registrados.</td>
+          </tr>
+        `;
+        return;
+      }
+
+      // Más recientes primero
+      const ordenados = [...movimientos].sort((a, b) => {
+        const fa = new Date(a.fecha || a.fechaHora || 0).getTime();
+        const fb = new Date(b.fecha || b.fechaHora || 0).getTime();
+        return fb - fa;
+      });
+
+      ordenados.forEach(m => {
+        const fecha = formatearFechaBonita(m.fecha || m.fechaHora || "");
+        const tipoTexto = m.tipo === "EGRESO" ? "Egreso" : "Ingreso";
+        const categoria = m.categoria || "";
+        const desc = m.descripcion || "";
+        const monto = alex3FormatearMonedaSeguro(m.monto);
+
         tbody.innerHTML += `
           <tr>
-            <td>${m.fecha}</td>
-            <td>${m.tipo === "ingreso" ? "Ingreso" : "Egreso"}</td>
-            <td>${m.categoria || ""}</td>
-            <td>${m.descripcion}</td>
-            <td>${formatearMoneda(m.monto)}</td>
+            <td>${fecha}</td>
+            <td>${tipoTexto}</td>
+            <td>${categoria}</td>
+            <td>${desc}</td>
+            <td>${monto}</td>
           </tr>
         `;
       });
@@ -181,12 +257,32 @@
       const tbody = document.getElementById("tabla-cierres-reporte");
       tbody.innerHTML = "";
 
-      cierres.forEach(c => {
+      if (!Array.isArray(cierres) || !cierres.length) {
+        tbody.innerHTML = `
+          <tr>
+            <td colspan="3" class="table-empty">No hay cierres de caja registrados.</td>
+          </tr>
+        `;
+        return;
+      }
+
+      // Más recientes primero
+      const ordenados = [...cierres].sort((a, b) => {
+        const fa = new Date(a.fecha || a.fechaHora || 0).getTime();
+        const fb = new Date(b.fecha || b.fechaHora || 0).getTime();
+        return fb - fa;
+      });
+
+      ordenados.forEach(c => {
+        const fecha = formatearFechaBonita(c.fecha || c.fechaHora || "");
+        const saldoFinal = alex3FormatearMonedaSeguro(c.saldoFinal);
+        const obs = c.observaciones || "";
+
         tbody.innerHTML += `
           <tr>
-            <td>${c.fecha}</td>
-            <td>${formatearMoneda(c.saldoFinal)}</td>
-            <td>${c.observaciones}</td>
+            <td>${fecha}</td>
+            <td>${saldoFinal}</td>
+            <td>${obs}</td>
           </tr>
         `;
       });
