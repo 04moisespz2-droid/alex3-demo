@@ -63,34 +63,68 @@
       <section class="cards-grid">
         <article class="card kpi-card">
           <h2 class="card-title">Ventas de hoy</h2>
-          <p class="card-kpi">Q 0.00</p>
+          <p class="card-kpi" id="kpi-ventas-hoy">Q 0.00</p>
           <p class="card-kpi-sub">Incluye efectivo, tarjeta y transferencias.</p>
         </article>
 
         <article class="card kpi-card">
           <h2 class="card-title">Ventas del mes</h2>
-          <p class="card-kpi">Q 0.00</p>
+          <p class="card-kpi" id="kpi-ventas-mes">Q 0.00</p>
           <p class="card-kpi-sub">Resumen de todas las ventas facturadas.</p>
         </article>
 
         <article class="card kpi-card">
           <h2 class="card-title">Tickets emitidos</h2>
-          <p class="card-kpi">0</p>
+          <p class="card-kpi" id="kpi-tickets">0</p>
           <p class="card-kpi-sub">Cantidad de comprobantes en el sistema.</p>
         </article>
 
         <article class="card kpi-card">
           <h2 class="card-title">Promedio por venta</h2>
-          <p class="card-kpi">Q 0.00</p>
+          <p class="card-kpi" id="kpi-promedio">Q 0.00</p>
           <p class="card-kpi-sub">Total vendido / número de ventas.</p>
         </article>
+      </section>
+
+      <!-- Registrar venta rápida (versión sencilla) -->
+      <section class="card">
+        <h2 class="card-title">Registrar venta rápida</h2>
+        <p class="card-description">
+          Esta es una versión sencilla para guardar ventas rápidas. Más adelante se puede conectar
+          con productos del inventario y facturación SAT.
+        </p>
+
+        <div class="form-grid">
+          <div class="form-field">
+            <label for="venta-cliente">Cliente (opcional)</label>
+            <input id="venta-cliente" type="text" class="input" placeholder="Cliente final / Consumidor">
+          </div>
+
+          <div class="form-field">
+            <label for="venta-forma-pago">Forma de pago</label>
+            <select id="venta-forma-pago" class="input">
+              <option value="Efectivo">Efectivo</option>
+              <option value="Tarjeta">Tarjeta</option>
+              <option value="Transferencia">Transferencia</option>
+              <option value="Depósito">Depósito</option>
+              <option value="Otro">Otro</option>
+            </select>
+          </div>
+
+          <div class="form-field">
+            <label for="venta-total">Total (Q)</label>
+            <input id="venta-total" type="number" class="input" placeholder="0.00" step="0.01" min="0">
+          </div>
+        </div>
+
+        <button class="btn" id="btn-registrar-venta">Guardar venta</button>
       </section>
 
       <!-- Tabla de ventas -->
       <section class="card">
         <h2 class="card-title">Últimas ventas registradas</h2>
         <p class="card-description">
-          Aquí aparecerán las ventas más recientes una vez se integre el backend.
+          Aquí aparecen las ventas más recientes registradas en el sistema.
         </p>
 
         <table class="table">
@@ -103,10 +137,10 @@
               <th>Total</th>
             </tr>
           </thead>
-          <tbody>
+          <tbody id="tabla-ventas-body">
             <tr>
               <td colspan="5" class="table-empty">
-                Aún no hay ventas registradas en esta versión demo.
+                Aún no hay ventas registradas.
               </td>
             </tr>
           </tbody>
@@ -115,13 +149,195 @@
     </main>
   </div>
 
+  <!-- Scripts base -->
+  <script src="alex-storage.js"></script>
+  <script src="alex-roles.js"></script>
+
   <script>
+    // Menú móvil
     const btnMenuMobile = document.getElementById('btnMenuMobile');
     const sidebar = document.querySelector('.sidebar');
 
-    btnMenuMobile.addEventListener('click', () => {
-      sidebar.classList.toggle('sidebar-open');
-    });
+    if (btnMenuMobile) {
+      btnMenuMobile.addEventListener('click', () => {
+        sidebar.classList.toggle('sidebar-open');
+      });
+    }
+
+    // Usuario y permisos
+    const usuarioActual = typeof getUsuarioActualObligatorio === "function"
+      ? getUsuarioActualObligatorio()
+      : null;
+
+    if (typeof aplicarPermisosYProteger === "function") {
+      aplicarPermisosYProteger("ventas");
+    }
+
+    // Cargar ventas desde almacenamiento
+    let ventas = [];
+    if (typeof load === "function") {
+      const data = load("ventas", []);
+      ventas = Array.isArray(data) ? data : [];
+    }
+
+    // Formateador de moneda seguro
+    function alex3FormatearMonedaSeguro(valor) {
+      if (typeof alex3FormatearMoneda === "function") {
+        return alex3FormatearMoneda(valor);
+      }
+      const num = Number(valor);
+      if (isNaN(num)) return "Q0.00";
+      return "Q" + num.toFixed(2);
+    }
+
+    function formatearFechaBonita(fechaIso) {
+      const d = new Date(fechaIso);
+      if (isNaN(d.getTime())) return "-";
+      const dia = String(d.getDate()).padStart(2, "0");
+      const mes = String(d.getMonth() + 1).padStart(2, "0");
+      const anio = d.getFullYear();
+      const horas = String(d.getHours()).padStart(2, "0");
+      const mins = String(d.getMinutes()).padStart(2, "0");
+      return `${dia}/${mes}/${anio} ${horas}:${mins}`;
+    }
+
+    function mismaFecha(d1, d2) {
+      return (
+        d1.getFullYear() === d2.getFullYear() &&
+        d1.getMonth() === d2.getMonth() &&
+        d1.getDate() === d2.getDate()
+      );
+    }
+
+    function mismoMes(d1, d2) {
+      return (
+        d1.getFullYear() === d2.getFullYear() &&
+        d1.getMonth() === d2.getMonth()
+      );
+    }
+
+    function actualizarKPIs() {
+      const hoy = new Date();
+      let totalHoy = 0;
+      let totalMes = 0;
+      let totalGlobal = 0;
+      let conteoVentas = ventas.length;
+
+      ventas.forEach(v => {
+        const fecha = new Date(v.fecha || v.fechaHora || Date.now());
+        const total = Number(v.total) || 0;
+        totalGlobal += total;
+
+        if (mismaFecha(fecha, hoy)) {
+          totalHoy += total;
+        }
+        if (mismoMes(fecha, hoy)) {
+          totalMes += total;
+        }
+      });
+
+      const promedio = conteoVentas > 0 ? (totalGlobal / conteoVentas) : 0;
+
+      document.getElementById("kpi-ventas-hoy").textContent = alex3FormatearMonedaSeguro(totalHoy);
+      document.getElementById("kpi-ventas-mes").textContent = alex3FormatearMonedaSeguro(totalMes);
+      document.getElementById("kpi-tickets").textContent = String(conteoVentas);
+      document.getElementById("kpi-promedio").textContent = alex3FormatearMonedaSeguro(promedio);
+    }
+
+    function renderTablaVentas() {
+      const tbody = document.getElementById("tabla-ventas-body");
+      tbody.innerHTML = "";
+
+      if (!ventas.length) {
+        tbody.innerHTML = `
+          <tr>
+            <td colspan="5" class="table-empty">
+              Aún no hay ventas registradas.
+            </td>
+          </tr>
+        `;
+        return;
+      }
+
+      // Mostrar ventas más recientes primero
+      const ventasOrdenadas = [...ventas].sort((a, b) => {
+        const fa = new Date(a.fecha || a.fechaHora || 0).getTime();
+        const fb = new Date(b.fecha || b.fechaHora || 0).getTime();
+        return fb - fa;
+      });
+
+      ventasOrdenadas.forEach(v => {
+        const fecha = formatearFechaBonita(v.fecha || v.fechaHora || new Date().toISOString());
+        const doc = v.documento || v.serie || v.numero || "TICKET";
+        const cliente = v.cliente || "Consumidor final";
+        const formaPago = v.formaPago || "N/D";
+        const totalFmt = alex3FormatearMonedaSeguro(v.total);
+
+        const fila = `
+          <tr>
+            <td>${fecha}</td>
+            <td>${doc}</td>
+            <td>${cliente}</td>
+            <td>${formaPago}</td>
+            <td>${totalFmt}</td>
+          </tr>
+        `;
+        tbody.innerHTML += fila;
+      });
+    }
+
+    function guardarVentas() {
+      if (typeof save === "function") {
+        save("ventas", ventas);
+      }
+    }
+
+    function registrarVentaRapida() {
+      const inputCliente = document.getElementById("venta-cliente");
+      const selectFormaPago = document.getElementById("venta-forma-pago");
+      const inputTotal = document.getElementById("venta-total");
+
+      const cliente = inputCliente.value.trim() || "Consumidor final";
+      const formaPago = selectFormaPago.value;
+      const totalNum = parseFloat(inputTotal.value);
+
+      if (isNaN(totalNum) || totalNum <= 0) {
+        alert("Ingresa un total válido para la venta.");
+        return;
+      }
+
+      const ahora = new Date();
+      const correlativo = ventas.length + 1;
+      const documento = "T-" + String(correlativo).padStart(4, "0");
+
+      const nuevaVenta = {
+        fecha: ahora.toISOString(),
+        documento: documento,
+        cliente: cliente,
+        formaPago: formaPago,
+        total: totalNum
+      };
+
+      ventas.push(nuevaVenta);
+      guardarVentas();
+      renderTablaVentas();
+      actualizarKPIs();
+
+      inputCliente.value = "";
+      inputTotal.value = "";
+
+      alert("Venta registrada correctamente.");
+    }
+
+    // Eventos
+    const btnRegistrarVenta = document.getElementById("btn-registrar-venta");
+    if (btnRegistrarVenta) {
+      btnRegistrarVenta.addEventListener("click", registrarVentaRapida);
+    }
+
+    // Primera carga
+    renderTablaVentas();
+    actualizarKPIs();
   </script>
 </body>
 </html>
