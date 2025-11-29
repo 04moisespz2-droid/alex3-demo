@@ -62,25 +62,25 @@
       <section class="cards-grid">
         <article class="card kpi-card">
           <h2 class="card-title">Saldo en caja</h2>
-          <p class="card-kpi">Q 0.00</p>
-          <p class="card-kpi-sub">Saldo calculado con los movimientos registrados.</p>
+          <p class="card-kpi" id="kpi-caja-saldo">Q 0.00</p>
+          <p class="card-kpi-sub">Saldo calculado con los movimientos registrados y ventas del día.</p>
         </article>
 
         <article class="card kpi-card">
           <h2 class="card-title">Ingresos de hoy</h2>
-          <p class="card-kpi">Q 0.00</p>
-          <p class="card-kpi-sub">Entradas directas a caja.</p>
+          <p class="card-kpi" id="kpi-caja-ingresos-hoy">Q 0.00</p>
+          <p class="card-kpi-sub">Entradas directas a caja + ventas de hoy.</p>
         </article>
 
         <article class="card kpi-card">
           <h2 class="card-title">Egresos de hoy</h2>
-          <p class="card-kpi gasto">Q 0.00</p>
+          <p class="card-kpi gasto" id="kpi-caja-egresos-hoy">Q 0.00</p>
           <p class="card-kpi-sub">Salidas por gastos, compras u otros.</p>
         </article>
 
         <article class="card kpi-card">
           <h2 class="card-title">Cortes realizados</h2>
-          <p class="card-kpi">0</p>
+          <p class="card-kpi" id="kpi-caja-cortes">0</p>
           <p class="card-kpi-sub">Número de cortes de caja registrados.</p>
         </article>
       </section>
@@ -88,10 +88,34 @@
       <section class="card">
         <h2 class="card-title">Movimientos de caja</h2>
         <p class="card-description">
-          En la versión completa verás aquí cada ingreso y egreso con su detalle.
+          Registra ingresos y egresos de caja. En la versión completa se puede integrar con cortes, arqueos y SAT.
         </p>
 
-        <table class="table">
+        <!-- Formulario de movimiento -->
+        <div class="form-grid">
+          <div class="form-field">
+            <label for="mov-tipo">Tipo de movimiento</label>
+            <select id="mov-tipo" class="input">
+              <option value="INGRESO">Ingreso</option>
+              <option value="EGRESO">Egreso</option>
+            </select>
+          </div>
+
+          <div class="form-field">
+            <label for="mov-descripcion">Descripción</label>
+            <input id="mov-descripcion" type="text" class="input" placeholder="Ej: Venta en efectivo, pago de luz, etc.">
+          </div>
+
+          <div class="form-field">
+            <label for="mov-monto">Monto (Q)</label>
+            <input id="mov-monto" type="number" class="input" placeholder="0.00" step="0.01" min="0">
+          </div>
+        </div>
+
+        <button class="btn" id="btn-registrar-movimiento">Guardar movimiento</button>
+
+        <!-- Tabla de movimientos -->
+        <table class="table" style="margin-top: 1.5rem;">
           <thead>
             <tr>
               <th>Fecha</th>
@@ -100,10 +124,10 @@
               <th>Monto</th>
             </tr>
           </thead>
-          <tbody>
+          <tbody id="tabla-movimientos-body">
             <tr>
               <td colspan="4" class="table-empty">
-                Aún no hay movimientos en esta versión demo.
+                Aún no hay movimientos registrados.
               </td>
             </tr>
           </tbody>
@@ -112,13 +136,220 @@
     </main>
   </div>
 
+  <!-- Scripts base -->
+  <script src="alex-storage.js"></script>
+  <script src="alex-roles.js"></script>
+
   <script>
+    // Menú móvil
     const btnMenuMobile = document.getElementById('btnMenuMobile');
     const sidebar = document.querySelector('.sidebar');
 
-    btnMenuMobile.addEventListener('click', () => {
-      sidebar.classList.toggle('sidebar-open');
-    });
+    if (btnMenuMobile) {
+      btnMenuMobile.addEventListener('click', () => {
+        sidebar.classList.toggle('sidebar-open');
+      });
+    }
+
+    // Usuario y permisos
+    const usuarioActual = typeof getUsuarioActualObligatorio === "function"
+      ? getUsuarioActualObligatorio()
+      : null;
+
+    if (typeof aplicarPermisosYProteger === "function") {
+      aplicarPermisosYProteger("caja");
+    }
+
+    // Cargar datos desde almacenamiento
+    let movimientos = [];
+    let cortes = [];
+    let ventas = [];
+
+    if (typeof load === "function") {
+      const movData = load("caja_movimientos", []);
+      movimientos = Array.isArray(movData) ? movData : [];
+
+      const cortesData = load("caja_cortes", []);
+      cortes = Array.isArray(cortesData) ? cortesData : [];
+
+      const ventasData = load("ventas", []);
+      ventas = Array.isArray(ventasData) ? ventasData : [];
+    }
+
+    // Formateadores
+    function alex3FormatearMonedaSeguro(valor) {
+      if (typeof alex3FormatearMoneda === "function") {
+        return alex3FormatearMoneda(valor);
+      }
+      const num = Number(valor);
+      if (isNaN(num)) return "Q 0.00";
+      return "Q " + num.toFixed(2);
+    }
+
+    function formatearFechaBonita(fechaIso) {
+      const d = new Date(fechaIso);
+      if (isNaN(d.getTime())) return "-";
+      const dia = String(d.getDate()).padStart(2, "0");
+      const mes = String(d.getMonth() + 1).padStart(2, "0");
+      const anio = d.getFullYear();
+      const horas = String(d.getHours()).padStart(2, "0");
+      const mins = String(d.getMinutes()).padStart(2, "0");
+      return `${dia}/${mes}/${anio} ${horas}:${mins}`;
+    }
+
+    function mismaFecha(d1, d2) {
+      return (
+        d1.getFullYear() === d2.getFullYear() &&
+        d1.getMonth() === d2.getMonth() &&
+        d1.getDate() === d2.getDate()
+      );
+    }
+
+    // Guardar en storage
+    function guardarMovimientos() {
+      if (typeof save === "function") {
+        save("caja_movimientos", movimientos);
+      }
+    }
+
+    function guardarCortes() {
+      if (typeof save === "function") {
+        save("caja_cortes", cortes);
+      }
+    }
+
+    // KPIs
+    function actualizarKPIsCaja() {
+      const hoy = new Date();
+
+      let ingresosHoy = 0;
+      let egresosHoy = 0;
+      let ingresosTotales = 0;
+      let egresosTotales = 0;
+
+      // Movimientos manuales
+      movimientos.forEach(m => {
+        const fecha = new Date(m.fecha || m.fechaHora || Date.now());
+        const monto = Number(m.monto) || 0;
+
+        if (m.tipo === "INGRESO") {
+          ingresosTotales += monto;
+          if (mismaFecha(fecha, hoy)) ingresosHoy += monto;
+        } else if (m.tipo === "EGRESO") {
+          egresosTotales += monto;
+          if (mismaFecha(fecha, hoy)) egresosHoy += monto;
+        }
+      });
+
+      // Ventas del día (se asumen como ingreso a caja)
+      let ventasHoy = 0;
+      ventas.forEach(v => {
+        const fecha = new Date(v.fecha || v.fechaHora || Date.now());
+        const total = Number(v.total) || 0;
+        if (mismaFecha(fecha, hoy)) ventasHoy += total;
+      });
+
+      const saldo = ingresosTotales - egresosTotales + ventasHoy;
+
+      const kpiSaldo = document.getElementById("kpi-caja-saldo");
+      const kpiIngresosHoy = document.getElementById("kpi-caja-ingresos-hoy");
+      const kpiEgresosHoy = document.getElementById("kpi-caja-egresos-hoy");
+      const kpiCortes = document.getElementById("kpi-caja-cortes");
+
+      if (kpiSaldo) kpiSaldo.textContent = alex3FormatearMonedaSeguro(saldo);
+      if (kpiIngresosHoy) kpiIngresosHoy.textContent = alex3FormatearMonedaSeguro(ingresosHoy + ventasHoy);
+      if (kpiEgresosHoy) kpiEgresosHoy.textContent = alex3FormatearMonedaSeguro(egresosHoy);
+      if (kpiCortes) kpiCortes.textContent = String(cortes.length || 0);
+    }
+
+    // Render tabla movimientos
+    function renderTablaMovimientos() {
+      const tbody = document.getElementById("tabla-movimientos-body");
+      if (!tbody) return;
+
+      tbody.innerHTML = "";
+
+      if (!movimientos.length) {
+        tbody.innerHTML = `
+          <tr>
+            <td colspan="4" class="table-empty">
+              Aún no hay movimientos registrados.
+            </td>
+          </tr>
+        `;
+        return;
+      }
+
+      const ordenados = [...movimientos].sort((a, b) => {
+        const fa = new Date(a.fecha || a.fechaHora || 0).getTime();
+        const fb = new Date(b.fecha || b.fechaHora || 0).getTime();
+        return fb - fa; // Más recientes primero
+      });
+
+      ordenados.forEach(m => {
+        const fecha = formatearFechaBonita(m.fecha || m.fechaHora || new Date().toISOString());
+        const tipo = m.tipo === "EGRESO" ? "Egreso" : "Ingreso";
+        const desc = m.descripcion || "-";
+        const montoFmt = alex3FormatearMonedaSeguro(m.monto);
+
+        const fila = `
+          <tr>
+            <td>${fecha}</td>
+            <td>${tipo}</td>
+            <td>${desc}</td>
+            <td>${montoFmt}</td>
+          </tr>
+        `;
+        tbody.innerHTML += fila;
+      });
+    }
+
+    // Registrar movimiento
+    function registrarMovimientoCaja() {
+      const selectTipo = document.getElementById("mov-tipo");
+      const inputDesc = document.getElementById("mov-descripcion");
+      const inputMonto = document.getElementById("mov-monto");
+
+      const tipo = selectTipo ? selectTipo.value : "INGRESO";
+      const descripcion = inputDesc ? inputDesc.value.trim() : "";
+      const montoNum = parseFloat(inputMonto ? inputMonto.value : "0");
+
+      if (!descripcion) {
+        alert("Agrega una descripción para el movimiento.");
+        return;
+      }
+
+      if (isNaN(montoNum) || montoNum <= 0) {
+        alert("Ingresa un monto válido.");
+        return;
+      }
+
+      const ahora = new Date();
+      const mov = {
+        fecha: ahora.toISOString(),
+        tipo,
+        descripcion,
+        monto: montoNum
+      };
+
+      movimientos.push(mov);
+      guardarMovimientos();
+      renderTablaMovimientos();
+      actualizarKPIsCaja();
+
+      if (inputDesc) inputDesc.value = "";
+      if (inputMonto) inputMonto.value = "";
+    }
+
+    // Eventos
+    const btnRegistrarMovimiento = document.getElementById("btn-registrar-movimiento");
+    if (btnRegistrarMovimiento) {
+      btnRegistrarMovimiento.addEventListener("click", registrarMovimientoCaja);
+    }
+
+    // Primera carga
+    renderTablaMovimientos();
+    actualizarKPIsCaja();
   </script>
 </body>
 </html>
