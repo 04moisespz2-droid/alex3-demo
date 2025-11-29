@@ -8,6 +8,7 @@
 </head>
 
 <body class="dashboard-body">
+  <!-- Sidebar -->
   <aside class="sidebar">
     <div class="sidebar-header">
       <span class="logo-badge">A</span>
@@ -38,27 +39,81 @@
     </div>
   </aside>
 
+  <!-- Layout principal -->
   <div class="main-layout">
+    <!-- Topbar -->
     <header class="topbar">
       <button class="btn-menu-mobile" id="btnMenuMobile">☰</button>
 
       <div class="topbar-left">
-        <h1 class="topbar-title">Clientes</h1>
-        <p class="topbar-subtitle">Control de clientes, fiados y datos de contacto.</p>
+        <h1 class="topbar-title">Clientes del negocio</h1>
+        <p class="topbar-subtitle">
+          Registra a tus clientes frecuentes, controla sus datos y prepárate para manejar fiados y créditos.
+        </p>
       </div>
 
       <div class="topbar-right">
         <span class="topbar-company">Mi tienda demo</span>
         <span class="topbar-divider">•</span>
-        <span class="topbar-user">Brayan (Dueño)</span>
+        <span class="topbar-user" id="topbar-user-label">Usuario (Rol)</span>
+        <button class="btn" id="btnLogout" type="button" style="margin-left: 0.75rem;">
+          Cerrar sesión
+        </button>
       </div>
     </header>
 
+    <!-- Contenido principal -->
     <main class="main-content">
+      <!-- Formulario alta de cliente -->
+      <section class="card">
+        <h2 class="card-title">Registrar nuevo cliente</h2>
+        <p class="card-description">
+          Guarda la información básica de tus clientes para poder relacionar ventas, fiados y reportes en el futuro.
+        </p>
+
+        <div class="form-grid">
+          <div class="form-field">
+            <label for="clNombre">Nombre completo</label>
+            <input id="clNombre" class="input" type="text" placeholder="Ej: Juan Pérez, Tienda La Esquina">
+          </div>
+
+          <div class="form-field">
+            <label for="clTelefono">Teléfono</label>
+            <input id="clTelefono" class="input" type="tel" placeholder="Ej: 5555-5555">
+          </div>
+
+          <div class="form-field">
+            <label for="clNit">NIT</label>
+            <input id="clNit" class="input" type="text" placeholder="CF o NIT del cliente">
+          </div>
+
+          <div class="form-field">
+            <label for="clTipo">Tipo de cliente</label>
+            <select id="clTipo" class="input">
+              <option value="CONTADO">Contado</option>
+              <option value="FIADO">Fiado / Crédito</option>
+            </select>
+          </div>
+
+          <div class="form-field">
+            <label for="clLimite">Límite de crédito (Q)</label>
+            <input id="clLimite" class="input" type="number" step="0.01" min="0" placeholder="Ej: 0.00 o 500.00">
+          </div>
+
+          <div class="form-field" style="grid-column: 1 / -1;">
+            <label for="clDireccion">Dirección</label>
+            <input id="clDireccion" class="input" type="text" placeholder="Zona, colonia, referencia, etc.">
+          </div>
+        </div>
+
+        <button class="btn" id="btnGuardarCliente">Guardar cliente</button>
+      </section>
+
+      <!-- Tabla de clientes -->
       <section class="card">
         <h2 class="card-title">Listado de clientes</h2>
         <p class="card-description">
-          Aquí verás tus clientes, sus saldos pendientes y su historial de compras.
+          Aquí verás todos los clientes registrados. En versiones futuras se podrán ver saldos de fiados y estado de cuenta.
         </p>
 
         <table class="table">
@@ -66,15 +121,18 @@
             <tr>
               <th>Nombre</th>
               <th>Teléfono</th>
-              <th>Correo</th>
-              <th>Saldo pendiente</th>
-              <th>Última compra</th>
+              <th>NIT</th>
+              <th>Tipo</th>
+              <th>Límite crédito</th>
+              <th>Dirección</th>
+              <th>Creado</th>
+              <th>Acciones</th>
             </tr>
           </thead>
-          <tbody>
+          <tbody id="tabla-clientes-body">
             <tr>
-              <td colspan="5" class="table-empty">
-                Aún no hay clientes registrados en esta versión demo.
+              <td colspan="8" class="table-empty">
+                Aún no hay clientes registrados.
               </td>
             </tr>
           </tbody>
@@ -83,12 +141,182 @@
     </main>
   </div>
 
+  <!-- Scripts base -->
+  <script src="alex-storage.js"></script>
+  <script src="alex-roles.js"></script>
+
   <script>
+    // Menú móvil
     const btnMenuMobile = document.getElementById('btnMenuMobile');
     const sidebar = document.querySelector('.sidebar');
-    btnMenuMobile.addEventListener('click', () => {
-      sidebar.classList.toggle('sidebar-open');
-    });
+
+    if (btnMenuMobile) {
+      btnMenuMobile.addEventListener('click', () => {
+        sidebar.classList.toggle('sidebar-open');
+      });
+    }
+
+    // Usuario y permisos
+    const usuarioActual = typeof getUsuarioActualObligatorio === "function"
+      ? getUsuarioActualObligatorio()
+      : null;
+
+    if (typeof aplicarPermisosYProteger === "function") {
+      aplicarPermisosYProteger("clientes");
+    }
+
+    // Pintar nombre y rol en el topbar
+    const labelUser = document.getElementById("topbar-user-label");
+    if (usuarioActual && labelUser) {
+      const rolTexto = usuarioActual.rol === "dueno" ? "Dueño" : "Empleado";
+      labelUser.textContent = `${usuarioActual.nombre} (${rolTexto})`;
+    }
+
+    // Botón Cerrar sesión
+    const btnLogout = document.getElementById("btnLogout");
+    if (btnLogout) {
+      btnLogout.addEventListener("click", () => {
+        if (!confirm("¿Quieres cerrar sesión?")) return;
+
+        if (typeof save === "function") {
+          save("usuarioActual", null);
+        } else {
+          localStorage.removeItem("usuarioActual");
+        }
+
+        window.location.href = "index.html";
+      });
+    }
+
+    // ====== LÓGICA DE CLIENTES ======
+
+    let clientes = [];
+    if (typeof load === "function") {
+      const cData = load("clientes", []);
+      clientes = Array.isArray(cData) ? cData : [];
+    }
+
+    function alex3FormatearMonedaSeguro(valor) {
+      if (typeof alex3FormatearMoneda === "function") {
+        return alex3FormatearMoneda(valor);
+      }
+      const num = Number(valor);
+      if (isNaN(num)) return "Q 0.00";
+      return "Q " + num.toFixed(2);
+    }
+
+    function renderTablaClientes() {
+      const tbody = document.getElementById("tabla-clientes-body");
+      tbody.innerHTML = "";
+
+      if (!clientes.length) {
+        tbody.innerHTML = `
+          <tr>
+            <td colspan="8" class="table-empty">Aún no hay clientes registrados.</td>
+          </tr>
+        `;
+        return;
+      }
+
+      const ordenados = [...clientes].sort((a, b) => {
+        const fa = new Date(a.creadoEnIso || a.creadoEn || 0).getTime();
+        const fb = new Date(b.creadoEnIso || b.creadoEn || 0).getTime();
+        return fb - fa;
+      });
+
+      ordenados.forEach((cl, index) => {
+        const tipoTexto = cl.tipo === "FIADO" ? "Fiado / Crédito" : "Contado";
+        const limiteTxt = cl.tipo === "FIADO"
+          ? alex3FormatearMonedaSeguro(cl.limiteCredito)
+          : "—";
+        const creado = cl.creadoEn || "";
+
+        tbody.innerHTML += `
+          <tr>
+            <td>${cl.nombre || ""}</td>
+            <td>${cl.telefono || ""}</td>
+            <td>${cl.nit || ""}</td>
+            <td>${tipoTexto}</td>
+            <td>${limiteTxt}</td>
+            <td>${cl.direccion || ""}</td>
+            <td>${creado}</td>
+            <td>
+              <button onclick="eliminarCliente(${index})">🗑️</button>
+            </td>
+          </tr>
+        `;
+      });
+    }
+
+    function registrarCliente() {
+      const nombre = document.getElementById("clNombre").value.trim();
+      const telefono = document.getElementById("clTelefono").value.trim();
+      const nit = document.getElementById("clNit").value.trim();
+      const tipo = document.getElementById("clTipo").value;
+      const limite = parseFloat(document.getElementById("clLimite").value);
+      const direccion = document.getElementById("clDireccion").value.trim();
+
+      if (!nombre) {
+        alert("El nombre del cliente es obligatorio.");
+        return;
+      }
+
+      if (tipo === "FIADO" && (isNaN(limite) || limite <= 0)) {
+        alert("Para clientes fiados debes definir un límite de crédito mayor a 0.");
+        return;
+      }
+
+      const ahora = new Date();
+      const nuevo = {
+        id: Date.now(),
+        nombre,
+        telefono,
+        nit,
+        tipo, // CONTADO o FIADO
+        limiteCredito: !isNaN(limite) ? limite : 0,
+        direccion,
+        creadoEn: ahora.toLocaleString("es-GT"),
+        creadoEnIso: ahora.toISOString(),
+        usuario: usuarioActual ? usuarioActual.usuario : null
+      };
+
+      clientes.push(nuevo);
+      if (typeof save === "function") {
+        save("clientes", clientes);
+      }
+
+      // Limpiar formulario
+      document.getElementById("clNombre").value = "";
+      document.getElementById("clTelefono").value = "";
+      document.getElementById("clNit").value = "";
+      document.getElementById("clTipo").value = "CONTADO";
+      document.getElementById("clLimite").value = "";
+      document.getElementById("clDireccion").value = "";
+
+      renderTablaClientes();
+      alert("Cliente registrado correctamente.");
+    }
+
+    function eliminarCliente(index) {
+      if (!confirm("¿Seguro que quieres eliminar este cliente?")) return;
+      clientes.splice(index, 1);
+      if (typeof save === "function") {
+        save("clientes", clientes);
+      }
+      renderTablaClientes();
+    }
+
+    // Hacer las funciones accesibles desde HTML
+    window.eliminarCliente = eliminarCliente;
+
+    // Evento del botón
+    const btnGuardarCliente = document.getElementById("btnGuardarCliente");
+    if (btnGuardarCliente) {
+      btnGuardarCliente.addEventListener("click", registrarCliente);
+    }
+
+    // Primera carga
+    renderTablaClientes();
   </script>
 </body>
 </html>
