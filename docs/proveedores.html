@@ -34,8 +34,8 @@
     </nav>
 
     <div class="sidebar-footer">
-      <span class="sidebar-footer-title">Empresa demo</span>
-      <span class="sidebar-footer-sub">Versión 1.0</span>
+      <span class="sidebar-footer-title">Mi negocio</span>
+      <span class="sidebar-footer-sub">Gestión de proveedores</span>
     </div>
   </aside>
 
@@ -46,109 +46,161 @@
       <button class="btn-menu-mobile" id="btnMenuMobile">☰</button>
 
       <div class="topbar-left">
-        <h1 class="topbar-title">Proveedores del negocio</h1>
+        <h1 class="topbar-title">Proveedores</h1>
         <p class="topbar-subtitle">
-          Registra a tus proveedores de mercancía, insumos y servicios para vincularlos con las compras.
+          Registra y administra tus proveedores para compras e inventario.
         </p>
       </div>
 
       <div class="topbar-right">
-        <span class="topbar-company">Mi tienda demo</span>
+        <span class="topbar-company">Mi negocio</span>
         <span class="topbar-divider">•</span>
         <span class="topbar-user" id="topbar-user-label">Usuario (Rol)</span>
-        <button class="btn" id="btnLogout" type="button" style="margin-left: 0.75rem;">
-          Cerrar sesión
-        </button>
       </div>
     </header>
 
     <!-- Contenido principal -->
     <main class="main-content">
-      <!-- Formulario alta proveedor -->
+      <!-- KPIs de proveedores -->
+      <section class="cards-grid">
+        <article class="card kpi-card">
+          <h2 class="card-title">Proveedores totales</h2>
+          <p class="card-kpi" id="kpi-prov-total">0</p>
+          <p class="card-kpi-sub">Cantidad de proveedores registrados.</p>
+        </article>
+
+        <article class="card kpi-card">
+          <h2 class="card-title">Mayoristas / importadores</h2>
+          <p class="card-kpi" id="kpi-prov-mayoristas">0</p>
+          <p class="card-kpi-sub">Mayorista, fabricante o importador.</p>
+        </article>
+
+        <article class="card kpi-card">
+          <h2 class="card-title">Locales / minoristas</h2>
+          <p class="card-kpi" id="kpi-prov-locales">0</p>
+          <p class="card-kpi-sub">Proveedores locales o pequeños.</p>
+        </article>
+
+        <article class="card kpi-card">
+          <h2 class="card-title">Último proveedor agregado</h2>
+          <p class="card-kpi" id="kpi-prov-ultimo">-</p>
+          <p class="card-kpi-sub">Nombre del último registro.</p>
+        </article>
+      </section>
+
+      <!-- Formulario de nuevo proveedor -->
       <section class="card">
-        <h2 class="card-title">Registrar nuevo proveedor</h2>
+        <h2 class="card-title">1. Registrar nuevo proveedor</h2>
         <p class="card-description">
-          Guarda tus proveedores principales para poder relacionar las compras, créditos y pagos en el futuro.
+          Guarda los datos básicos para usarlos luego en el módulo de compras y control de pagos.
         </p>
 
         <div class="form-grid">
           <div class="form-field">
-            <label for="prNombre">Nombre comercial / Proveedor</label>
-            <input id="prNombre" class="input" type="text" placeholder="Ej: Bodega San Juan, Importadora XYZ">
+            <label for="pNombre">Nombre comercial / empresa</label>
+            <input id="pNombre" class="input" type="text"
+                   placeholder="Ej: Mayorista Centro, Perfumes GT, Proveedor China">
           </div>
 
           <div class="form-field">
-            <label for="prContacto">Persona de contacto</label>
-            <input id="prContacto" class="input" type="text" placeholder="Ej: Carlos López">
+            <label for="pContacto">Persona de contacto</label>
+            <input id="pContacto" class="input" type="text"
+                   placeholder="Ej: Carlos López">
           </div>
 
           <div class="form-field">
-            <label for="prTelefono">Teléfono</label>
-            <input id="prTelefono" class="input" type="tel" placeholder="Ej: 5555-5555">
+            <label for="pTelefono">Teléfono / WhatsApp</label>
+            <input id="pTelefono" class="input" type="tel"
+                   placeholder="Ej: 5555-5555">
           </div>
 
           <div class="form-field">
-            <label for="prNit">NIT</label>
-            <input id="prNit" class="input" type="text" placeholder="NIT del proveedor">
+            <label for="pEmail">Correo electrónico</label>
+            <input id="pEmail" class="input" type="email"
+                   placeholder="Ej: proveedor@ejemplo.com">
           </div>
 
           <div class="form-field">
-            <label for="prTipo">Tipo de proveedor</label>
-            <select id="prTipo" class="input">
-              <option value="LOCAL">Local (Guatemala)</option>
-              <option value="INTERNACIONAL">Internacional</option>
+            <label for="pNit">NIT / ID</label>
+            <input id="pNit" class="input" type="text"
+                   placeholder="Ej: 1234567-8, extranjero, etc.">
+          </div>
+
+          <div class="form-field">
+            <label for="pTipo">Tipo de proveedor</label>
+            <select id="pTipo" class="input">
+              <option value="mayorista">Mayorista</option>
+              <option value="fabricante">Fabricante</option>
+              <option value="importador">Importador</option>
+              <option value="local">Local / minorista</option>
             </select>
           </div>
 
           <div class="form-field">
-            <label for="prFormaPago">Forma de pago principal</label>
-            <select id="prFormaPago" class="input">
-              <option value="EFECTIVO">Efectivo</option>
-              <option value="TRANSFERENCIA">Transferencia / Depósito</option>
-              <option value="TARJETA">Tarjeta</option>
-              <option value="CREDITO">Crédito</option>
-              <option value="OTRO">Otro</option>
+            <label for="pCondicionesPago">Condiciones de pago</label>
+            <select id="pCondicionesPago" class="input">
+              <option value="contado">Contado</option>
+              <option value="credito_8_dias">Crédito 8 días</option>
+              <option value="credito_15_dias">Crédito 15 días</option>
+              <option value="credito_30_dias">Crédito 30 días</option>
+              <option value="otros">Otros</option>
             </select>
           </div>
 
-          <div class="form-field" style="grid-column: 1 / -1;">
-            <label for="prDireccion">Dirección</label>
-            <input id="prDireccion" class="input" type="text" placeholder="Zona, colonia, referencia, país si aplica">
+          <div class="form-field" id="campoCondicionesDetalle" style="grid-column: 1 / -1; display: none;">
+            <label for="pCondicionesDetalle">Detalle de condiciones (opcional)</label>
+            <input id="pCondicionesDetalle" class="input" type="text"
+                   placeholder="Ej: Paga 50% anticipo, resto contra entrega">
           </div>
 
           <div class="form-field" style="grid-column: 1 / -1;">
-            <label for="prNotas">Notas</label>
-            <input id="prNotas" class="input" type="text" placeholder="Condiciones especiales, horarios, etc.">
+            <label for="pDireccion">Dirección</label>
+            <input id="pDireccion" class="input" type="text"
+                   placeholder="Ej: Bodega en zona 9, local en centro comercial, etc.">
+          </div>
+
+          <div class="form-field" style="grid-column: 1 / -1;">
+            <label for="pNotas">Notas (opcional)</label>
+            <input id="pNotas" class="input" type="text"
+                   placeholder="Ej: Envíos por carga, da descuento por volumen, horarios, etc.">
           </div>
         </div>
 
-        <button class="btn" id="btnGuardarProveedor">Guardar proveedor</button>
+        <button class="btn" id="btnGuardarProveedor" style="margin-top: 0.75rem;">
+          Guardar proveedor
+        </button>
       </section>
 
-      <!-- Tabla de proveedores -->
+      <!-- Buscador y lista de proveedores -->
       <section class="card">
-        <h2 class="card-title">Listado de proveedores</h2>
+        <h2 class="card-title">2. Lista de proveedores</h2>
         <p class="card-description">
-          Aquí verás todos los proveedores registrados. Luego se podrán vincular a las compras y reportes.
+          Busca por nombre, contacto, teléfono, correo o NIT. Los más recientes aparecen primero.
         </p>
+
+        <div class="form-grid" style="margin-bottom: 0.75rem;">
+          <div class="form-field" style="grid-column: 1 / -1;">
+            <label for="buscarProveedor">Buscar proveedor</label>
+            <input id="buscarProveedor" class="input" type="text"
+                   placeholder="Escribe parte del nombre, contacto, teléfono, correo o NIT">
+          </div>
+        </div>
 
         <table class="table">
           <thead>
             <tr>
-              <th>Proveedor</th>
+              <th>Nombre</th>
               <th>Contacto</th>
               <th>Teléfono</th>
-              <th>NIT</th>
               <th>Tipo</th>
-              <th>Forma de pago</th>
-              <th>Dirección</th>
+              <th>Condiciones</th>
               <th>Creado</th>
               <th>Acciones</th>
             </tr>
           </thead>
           <tbody id="tabla-proveedores-body">
             <tr>
-              <td colspan="9" class="table-empty">
+              <td colspan="7" class="table-empty">
                 Aún no hay proveedores registrados.
               </td>
             </tr>
@@ -163,17 +215,16 @@
   <script src="alex-roles.js"></script>
 
   <script>
-    // Menú móvil
+    // ===== Menú móvil =====
     const btnMenuMobile = document.getElementById('btnMenuMobile');
     const sidebar = document.querySelector('.sidebar');
-
     if (btnMenuMobile) {
       btnMenuMobile.addEventListener('click', () => {
         sidebar.classList.toggle('sidebar-open');
       });
     }
 
-    // Usuario y permisos
+    // ===== Usuario y permisos =====
     const usuarioActual = typeof getUsuarioActualObligatorio === "function"
       ? getUsuarioActualObligatorio()
       : null;
@@ -182,160 +233,290 @@
       aplicarPermisosYProteger("proveedores");
     }
 
-    // Pintar nombre y rol en el topbar
     const labelUser = document.getElementById("topbar-user-label");
     if (usuarioActual && labelUser) {
       const rolTexto = usuarioActual.rol === "dueno" ? "Dueño" : "Empleado";
       labelUser.textContent = `${usuarioActual.nombre} (${rolTexto})`;
     }
 
-    // Botón Cerrar sesión
-    const btnLogout = document.getElementById("btnLogout");
-    if (btnLogout) {
-      btnLogout.addEventListener("click", () => {
-        if (!confirm("¿Quieres cerrar sesión?")) return;
-
-        if (typeof save === "function") {
-          save("usuarioActual", null);
-        } else {
-          localStorage.removeItem("usuarioActual");
-        }
-
-        window.location.href = "index.html";
-      });
+    // ===== Helpers =====
+    function formatearFechaLocal(fechaIso) {
+      const d = new Date(fechaIso);
+      if (isNaN(d.getTime())) return "-";
+      return d.toLocaleString("es-GT");
     }
 
-    // ====== LÓGICA DE PROVEEDORES ======
+    function tipoProveedorLegible(tipo) {
+      switch (tipo) {
+        case "mayorista": return "Mayorista";
+        case "fabricante": return "Fabricante";
+        case "importador": return "Importador";
+        case "local": return "Local";
+        default: return tipo || "-";
+      }
+    }
 
+    function condicionesLegibles(cond) {
+      switch (cond) {
+        case "contado": return "Contado";
+        case "credito_8_dias": return "Crédito 8 días";
+        case "credito_15_dias": return "Crédito 15 días";
+        case "credito_30_dias": return "Crédito 30 días";
+        case "otros": return "Otros";
+        default: return cond || "-";
+      }
+    }
+
+    // ===== Datos base: proveedores =====
     let proveedores = [];
     if (typeof load === "function") {
       const pData = load("proveedores", []);
       proveedores = Array.isArray(pData) ? pData : [];
     }
 
-    function renderTablaProveedores() {
-      const tbody = document.getElementById("tabla-proveedores-body");
-      tbody.innerHTML = "";
+    function guardarProveedores() {
+      if (typeof save === "function") {
+        save("proveedores", proveedores);
+      }
+    }
+
+    // ===== KPIs de proveedores =====
+    function recalcularKPIsProveedores() {
+      const total = proveedores.length;
+      const mayoristas = proveedores.filter(p =>
+        p.tipo === "mayorista" || p.tipo === "fabricante" || p.tipo === "importador"
+      ).length;
+      const locales = proveedores.filter(p => p.tipo === "local").length;
+
+      const kpiTotal = document.getElementById("kpi-prov-total");
+      const kpiMayoristas = document.getElementById("kpi-prov-mayoristas");
+      const kpiLocales = document.getElementById("kpi-prov-locales");
+      const kpiUltimo = document.getElementById("kpi-prov-ultimo");
+
+      if (kpiTotal) kpiTotal.textContent = String(total);
+      if (kpiMayoristas) kpiMayoristas.textContent = String(mayoristas);
+      if (kpiLocales) kpiLocales.textContent = String(locales);
+
+      if (kpiUltimo) {
+        if (!proveedores.length) {
+          kpiUltimo.textContent = "-";
+        } else {
+          const ultimo = proveedores[proveedores.length - 1];
+          kpiUltimo.textContent = ultimo.nombre || "-";
+        }
+      }
+    }
+
+    // ===== Renderizar tabla de proveedores =====
+    const tbodyProveedores = document.getElementById("tabla-proveedores-body");
+    const inputBuscarProveedor = document.getElementById("buscarProveedor");
+
+    function renderProveedores() {
+      if (!tbodyProveedores) return;
+
+      const filtro = (inputBuscarProveedor && inputBuscarProveedor.value.trim().toLowerCase()) || "";
+
+      tbodyProveedores.innerHTML = "";
 
       if (!proveedores.length) {
-        tbody.innerHTML = `
+        tbodyProveedores.innerHTML = `
           <tr>
-            <td colspan="9" class="table-empty">Aún no hay proveedores registrados.</td>
+            <td colspan="7" class="table-empty">
+              Aún no hay proveedores registrados.
+            </td>
           </tr>
         `;
+        recalcularKPIsProveedores();
         return;
       }
 
       const ordenados = [...proveedores].sort((a, b) => {
         const fa = new Date(a.creadoEnIso || a.creadoEn || 0).getTime();
         const fb = new Date(b.creadoEnIso || b.creadoEn || 0).getTime();
-        return fb - fa;
+        return fb - fa; // más recientes primero
       });
 
-      ordenados.forEach((pr, index) => {
-        let tipoTexto = "Local";
-        if (pr.tipo === "INTERNACIONAL") tipoTexto = "Internacional";
+      const filtrados = filtro
+        ? ordenados.filter(p => {
+            const texto = [
+              p.nombre || "",
+              p.contacto || "",
+              p.telefono || "",
+              p.email || "",
+              p.nit || ""
+            ].join(" ").toLowerCase();
+            return texto.includes(filtro);
+          })
+        : ordenados;
 
-        let formaPagoTexto = "";
-        switch (pr.formaPagoPrincipal) {
-          case "EFECTIVO": formaPagoTexto = "Efectivo"; break;
-          case "TRANSFERENCIA": formaPagoTexto = "Transferencia / Depósito"; break;
-          case "TARJETA": formaPagoTexto = "Tarjeta"; break;
-          case "CREDITO": formaPagoTexto = "Crédito"; break;
-          case "OTRO": formaPagoTexto = "Otro"; break;
-          default: formaPagoTexto = pr.formaPagoPrincipal || ""; break;
-        }
-
-        const creado = pr.creadoEn || "";
-
-        tbody.innerHTML += `
+      if (!filtrados.length) {
+        tbodyProveedores.innerHTML = `
           <tr>
-            <td>${pr.nombre || ""}</td>
-            <td>${pr.contacto || ""}</td>
-            <td>${pr.telefono || ""}</td>
-            <td>${pr.nit || ""}</td>
-            <td>${tipoTexto}</td>
-            <td>${formaPagoTexto}</td>
-            <td>${pr.direccion || ""}</td>
-            <td>${creado}</td>
+            <td colspan="7" class="table-empty">
+              No se encontraron proveedores con ese texto.
+            </td>
+          </tr>
+        `;
+        recalcularKPIsProveedores();
+        return;
+      }
+
+      filtrados.forEach((p, index) => {
+        const tipo = tipoProveedorLegible(p.tipo);
+        const cond = condicionesLegibles(p.condicionesPago);
+        const detalleCond = p.condicionesDetalle ? (" - " + p.condicionesDetalle) : "";
+        const fechaCreado = p.creadoEn || (p.creadoEnIso ? formatearFechaLocal(p.creadoEnIso) : "-");
+
+        tbodyProveedores.innerHTML += `
+          <tr>
+            <td>${p.nombre || "-"}</td>
+            <td>${p.contacto || "-"}</td>
+            <td>${p.telefono || "-"}</td>
+            <td>${tipo}</td>
+            <td>${cond}${detalleCond}</td>
+            <td>${fechaCreado}</td>
             <td>
-              <button onclick="eliminarProveedor(${index})">🗑️</button>
+              <button class="btn btn-small" data-delete-index="${index}">🗑️</button>
             </td>
           </tr>
         `;
       });
+
+      recalcularKPIsProveedores();
     }
 
-    function registrarProveedor() {
-      const nombre = document.getElementById("prNombre").value.trim();
-      const contacto = document.getElementById("prContacto").value.trim();
-      const telefono = document.getElementById("prTelefono").value.trim();
-      const nit = document.getElementById("prNit").value.trim();
-      const tipo = document.getElementById("prTipo").value;
-      const formaPago = document.getElementById("prFormaPago").value;
-      const direccion = document.getElementById("prDireccion").value.trim();
-      const notas = document.getElementById("prNotas").value.trim();
+    // ===== Mostrar detalle de condiciones según selección =====
+    const selectCondicionesPago = document.getElementById("pCondicionesPago");
+    const campoCondicionesDetalle = document.getElementById("campoCondicionesDetalle");
+    const inpCondicionesDetalle = document.getElementById("pCondicionesDetalle");
+
+    if (selectCondicionesPago && campoCondicionesDetalle) {
+      selectCondicionesPago.addEventListener("change", () => {
+        if (selectCondicionesPago.value === "otros") {
+          campoCondicionesDetalle.style.display = "block";
+        } else {
+          campoCondicionesDetalle.style.display = "none";
+          if (inpCondicionesDetalle) inpCondicionesDetalle.value = "";
+        }
+      });
+    }
+
+    // ===== Guardar nuevo proveedor =====
+    const inpNombre = document.getElementById("pNombre");
+    const inpContacto = document.getElementById("pContacto");
+    const inpTelefono = document.getElementById("pTelefono");
+    const inpEmail = document.getElementById("pEmail");
+    const inpNit = document.getElementById("pNit");
+    const inpTipo = document.getElementById("pTipo");
+    const inpCondicionesPago = document.getElementById("pCondicionesPago");
+    const inpDireccion = document.getElementById("pDireccion");
+    const inpNotas = document.getElementById("pNotas");
+    const btnGuardarProveedor = document.getElementById("btnGuardarProveedor");
+
+    function guardarProveedor() {
+      const nombre = (inpNombre.value || "").trim();
+      const contacto = (inpContacto.value || "").trim();
+      const telefono = (inpTelefono.value || "").trim();
+      const email = (inpEmail.value || "").trim();
+      const nit = (inpNit.value || "").trim();
+      const tipo = inpTipo.value || "mayorista";
+      const condicionesPago = inpCondicionesPago.value || "contado";
+      const condicionesDetalle = (inpCondicionesDetalle && inpCondicionesDetalle.value.trim()) || "";
+      const direccion = (inpDireccion.value || "").trim();
+      const notas = (inpNotas.value || "").trim();
 
       if (!nombre) {
-        alert("El nombre comercial del proveedor es obligatorio.");
+        alert("Escribe el nombre comercial del proveedor.");
         return;
       }
 
+      // Validaciones suaves
+      if (telefono && telefono.length < 6) {
+        if (!confirm("El teléfono parece muy corto, ¿seguro que es correcto?")) {
+          return;
+        }
+      }
+
       const ahora = new Date();
+      const creadoEnIso = ahora.toISOString();
+      const creadoEn = ahora.toLocaleString("es-GT");
+
       const nuevo = {
-        id: Date.now(),
+        id: "proveedor_" + Date.now(),
         nombre,
         contacto,
         telefono,
+        email,
         nit,
-        tipo, // LOCAL o INTERNACIONAL
-        formaPagoPrincipal: formaPago,
+        tipo,
+        condicionesPago,
+        condicionesDetalle,
         direccion,
         notas,
-        creadoEn: ahora.toLocaleString("es-GT"),
-        creadoEnIso: ahora.toISOString(),
-        usuario: usuarioActual ? usuarioActual.usuario : null
+        creadoEn,
+        creadoEnIso,
+        usuarioCreador: usuarioActual ? usuarioActual.usuario : null
       };
 
       proveedores.push(nuevo);
-      if (typeof save === "function") {
-        save("proveedores", proveedores);
-      }
+      guardarProveedores();
 
       // Limpiar formulario
-      document.getElementById("prNombre").value = "";
-      document.getElementById("prContacto").value = "";
-      document.getElementById("prTelefono").value = "";
-      document.getElementById("prNit").value = "";
-      document.getElementById("prTipo").value = "LOCAL";
-      document.getElementById("prFormaPago").value = "EFECTIVO";
-      document.getElementById("prDireccion").value = "";
-      document.getElementById("prNotas").value = "";
+      inpNombre.value = "";
+      inpContacto.value = "";
+      inpTelefono.value = "";
+      inpEmail.value = "";
+      inpNit.value = "";
+      inpTipo.value = "mayorista";
+      inpCondicionesPago.value = "contado";
+      if (campoCondicionesDetalle) campoCondicionesDetalle.style.display = "none";
+      if (inpCondicionesDetalle) inpCondicionesDetalle.value = "";
+      inpDireccion.value = "";
+      inpNotas.value = "";
+      inpNombre.focus();
 
-      renderTablaProveedores();
-      alert("Proveedor registrado correctamente.");
+      renderProveedores();
+      alert("Proveedor guardado correctamente.");
     }
 
-    function eliminarProveedor(index) {
-      if (!confirm("¿Seguro que quieres eliminar este proveedor?")) return;
-      proveedores.splice(index, 1);
-      if (typeof save === "function") {
-        save("proveedores", proveedores);
-      }
-      renderTablaProveedores();
-    }
-
-    // Hacer accesible desde HTML
-    window.eliminarProveedor = eliminarProveedor;
-
-    // Botón guardar
-    const btnGuardarProveedor = document.getElementById("btnGuardarProveedor");
     if (btnGuardarProveedor) {
-      btnGuardarProveedor.addEventListener("click", registrarProveedor);
+      btnGuardarProveedor.addEventListener("click", guardarProveedor);
     }
 
-    // Primera carga
-    renderTablaProveedores();
+    // Enter en NIT → guardar
+    if (inpNit) {
+      inpNit.addEventListener("keydown", (e) => {
+        if (e.key === "Enter") {
+          e.preventDefault();
+          guardarProveedor();
+        }
+      });
+    }
+
+    // Buscar mientras se escribe
+    if (inputBuscarProveedor) {
+      inputBuscarProveedor.addEventListener("input", () => {
+        renderProveedores();
+      });
+    }
+
+    // Eliminar proveedor
+    if (tbodyProveedores) {
+      tbodyProveedores.addEventListener("click", (e) => {
+        const btn = e.target.closest("button[data-delete-index]");
+        if (!btn) return;
+        const idx = parseInt(btn.getAttribute("data-delete-index"));
+        if (isNaN(idx)) return;
+
+        if (!confirm("¿Seguro que quieres eliminar este proveedor?")) return;
+        proveedores.splice(idx, 1);
+        guardarProveedores();
+        renderProveedores();
+      });
+    }
+
+    // ===== Primera carga =====
+    renderProveedores();
   </script>
 </body>
 </html>
