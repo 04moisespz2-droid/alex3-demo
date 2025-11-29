@@ -187,9 +187,27 @@
         </article>
       </section>
 
+      <!-- Exportar libros -->
+      <section class="card">
+        <h2 class="card-title">4. Exportar libros SAT (CSV)</h2>
+        <p class="card-description">
+          Descarga un archivo CSV (compatible con Excel) con todas las ventas y compras del mes seleccionado.
+          Estos archivos se parecen a un libro de ventas / libro de compras básico.
+        </p>
+
+        <div class="form-grid">
+          <button class="btn" id="btnExportVentas">
+            📤 Exportar libro de ventas (CSV)
+          </button>
+          <button class="btn" id="btnExportCompras">
+            📤 Exportar libro de compras (CSV)
+          </button>
+        </div>
+      </section>
+
       <!-- Listado de movimientos usados -->
       <section class="card">
-        <h2 class="card-title">4. Movimientos usados para el cálculo</h2>
+        <h2 class="card-title">5. Movimientos usados para el cálculo</h2>
         <p class="card-description">
           Estas tablas muestran las ventas y compras del mes seleccionado que ALEX toma en cuenta
           para los cálculos de arriba.
@@ -268,7 +286,7 @@
     const labelUser = document.getElementById("topbar-user-label");
     if (usuarioActual && labelUser) {
       const rolTexto = usuarioActual.rol === "dueno" ? "Dueño" : "Empleado";
-      labelUser.textContent = `${usuarioActual.nombre} (${rolTexto})`;
+      labelUser.textContent = \`\${usuarioActual.nombre} (\${rolTexto})\`;
     }
 
     // ===== Helpers =====
@@ -290,6 +308,15 @@
       const d = new Date(fechaIso);
       if (isNaN(d.getTime())) return "-";
       return d.toLocaleString("es-GT");
+    }
+
+    function formatearFechaISOaYYYYMMDD(fechaIso) {
+      const d = new Date(fechaIso);
+      if (isNaN(d.getTime())) return "";
+      const y = d.getFullYear();
+      const m = String(d.getMonth() + 1).padStart(2, "0");
+      const dia = String(d.getDate()).padStart(2, "0");
+      return \`\${y}-\${m}-\${dia}\`;
     }
 
     // ===== Cargar datos =====
@@ -323,36 +350,46 @@
     const tablaVentasBody = document.getElementById("sat-tabla-ventas");
     const tablaComprasBody = document.getElementById("sat-tabla-compras");
 
+    const btnExportVentas = document.getElementById("btnExportVentas");
+    const btnExportCompras = document.getElementById("btnExportCompras");
+
     function obtenerFechaReferencia() {
       if (inputMes && inputMes.value) {
-        // valor tipo "YYYY-MM"
         const [year, month] = inputMes.value.split("-").map(Number);
         if (!isNaN(year) && !isNaN(month)) {
           return new Date(year, month - 1, 1);
         }
       }
-      return new Date(); // mes actual
+      return new Date();
     }
 
-    function recalcularSAT() {
+    function getVentasMesActual() {
       const ref = obtenerFechaReferencia();
-
-      // Filtrar por mes de referencia
-      const ventasMes = ventas.filter(v => {
+      return ventas.filter(v => {
         const f = new Date(v.fechaHora || v.fecha || Date.now());
         return esMismoMesReferencia(f, ref);
       });
+    }
 
-      const comprasMes = compras.filter(c => {
+    function getComprasMesActual() {
+      const ref = obtenerFechaReferencia();
+      return compras.filter(c => {
         const f = new Date(c.fechaHora || c.fecha || Date.now());
         return esMismoMesReferencia(f, ref);
       });
+    }
 
-      // Totales base
+    // ===== Cálculo principal SAT =====
+    function recalcularSAT() {
+      const ref = obtenerFechaReferencia();
+
+      const ventasMes = getVentasMesActual();
+      const comprasMes = getComprasMesActual();
+
       const totalVentas = ventasMes.reduce((acc, v) => acc + (Number(v.total) || 0), 0);
       const totalCompras = comprasMes.reduce((acc, c) => acc + (Number(c.monto) || 0), 0);
 
-      // Pequeño contribuyente (aprox 5% sobre ventas)
+      // Pequeño contribuyente (aprox 5%)
       const tasaPeq = 0.05;
       const impuestoPeq = totalVentas * tasaPeq;
 
@@ -362,7 +399,7 @@
       const ivaCredito = totalCompras * tasaIVA;
       const ivaPorPagar = Math.max(0, ivaDebito - ivaCredito);
 
-      // Actualizar KPIs
+      // KPIs
       if (kpiVentas) kpiVentas.textContent = alex3FormatearMonedaSeguro(totalVentas);
       if (kpiCompras) kpiCompras.textContent = alex3FormatearMonedaSeguro(totalCompras);
       if (kpiPeq) kpiPeq.textContent = alex3FormatearMonedaSeguro(impuestoPeq);
@@ -384,6 +421,7 @@
       renderTablaComprasMes(comprasMes);
     }
 
+    // ===== Tablas de detalle =====
     function renderTablaVentasMes(lista) {
       if (!tablaVentasBody) return;
       tablaVentasBody.innerHTML = "";
@@ -462,6 +500,116 @@
           </tr>
         `;
       });
+    }
+
+    // ===== Exportar CSV =====
+    function descargarCSV(nombreArchivo, encabezados, filas) {
+      let contenido = encabezados.join(",") + "\\n";
+      filas.forEach(fila => {
+        const linea = fila.map(v => {
+          const str = (v ?? "").toString().replace(/"/g, '""');
+          if (str.includes(",") || str.includes("\"") || str.includes("\\n")) {
+            return \`"\${str}"\`;
+          }
+          return str;
+        }).join(",");
+        contenido += linea + "\\n";
+      });
+
+      const blob = new Blob([contenido], { type: "text/csv;charset=utf-8;" });
+      const url = URL.createObjectURL(blob);
+
+      const link = document.createElement("a");
+      link.href = url;
+      link.download = nombreArchivo;
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      URL.revokeObjectURL(url);
+    }
+
+    function exportarLibroVentasCSV() {
+      const ventasMes = getVentasMesActual();
+      if (!ventasMes.length) {
+        alert("No hay ventas en el mes seleccionado para exportar.");
+        return;
+      }
+
+      const ref = obtenerFechaReferencia();
+      const year = ref.getFullYear();
+      const month = String(ref.getMonth() + 1).padStart(2, "0");
+
+      const encabezados = [
+        "Fecha",
+        "Cliente",
+        "Documento",
+        "Total",
+        "FormaPago",
+        "Notas"
+      ];
+
+      const filas = ventasMes.map(v => {
+        const fechaISO = v.fechaHora || "";
+        const fecha = fechaISO ? formatearFechaISOaYYYYMMDD(fechaISO) : (v.fecha || "");
+        const cliente = v.clienteNombre || "Cliente general";
+        const doc = v.documentoTipo
+          ? (v.documentoNumero ? \`\${v.documentoTipo} \${v.documentoNumero}\` : v.documentoTipo)
+          : (v.documentoNumero || "");
+        const total = Number(v.total || 0).toFixed(2);
+        const formaPago = v.formaPago || "";
+        const notas = v.notas || "";
+
+        return [fecha, cliente, doc, total, formaPago, notas];
+      });
+
+      const nombreArchivo = \`libro_ventas_\${year}_\${month}.csv\`;
+      descargarCSV(nombreArchivo, encabezados, filas);
+    }
+
+    function exportarLibroComprasCSV() {
+      const comprasMes = getComprasMesActual();
+      if (!comprasMes.length) {
+        alert("No hay compras en el mes seleccionado para exportar.");
+        return;
+      }
+
+      const ref = obtenerFechaReferencia();
+      const year = ref.getFullYear();
+      const month = String(ref.getMonth() + 1).padStart(2, "0");
+
+      const encabezados = [
+        "Fecha",
+        "Proveedor",
+        "Documento",
+        "Monto",
+        "FormaPago",
+        "Notas"
+      ];
+
+      const filas = comprasMes.map(c => {
+        const fechaISO = c.fechaHora || "";
+        const fecha = fechaISO ? formatearFechaISOaYYYYMMDD(fechaISO) : (c.fecha || "");
+        const proveedor = c.proveedorNombre || "";
+        const doc = c.documentoTipo
+          ? (c.documentoNumero ? \`\${c.documentoTipo} \${c.documentoNumero}\` : c.documentoTipo)
+          : (c.documentoNumero || "");
+        const monto = Number(c.monto || 0).toFixed(2);
+        const formaPago = c.formaPago || "";
+        const notas = c.notas || "";
+
+        return [fecha, proveedor, doc, monto, formaPago, notas];
+      });
+
+      const nombreArchivo = \`libro_compras_\${year}_\${month}.csv\`;
+      descargarCSV(nombreArchivo, encabezados, filas);
+    }
+
+    if (btnExportVentas) {
+      btnExportVentas.addEventListener("click", exportarLibroVentasCSV);
+    }
+
+    if (btnExportCompras) {
+      btnExportCompras.addEventListener("click", exportarLibroComprasCSV);
     }
 
     // Cambiar mes → recalcular
