@@ -17,7 +17,6 @@
       <li id="menu-caja"><a href="caja.html">💰 Caja</a></li>
       <li id="menu-usuarios"><a href="usuarios.html">👤 Usuarios</a></li>
       <li id="menu-reportes"><a href="reportes.html">📊 Reportes</a></li>
-
     </ul>
   </div>
 
@@ -57,14 +56,37 @@
   <script src="alex-storage.js"></script>
   <script src="alex-roles.js"></script>
   <script>
+    // Usuario y permisos
     const usuarioActual = getUsuarioActualObligatorio();
     aplicarPermisosYProteger("inventario");
 
+    // Cargar productos desde almacenamiento
     let productos = load("productos", []);
+    if (!Array.isArray(productos)) {
+      productos = [];
+    }
+
+    // Formateador de moneda seguro
+    function alex3FormatearMonedaSeguro(valor) {
+      if (typeof alex3FormatearMoneda === "function") {
+        return alex3FormatearMoneda(valor);
+      }
+      const num = Number(valor);
+      if (isNaN(num)) return "Q0.00";
+      return "Q" + num.toFixed(2);
+    }
+
+    function limpiarFormulario() {
+      document.getElementById("codigo").value = "";
+      document.getElementById("nombre").value = "";
+      document.getElementById("compra").value = "";
+      document.getElementById("venta").value = "";
+      document.getElementById("stock").value = "";
+    }
 
     function agregarProducto() {
-      const codigo = document.getElementById("codigo").value;
-      const nombre = document.getElementById("nombre").value;
+      const codigo = document.getElementById("codigo").value.trim();
+      const nombre = document.getElementById("nombre").value.trim();
       const compra = parseFloat(document.getElementById("compra").value);
       const venta = parseFloat(document.getElementById("venta").value);
       const stock = parseInt(document.getElementById("stock").value);
@@ -75,12 +97,21 @@
       }
 
       const ganancia = venta - compra;
-      const margen = (ganancia / compra * 100).toFixed(1);
+      const margen = compra > 0 ? ((ganancia / compra) * 100) : 0;
 
-      const nuevo = { codigo, nombre, compra, venta, ganancia, margen, stock };
+      const nuevo = {
+        codigo,
+        nombre,
+        compra,
+        venta,
+        ganancia,
+        margen: Number(margen.toFixed(1)),
+        stock
+      };
+
       productos.push(nuevo);
-
       save("productos", productos);
+      limpiarFormulario();
       renderTabla();
     }
 
@@ -89,18 +120,25 @@
       tbody.innerHTML = "";
 
       productos.forEach((p, index) => {
-        tbody.innerHTML += `
+        const compraFmt = alex3FormatearMonedaSeguro(p.compra);
+        const ventaFmt = alex3FormatearMonedaSeguro(p.venta);
+        const gananciaFmt = alex3FormatearMonedaSeguro(p.ganancia);
+
+        const fila = `
           <tr>
             <td>${p.codigo}</td>
             <td>${p.nombre}</td>
-           <td>${alex3FormatearMoneda(prod.compra)}</td>
-<td>${alex3FormatearMoneda(prod.venta)}</td>
-<td>${alex3FormatearMoneda(prod.gananciaQ)}</td>
+            <td>${compraFmt}</td>
+            <td>${ventaFmt}</td>
+            <td>${gananciaFmt}</td>
             <td>${p.margen}%</td>
             <td>${p.stock}</td>
-            <td><button onclick="eliminarProducto(${index})">🗑️</button></td>
+            <td>
+              <button onclick="eliminarProducto(${index})">🗑️</button>
+            </td>
           </tr>
         `;
+        tbody.innerHTML += fila;
       });
     }
 
@@ -110,12 +148,9 @@
       renderTabla();
     }
 
+    // Primera carga
     renderTabla();
   </script>
 
 </body>
 </html>
-
-
-
-
