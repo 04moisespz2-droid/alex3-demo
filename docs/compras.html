@@ -8,6 +8,7 @@
 </head>
 
 <body class="dashboard-body">
+  <!-- Sidebar -->
   <aside class="sidebar">
     <div class="sidebar-header">
       <span class="logo-badge">A</span>
@@ -38,43 +39,104 @@
     </div>
   </aside>
 
+  <!-- Layout principal -->
   <div class="main-layout">
+    <!-- Topbar -->
     <header class="topbar">
       <button class="btn-menu-mobile" id="btnMenuMobile">☰</button>
 
       <div class="topbar-left">
-        <h1 class="topbar-title">Compras</h1>
-        <p class="topbar-subtitle">Control de compras a proveedores y reposición de stock.</p>
+        <h1 class="topbar-title">Compras y proveedores</h1>
+        <p class="topbar-subtitle">Registra las compras de mercancía y otros insumos del negocio.</p>
       </div>
 
       <div class="topbar-right">
         <span class="topbar-company">Mi tienda demo</span>
         <span class="topbar-divider">•</span>
-        <span class="topbar-user">Brayan (Dueño)</span>
+        <span class="topbar-user" id="topbar-user-label">Usuario (Rol)</span>
+        <button class="btn" id="btnLogout" type="button" style="margin-left: 0.75rem;">
+          Cerrar sesión
+        </button>
       </div>
     </header>
 
+    <!-- Contenido principal -->
     <main class="main-content">
+      <!-- Formulario de compras -->
       <section class="card">
-        <h2 class="card-title">Listado de compras</h2>
+        <h2 class="card-title">Registrar nueva compra</h2>
         <p class="card-description">
-          Aquí verás todas las compras que afecten inventario y gastos una vez se conecte el backend.
+          Usa este módulo para registrar compras de mercancía, insumos y otros gastos directos a proveedores.
+          Si pagas en efectivo desde caja, se creará automáticamente un <strong>EGRESO</strong> en la caja.
+        </p>
+
+        <div class="form-grid">
+          <div class="form-field">
+            <label for="cProveedor">Proveedor</label>
+            <input id="cProveedor" class="input" type="text" placeholder="Ej: Proveedor XYZ, bodega, mercado, etc.">
+          </div>
+
+          <div class="form-field">
+            <label for="cCategoria">Categoría de compra</label>
+            <select id="cCategoria" class="input">
+              <option value="">Selecciona una categoría</option>
+              <option value="Mercancía para venta">Mercancía para venta</option>
+              <option value="Materia prima">Materia prima</option>
+              <option value="Insumos de empaque">Insumos de empaque</option>
+              <option value="Herramientas / Equipo">Herramientas / Equipo</option>
+              <option value="Mantenimiento / Reparaciones">Mantenimiento / Reparaciones</option>
+              <option value="Otros">Otros</option>
+            </select>
+          </div>
+
+          <div class="form-field">
+            <label for="cDescripcion">Descripción</label>
+            <input id="cDescripcion" class="input" type="text" placeholder="Ej: Lote de 20 perfumes, cajas, bolsas, etc.">
+          </div>
+
+          <div class="form-field">
+            <label for="cMonto">Monto total (Q)</label>
+            <input id="cMonto" class="input" type="number" step="0.01" min="0" placeholder="0.00">
+          </div>
+
+          <div class="form-field">
+            <label for="cFormaPago">Forma de pago</label>
+            <select id="cFormaPago" class="input">
+              <option value="EFECTIVO_CAJA">Efectivo en caja</option>
+              <option value="TRANSFERENCIA">Transferencia / Depósito</option>
+              <option value="TARJETA">Tarjeta</option>
+              <option value="CREDITO">Crédito con proveedor</option>
+              <option value="OTRO">Otro</option>
+            </select>
+          </div>
+        </div>
+
+        <button class="btn" id="btnGuardarCompra">Guardar compra</button>
+      </section>
+
+      <!-- Tabla de compras -->
+      <section class="card">
+        <h2 class="card-title">Historial de compras</h2>
+        <p class="card-description">
+          Aquí verás las compras registradas a lo largo del tiempo. En futuras versiones se podrán
+          vincular directamente con el inventario para actualizar el stock.
         </p>
 
         <table class="table">
           <thead>
             <tr>
-              <th>Fecha</th>
-              <th>Documento</th>
+              <th>Fecha / Hora</th>
               <th>Proveedor</th>
-              <th>Estado</th>
-              <th>Total</th>
+              <th>Categoría</th>
+              <th>Descripción</th>
+              <th>Forma de pago</th>
+              <th>Monto</th>
             </tr>
           </thead>
-          <tbody>
+          <tbody id="tabla-compras-body">
             <tr>
-              <td colspan="5" class="table-empty">
-                Aún no hay compras registradas en esta versión demo.
+              <td colspan="6" class="table-empty">
+                Aún no hay compras registradas.
               </td>
             </tr>
           </tbody>
@@ -83,12 +145,200 @@
     </main>
   </div>
 
+  <!-- Scripts base -->
+  <script src="alex-storage.js"></script>
+  <script src="alex-roles.js"></script>
+
   <script>
+    // Menú móvil
     const btnMenuMobile = document.getElementById('btnMenuMobile');
     const sidebar = document.querySelector('.sidebar');
-    btnMenuMobile.addEventListener('click', () => {
-      sidebar.classList.toggle('sidebar-open');
-    });
+
+    if (btnMenuMobile) {
+      btnMenuMobile.addEventListener('click', () => {
+        sidebar.classList.toggle('sidebar-open');
+      });
+    }
+
+    // Usuario y permisos
+    const usuarioActual = typeof getUsuarioActualObligatorio === "function"
+      ? getUsuarioActualObligatorio()
+      : null;
+
+    if (typeof aplicarPermisosYProteger === "function") {
+      aplicarPermisosYProteger("compras");
+    }
+
+    // Pintar nombre y rol en el topbar
+    const labelUser = document.getElementById("topbar-user-label");
+    if (usuarioActual && labelUser) {
+      const rolTexto = usuarioActual.rol === "dueno" ? "Dueño" : "Empleado";
+      labelUser.textContent = `${usuarioActual.nombre} (${rolTexto})`;
+    }
+
+    // Botón Cerrar sesión
+    const btnLogout = document.getElementById("btnLogout");
+    if (btnLogout) {
+      btnLogout.addEventListener("click", () => {
+        if (!confirm("¿Quieres cerrar sesión?")) return;
+
+        if (typeof save === "function") {
+          save("usuarioActual", null);
+        } else {
+          localStorage.removeItem("usuarioActual");
+        }
+
+        window.location.href = "index.html";
+      });
+    }
+
+    // ====== LÓGICA DE COMPRAS ======
+    let compras = [];
+    let cajaMovimientos = [];
+
+    if (typeof load === "function") {
+      const cData = load("compras", []);
+      compras = Array.isArray(cData) ? cData : [];
+
+      const movData = load("caja_movimientos", []);
+      cajaMovimientos = Array.isArray(movData) ? movData : [];
+    }
+
+    function alex3FormatearMonedaSeguro(valor) {
+      if (typeof alex3FormatearMoneda === "function") {
+        return alex3FormatearMoneda(valor);
+      }
+      const num = Number(valor);
+      if (isNaN(num)) return "Q 0.00";
+      return "Q " + num.toFixed(2);
+    }
+
+    function formatearFechaBonita(fechaIso) {
+      const d = new Date(fechaIso);
+      if (isNaN(d.getTime())) return fechaIso || "-";
+      const dia = String(d.getDate()).padStart(2, "0");
+      const mes = String(d.getMonth() + 1).padStart(2, "0");
+      const anio = d.getFullYear();
+      const horas = String(d.getHours()).padStart(2, "0");
+      const mins = String(d.getMinutes()).padStart(2, "0");
+      return `${dia}/${mes}/${anio} ${horas}:${mins}`;
+    }
+
+    function renderTablaCompras() {
+      const tbody = document.getElementById("tabla-compras-body");
+      tbody.innerHTML = "";
+
+      if (!compras.length) {
+        tbody.innerHTML = `
+          <tr>
+            <td colspan="6" class="table-empty">Aún no hay compras registradas.</td>
+          </tr>
+        `;
+        return;
+      }
+
+      const ordenadas = [...compras].sort((a, b) => {
+        const fa = new Date(a.fechaHora || a.fecha || 0).getTime();
+        const fb = new Date(b.fechaHora || b.fecha || 0).getTime();
+        return fb - fa;
+      });
+
+      ordenadas.forEach(c => {
+        const fecha = formatearFechaBonita(c.fechaHora || c.fecha || "");
+        const proveedor = c.proveedor || "";
+        const categoria = c.categoria || "";
+        const descripcion = c.descripcion || "";
+        const formaPagoTexto = (function (fp) {
+          switch (fp) {
+            case "EFECTIVO_CAJA": return "Efectivo en caja";
+            case "TRANSFERENCIA": return "Transferencia / Depósito";
+            case "TARJETA": return "Tarjeta";
+            case "CREDITO": return "Crédito con proveedor";
+            case "OTRO": return "Otro";
+            default: return fp || "";
+          }
+        })(c.formaPago);
+        const monto = alex3FormatearMonedaSeguro(c.monto);
+
+        tbody.innerHTML += `
+          <tr>
+            <td>${fecha}</td>
+            <td>${proveedor}</td>
+            <td>${categoria}</td>
+            <td>${descripcion}</td>
+            <td>${formaPagoTexto}</td>
+            <td>${monto}</td>
+          </tr>
+        `;
+      });
+    }
+
+    function registrarCompra() {
+      const proveedor = document.getElementById("cProveedor").value.trim();
+      const categoria = document.getElementById("cCategoria").value;
+      const descripcion = document.getElementById("cDescripcion").value.trim();
+      const monto = parseFloat(document.getElementById("cMonto").value);
+      const formaPago = document.getElementById("cFormaPago").value;
+
+      if (!proveedor || !categoria || !descripcion || isNaN(monto) || monto <= 0) {
+        alert("Por favor completa proveedor, categoría, descripción y un monto válido.");
+        return;
+      }
+
+      const ahora = new Date().toISOString();
+
+      const nuevaCompra = {
+        id: Date.now(),
+        fechaHora: ahora,
+        proveedor,
+        categoria,
+        descripcion,
+        monto,
+        formaPago,
+        usuario: usuarioActual ? usuarioActual.usuario : null
+      };
+
+      compras.push(nuevaCompra);
+      if (typeof save === "function") {
+        save("compras", compras);
+      }
+
+      // Si pagaste con efectivo de caja, registrar EGRESO en caja_movimientos
+      if (formaPago === "EFECTIVO_CAJA") {
+        const mov = {
+          id: "compra_" + Date.now(),
+          fechaHora: ahora,
+          tipo: "EGRESO",
+          categoria: "Compra - " + categoria,
+          descripcion: "Compra a " + proveedor + " - " + descripcion,
+          monto: monto,
+          origen: "compra",
+          usuario: usuarioActual ? usuarioActual.usuario : null
+        };
+        cajaMovimientos.push(mov);
+        if (typeof save === "function") {
+          save("caja_movimientos", cajaMovimientos);
+        }
+      }
+
+      // Limpiar formulario
+      document.getElementById("cProveedor").value = "";
+      document.getElementById("cCategoria").value = "";
+      document.getElementById("cDescripcion").value = "";
+      document.getElementById("cMonto").value = "";
+      document.getElementById("cFormaPago").value = "EFECTIVO_CAJA";
+
+      renderTablaCompras();
+      alert("Compra registrada correctamente.");
+    }
+
+    const btnGuardarCompra = document.getElementById("btnGuardarCompra");
+    if (btnGuardarCompra) {
+      btnGuardarCompra.addEventListener("click", registrarCompra);
+    }
+
+    // Primera carga
+    renderTablaCompras();
   </script>
 </body>
 </html>
