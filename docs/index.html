@@ -21,20 +21,25 @@
       <h2 class="auth-title">Iniciar sesión</h2>
       <p class="auth-subtitle">Ingresa a tu panel para ver ventas, gastos y caja en tiempo real.</p>
 
-      <form class="auth-form" onsubmit="event.preventDefault(); window.location.href='dashboard.html';">
+      <form class="auth-form" id="login-form">
         <label class="form-label">
           Correo o usuario
-          <input type="email" class="form-input" placeholder="ejemplo@tu-negocio.com" required>
+          <!-- type="text" para permitir usuario normal (no obliga a tener @) -->
+          <input id="login-usuario" type="text" class="form-input" placeholder="ejemplo@tu-negocio.com o usuario" required>
         </label>
 
         <label class="form-label">
           Contraseña
-          <input type="password" class="form-input" placeholder="••••••••" required>
+          <input id="login-password" type="password" class="form-input" placeholder="••••••••" required>
         </label>
 
         <button type="submit" class="btn btn-primary btn-full">
           Ingresar
         </button>
+
+        <p id="login-error" class="auth-error" style="margin-top: 0.75rem; color: #e11d48; font-size: 0.9rem; display: none;">
+          Usuario o contraseña incorrectos.
+        </p>
       </form>
 
       <p class="auth-footer-text">
@@ -42,5 +47,91 @@
       </p>
     </div>
   </div>
+
+  <!-- Scripts base -->
+  <script src="alex-storage.js"></script>
+  <script src="alex-roles.js"></script>
+
+  <script>
+    // Al cargar la página, preparamos todo el login
+    document.addEventListener("DOMContentLoaded", () => {
+      let usuarios = [];
+      if (typeof load === "function") {
+        const data = load("usuarios", []);
+        usuarios = Array.isArray(data) ? data : [];
+      }
+
+      // Si no hay usuarios, creamos uno por defecto (dueño)
+      if (!usuarios.length) {
+        const duenoDemo = {
+          nombre: "Dueño demo",
+          usuario: "admin",
+          rol: "dueno",
+          password: "1234",
+          creadoEn: new Date().toLocaleString("es-GT")
+        };
+        usuarios.push(duenoDemo);
+        if (typeof save === "function") {
+          save("usuarios", usuarios);
+        }
+      }
+
+      const form = document.getElementById("login-form");
+      const inputUsuario = document.getElementById("login-usuario");
+      const inputPassword = document.getElementById("login-password");
+      const errorEl = document.getElementById("login-error");
+
+      if (!form) return;
+
+      form.addEventListener("submit", (e) => {
+        e.preventDefault();
+        if (errorEl) {
+          errorEl.style.display = "none";
+        }
+
+        const userInput = inputUsuario.value.trim();
+        const passInput = inputPassword.value.trim();
+
+        if (!userInput || !passInput) {
+          if (errorEl) {
+            errorEl.textContent = "Ingresa usuario y contraseña.";
+            errorEl.style.display = "block";
+          }
+          return;
+        }
+
+        // Buscar usuario por campo "usuario" (puede ser texto o correo)
+        const encontrado = usuarios.find(u =>
+          (u.usuario && u.usuario.toLowerCase() === userInput.toLowerCase())
+        );
+
+        if (!encontrado || encontrado.password !== passInput) {
+          if (errorEl) {
+            errorEl.textContent = "Usuario o contraseña incorrectos.";
+            errorEl.style.display = "block";
+          }
+          return;
+        }
+
+        // Guardar usuarioActual (sin contraseña por seguridad básica)
+        const usuarioActual = {
+          nombre: encontrado.nombre,
+          usuario: encontrado.usuario,
+          rol: encontrado.rol || "empleado",
+          creadoEn: encontrado.creadoEn || new Date().toISOString()
+        };
+
+        if (typeof save === "function") {
+          save("usuarioActual", usuarioActual);
+        } else {
+          // fallback si por alguna razón no existe save
+          localStorage.setItem("usuarioActual", JSON.stringify(usuarioActual));
+        }
+
+        // Redirigir al dashboard
+        window.location.href = "dashboard.html";
+      });
+    });
+  </script>
 </body>
 </html>
