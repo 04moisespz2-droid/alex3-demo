@@ -8,7 +8,7 @@
 </head>
 
 <body class="dashboard-body">
-  <!-- Sidebar (MISMO DISEÑO, SOLO CAMBIA LA PESTAÑA ACTIVA) -->
+  <!-- Sidebar -->
   <aside class="sidebar">
     <div class="sidebar-header">
       <span class="logo-badge">A</span>
@@ -53,7 +53,10 @@
       <div class="topbar-right">
         <span class="topbar-company">Mi tienda demo</span>
         <span class="topbar-divider">•</span>
-        <span class="topbar-user">Brayan (Dueño)</span>
+        <span class="topbar-user" id="topbar-user-label">Usuario (Rol)</span>
+        <button class="btn" id="btnLogout" type="button" style="margin-left: 0.75rem;">
+          Cerrar sesión
+        </button>
       </div>
     </header>
 
@@ -70,61 +73,77 @@
         <article class="card kpi-card">
           <h2 class="card-title">Ventas del mes</h2>
           <p class="card-kpi" id="kpi-ventas-mes">Q 0.00</p>
-          <p class="card-kpi-sub">Resumen de todas las ventas facturadas.</p>
+          <p class="card-kpi-sub">Resumen de todas las ventas registradas.</p>
         </article>
 
         <article class="card kpi-card">
           <h2 class="card-title">Tickets emitidos</h2>
-          <p class="card-kpi" id="kpi-tickets">0</p>
-          <p class="card-kpi-sub">Cantidad de comprobantes en el sistema.</p>
+          <p class="card-kpi" id="kpi-ventas-tickets">0</p>
+          <p class="card-kpi-sub">Cantidad de ventas registradas.</p>
         </article>
 
         <article class="card kpi-card">
           <h2 class="card-title">Promedio por venta</h2>
-          <p class="card-kpi" id="kpi-promedio">Q 0.00</p>
+          <p class="card-kpi" id="kpi-ventas-promedio">Q 0.00</p>
           <p class="card-kpi-sub">Total vendido / número de ventas.</p>
         </article>
       </section>
 
-      <!-- Registrar venta rápida (versión sencilla) -->
+      <!-- Formulario: registrar venta rápida -->
       <section class="card">
         <h2 class="card-title">Registrar venta rápida</h2>
         <p class="card-description">
-          Esta es una versión sencilla para guardar ventas rápidas. Más adelante se puede conectar
-          con productos del inventario y facturación SAT.
+          Usa este formulario para registrar ventas totales. En una versión futura se conectará con el carrito y el inventario.
         </p>
 
         <div class="form-grid">
           <div class="form-field">
-            <label for="venta-cliente">Cliente (opcional)</label>
-            <input id="venta-cliente" type="text" class="input" placeholder="Cliente final / Consumidor">
+            <label for="vFecha">Fecha y hora</label>
+            <input id="vFecha" class="input" type="datetime-local">
           </div>
 
           <div class="form-field">
-            <label for="venta-forma-pago">Forma de pago</label>
-            <select id="venta-forma-pago" class="input">
-              <option value="Efectivo">Efectivo</option>
-              <option value="Tarjeta">Tarjeta</option>
-              <option value="Transferencia">Transferencia</option>
-              <option value="Depósito">Depósito</option>
-              <option value="Otro">Otro</option>
+            <label for="vCliente">Cliente (opcional)</label>
+            <input id="vCliente" class="input" type="text" placeholder="Ej: Cliente contado, nombre o empresa">
+          </div>
+
+          <div class="form-field">
+            <label for="vDocumento">Documento</label>
+            <select id="vDocumento" class="input">
+              <option value="Ticket interno">Ticket interno</option>
+              <option value="Factura">Factura</option>
+              <option value="Recibo">Recibo</option>
             </select>
           </div>
 
           <div class="form-field">
-            <label for="venta-total">Total (Q)</label>
-            <input id="venta-total" type="number" class="input" placeholder="0.00" step="0.01" min="0">
+            <label for="vFormaPago">Forma de pago</label>
+            <select id="vFormaPago" class="input">
+              <option value="EFECTIVO">Efectivo</option>
+              <option value="TRANSFERENCIA">Transferencia</option>
+              <option value="TARJETA">Tarjeta</option>
+            </select>
+          </div>
+
+          <div class="form-field">
+            <label for="vTotal">Total de la venta (Q)</label>
+            <input id="vTotal" class="input" type="number" step="0.01" min="0" placeholder="Ej: 250.00">
+          </div>
+
+          <div class="form-field" style="grid-column: 1 / -1;">
+            <label for="vNotas">Notas (opcional)</label>
+            <input id="vNotas" class="input" type="text" placeholder="Ej: Envío incluido, promo, etc.">
           </div>
         </div>
 
-        <button class="btn" id="btn-registrar-venta">Guardar venta</button>
+        <button class="btn" id="btnRegistrarVenta">Guardar venta</button>
       </section>
 
       <!-- Tabla de ventas -->
       <section class="card">
         <h2 class="card-title">Últimas ventas registradas</h2>
         <p class="card-description">
-          Aquí aparecen las ventas más recientes registradas en el sistema.
+          Las ventas más recientes aparecen primero.
         </p>
 
         <table class="table">
@@ -140,7 +159,7 @@
           <tbody id="tabla-ventas-body">
             <tr>
               <td colspan="5" class="table-empty">
-                Aún no hay ventas registradas.
+                Aún no hay ventas registradas en esta versión demo.
               </td>
             </tr>
           </tbody>
@@ -157,7 +176,6 @@
     // Menú móvil
     const btnMenuMobile = document.getElementById('btnMenuMobile');
     const sidebar = document.querySelector('.sidebar');
-
     if (btnMenuMobile) {
       btnMenuMobile.addEventListener('click', () => {
         sidebar.classList.toggle('sidebar-open');
@@ -173,117 +191,39 @@
       aplicarPermisosYProteger("ventas");
     }
 
-    // Cargar ventas desde almacenamiento
+    // Mostrar nombre y rol en topbar
+    const labelUser = document.getElementById("topbar-user-label");
+    if (usuarioActual && labelUser) {
+      const rolTexto = usuarioActual.rol === "dueno" ? "Dueño" : "Empleado";
+      labelUser.textContent = `${usuarioActual.nombre} (${rolTexto})`;
+    }
+
+    // Cerrar sesión
+    const btnLogout = document.getElementById("btnLogout");
+    if (btnLogout) {
+      btnLogout.addEventListener("click", () => {
+        if (!confirm("¿Quieres cerrar sesión?")) return;
+
+        if (typeof save === "function") {
+          save("usuarioActual", null);
+        } else {
+          localStorage.removeItem("usuarioActual");
+        }
+
+        window.location.href = "index.html";
+      });
+    }
+
+    // ==== Datos base ====
     let ventas = [];
+    let cajaMovs = [];
+
     if (typeof load === "function") {
-      const data = load("ventas", []);
-      ventas = Array.isArray(data) ? data : [];
-    }
+      const vData = load("ventas", []);
+      ventas = Array.isArray(vData) ? vData : [];
 
-    // Formateador de moneda seguro
-    function alex3FormatearMonedaSeguro(valor) {
-      if (typeof alex3FormatearMoneda === "function") {
-        return alex3FormatearMoneda(valor);
-      }
-      const num = Number(valor);
-      if (isNaN(num)) return "Q0.00";
-      return "Q" + num.toFixed(2);
-    }
-
-    function formatearFechaBonita(fechaIso) {
-      const d = new Date(fechaIso);
-      if (isNaN(d.getTime())) return "-";
-      const dia = String(d.getDate()).padStart(2, "0");
-      const mes = String(d.getMonth() + 1).padStart(2, "0");
-      const anio = d.getFullYear();
-      const horas = String(d.getHours()).padStart(2, "0");
-      const mins = String(d.getMinutes()).padStart(2, "0");
-      return `${dia}/${mes}/${anio} ${horas}:${mins}`;
-    }
-
-    function mismaFecha(d1, d2) {
-      return (
-        d1.getFullYear() === d2.getFullYear() &&
-        d1.getMonth() === d2.getMonth() &&
-        d1.getDate() === d2.getDate()
-      );
-    }
-
-    function mismoMes(d1, d2) {
-      return (
-        d1.getFullYear() === d2.getFullYear() &&
-        d1.getMonth() === d2.getMonth()
-      );
-    }
-
-    function actualizarKPIs() {
-      const hoy = new Date();
-      let totalHoy = 0;
-      let totalMes = 0;
-      let totalGlobal = 0;
-      let conteoVentas = ventas.length;
-
-      ventas.forEach(v => {
-        const fecha = new Date(v.fecha || v.fechaHora || Date.now());
-        const total = Number(v.total) || 0;
-        totalGlobal += total;
-
-        if (mismaFecha(fecha, hoy)) {
-          totalHoy += total;
-        }
-        if (mismoMes(fecha, hoy)) {
-          totalMes += total;
-        }
-      });
-
-      const promedio = conteoVentas > 0 ? (totalGlobal / conteoVentas) : 0;
-
-      document.getElementById("kpi-ventas-hoy").textContent = alex3FormatearMonedaSeguro(totalHoy);
-      document.getElementById("kpi-ventas-mes").textContent = alex3FormatearMonedaSeguro(totalMes);
-      document.getElementById("kpi-tickets").textContent = String(conteoVentas);
-      document.getElementById("kpi-promedio").textContent = alex3FormatearMonedaSeguro(promedio);
-    }
-
-    function renderTablaVentas() {
-      const tbody = document.getElementById("tabla-ventas-body");
-      tbody.innerHTML = "";
-
-      if (!ventas.length) {
-        tbody.innerHTML = `
-          <tr>
-            <td colspan="5" class="table-empty">
-              Aún no hay ventas registradas.
-            </td>
-          </tr>
-        `;
-        return;
-      }
-
-      // Mostrar ventas más recientes primero
-      const ventasOrdenadas = [...ventas].sort((a, b) => {
-        const fa = new Date(a.fecha || a.fechaHora || 0).getTime();
-        const fb = new Date(b.fecha || b.fechaHora || 0).getTime();
-        return fb - fa;
-      });
-
-      ventasOrdenadas.forEach(v => {
-        const fecha = formatearFechaBonita(v.fecha || v.fechaHora || new Date().toISOString());
-        const doc = v.documento || v.serie || v.numero || "TICKET";
-        const cliente = v.cliente || "Consumidor final";
-        const formaPago = v.formaPago || "N/D";
-        const totalFmt = alex3FormatearMonedaSeguro(v.total);
-
-        const fila = `
-          <tr>
-            <td>${fecha}</td>
-            <td>${doc}</td>
-            <td>${cliente}</td>
-            <td>${formaPago}</td>
-            <td>${totalFmt}</td>
-          </tr>
-        `;
-        tbody.innerHTML += fila;
-      });
+      const mData = load("caja_movimientos", []);
+      cajaMovs = Array.isArray(mData) ? mData : [];
     }
 
     function guardarVentas() {
@@ -292,52 +232,201 @@
       }
     }
 
-    function registrarVentaRapida() {
-      const inputCliente = document.getElementById("venta-cliente");
-      const selectFormaPago = document.getElementById("venta-forma-pago");
-      const inputTotal = document.getElementById("venta-total");
+    function guardarCajaMovs() {
+      if (typeof save === "function") {
+        save("caja_movimientos", cajaMovs);
+        // Por compatibilidad con otros módulos:
+        save("movimientosCaja", cajaMovs);
+      }
+    }
 
-      const cliente = inputCliente.value.trim() || "Consumidor final";
-      const formaPago = selectFormaPago.value;
+    // Helpers
+    function alex3FormatearMonedaSeguro(valor) {
+      if (typeof alex3FormatearMoneda === "function") {
+        return alex3FormatearMoneda(valor);
+      }
+      const num = Number(valor);
+      if (isNaN(num)) return "Q 0.00";
+      return "Q " + num.toFixed(2);
+    }
+
+    function esMismoDia(a, b) {
+      return a.getFullYear() === b.getFullYear() &&
+             a.getMonth() === b.getMonth() &&
+             a.getDate() === b.getDate();
+    }
+
+    function esMismoMes(a, b) {
+      return a.getFullYear() === b.getFullYear() &&
+             a.getMonth() === b.getMonth();
+    }
+
+    // ==== KPIs ====
+    function recalcularKPIsVentas() {
+      const hoy = new Date();
+      let totalHoy = 0;
+      let totalMes = 0;
+
+      ventas.forEach(v => {
+        const fecha = new Date(v.fechaHora || v.fecha || Date.now());
+        const total = Number(v.total) || 0;
+
+        if (esMismoDia(fecha, hoy)) {
+          totalHoy += total;
+        }
+        if (esMismoMes(fecha, hoy)) {
+          totalMes += total;
+        }
+      });
+
+      const tickets = ventas.length;
+      const promedio = tickets > 0 ? totalMes / tickets : 0;
+
+      const elHoy = document.getElementById("kpi-ventas-hoy");
+      const elMes = document.getElementById("kpi-ventas-mes");
+      const elTickets = document.getElementById("kpi-ventas-tickets");
+      const elProm = document.getElementById("kpi-ventas-promedio");
+
+      if (elHoy) elHoy.textContent = alex3FormatearMonedaSeguro(totalHoy);
+      if (elMes) elMes.textContent = alex3FormatearMonedaSeguro(totalMes);
+      if (elTickets) elTickets.textContent = String(tickets);
+      if (elProm) elProm.textContent = alex3FormatearMonedaSeguro(promedio);
+    }
+
+    // ==== Tabla de ventas ====
+    function renderTablaVentas() {
+      const tbody = document.getElementById("tabla-ventas-body");
+      tbody.innerHTML = "";
+
+      if (!ventas.length) {
+        tbody.innerHTML = `
+          <tr>
+            <td colspan="5" class="table-empty">Aún no hay ventas registradas en esta versión demo.</td>
+          </tr>
+        `;
+        return;
+      }
+
+      const ordenadas = [...ventas].sort((a, b) => {
+        const fa = new Date(a.fechaHora || a.fecha || 0).getTime();
+        const fb = new Date(b.fechaHora || b.fecha || 0).getTime();
+        return fb - fa;
+      });
+
+      ordenadas.forEach(v => {
+        const fechaTxt = v.fecha || new Date(v.fechaHora || Date.now()).toLocaleString("es-GT");
+        const doc = v.documento || "-";
+        const cliente = v.cliente || "Contado";
+        const forma = v.formaPago || "-";
+        const totalTxt = alex3FormatearMonedaSeguro(v.total);
+
+        tbody.innerHTML += `
+          <tr>
+            <td>${fechaTxt}</td>
+            <td>${doc}</td>
+            <td>${cliente}</td>
+            <td>${forma}</td>
+            <td>${totalTxt}</td>
+          </tr>
+        `;
+      });
+    }
+
+    // ==== Registrar venta ====
+    function registrarVenta() {
+      const inputFecha = document.getElementById("vFecha");
+      const inputCliente = document.getElementById("vCliente");
+      const inputDoc = document.getElementById("vDocumento");
+      const inputForma = document.getElementById("vFormaPago");
+      const inputTotal = document.getElementById("vTotal");
+      const inputNotas = document.getElementById("vNotas");
+
+      const fechaVal = inputFecha.value;
+      const cliente = inputCliente.value.trim();
+      const documento = inputDoc.value;
+      const formaPago = inputForma.value;
       const totalNum = parseFloat(inputTotal.value);
+      const notas = inputNotas.value.trim();
 
       if (isNaN(totalNum) || totalNum <= 0) {
         alert("Ingresa un total válido para la venta.");
         return;
       }
 
-      const ahora = new Date();
-      const correlativo = ventas.length + 1;
-      const documento = "T-" + String(correlativo).padStart(4, "0");
+      if (!formaPago) {
+        alert("Selecciona una forma de pago.");
+        return;
+      }
+
+      let fechaObj;
+      if (fechaVal) {
+        fechaObj = new Date(fechaVal);
+      } else {
+        fechaObj = new Date();
+      }
+
+      if (isNaN(fechaObj.getTime())) {
+        fechaObj = new Date();
+      }
+
+      const fechaLocal = fechaObj.toLocaleString("es-GT");
+      const fechaIso = fechaObj.toISOString();
 
       const nuevaVenta = {
-        fecha: ahora.toISOString(),
-        documento: documento,
-        cliente: cliente,
-        formaPago: formaPago,
-        total: totalNum
+        id: "venta_" + Date.now(),
+        fecha: fechaLocal,
+        fechaHora: fechaIso,
+        cliente: cliente || "Cliente contado",
+        documento,
+        formaPago,
+        total: totalNum,
+        notas,
+        origen: "venta_rapida",
+        usuario: usuarioActual ? usuarioActual.usuario : null
       };
 
       ventas.push(nuevaVenta);
       guardarVentas();
-      renderTablaVentas();
-      actualizarKPIs();
 
+      // Si es EFECTIVO, crear movimiento de caja
+      if (formaPago === "EFECTIVO") {
+        const mov = {
+          id: "caja_venta_" + Date.now(),
+          fechaHora: fechaIso,
+          fecha: fechaLocal,
+          tipo: "INGRESO",
+          categoria: "Ventas en efectivo",
+          descripcion: `Venta rápida (${nuevaVenta.cliente})`,
+          monto: totalNum,
+          origen: "venta",
+          ventaId: nuevaVenta.id,
+          usuario: usuarioActual ? usuarioActual.usuario : null
+        };
+        cajaMovs.push(mov);
+        guardarCajaMovs();
+      }
+
+      // Limpiar formulario
+      inputFecha.value = "";
       inputCliente.value = "";
+      inputDoc.value = "Ticket interno";
+      inputForma.value = "EFECTIVO";
       inputTotal.value = "";
+      inputNotas.value = "";
 
+      renderTablaVentas();
+      recalcularKPIsVentas();
       alert("Venta registrada correctamente.");
     }
 
-    // Eventos
-    const btnRegistrarVenta = document.getElementById("btn-registrar-venta");
+    const btnRegistrarVenta = document.getElementById("btnRegistrarVenta");
     if (btnRegistrarVenta) {
-      btnRegistrarVenta.addEventListener("click", registrarVentaRapida);
+      btnRegistrarVenta.addEventListener("click", registrarVenta);
     }
 
     // Primera carga
     renderTablaVentas();
-    actualizarKPIs();
+    recalcularKPIsVentas();
   </script>
 </body>
 </html>
