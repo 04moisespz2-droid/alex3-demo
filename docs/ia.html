@@ -2,7 +2,7 @@
 <html lang="es">
 <head>
   <meta charset="UTF-8">
-  <title>ALEX 3.0 - IA Empresarial</title>
+  <title>ALEX 3.0 - IA empresarial</title>
   <link rel="stylesheet" href="styles.css">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
 </head>
@@ -34,8 +34,8 @@
     </nav>
 
     <div class="sidebar-footer">
-      <span class="sidebar-footer-title">Empresa demo</span>
-      <span class="sidebar-footer-sub">Versión 1.0</span>
+      <span class="sidebar-footer-title">Mi negocio</span>
+      <span class="sidebar-footer-sub">IA en tiempo casi real</span>
     </div>
   </aside>
 
@@ -46,132 +46,155 @@
       <button class="btn-menu-mobile" id="btnMenuMobile">☰</button>
 
       <div class="topbar-left">
-        <h1 class="topbar-title">IA empresarial de ALEX 3.0</h1>
+        <h1 class="topbar-title">IA empresarial ALEX 3.0</h1>
         <p class="topbar-subtitle">
-          Alertas inteligentes, simulaciones y decisiones automáticas para tu negocio.
+          Alertas inteligentes y sugerencias automáticas basadas en tus datos reales.
         </p>
       </div>
 
       <div class="topbar-right">
-        <span class="topbar-company">Mi tienda demo</span>
+        <span class="topbar-company">Mi negocio</span>
         <span class="topbar-divider">•</span>
         <span class="topbar-user" id="topbar-user-label">Usuario (Rol)</span>
-        <button class="btn" id="btnLogout" type="button" style="margin-left: 0.75rem;">
-          Cerrar sesión
-        </button>
       </div>
     </header>
 
     <!-- Contenido principal -->
     <main class="main-content">
-      <!-- Qué hará la IA -->
-      <section class="cards-grid">
-        <article class="card">
-          <h2 class="card-title">Alertas inteligentes</h2>
-          <p class="card-description">
-            ALEX 3.0 analizará tus datos de forma automática y te avisará cuando algo importante esté pasando.
-          </p>
-          <ul class="alerts-list">
-            <li class="alert-item">🔔 <strong>Stock bajo:</strong> productos que se están quedando sin inventario.</li>
-            <li class="alert-item">🔔 <strong>Días flojos:</strong> ventas muy bajas comparadas con el promedio.</li>
-            <li class="alert-item">🔔 <strong>Fiados peligrosos:</strong> clientes con saldo muy alto o atrasado.</li>
-            <li class="alert-item">🔔 <strong>Caja sospechosa:</strong> diferencias entre sistema y efectivo físico.</li>
-          </ul>
-        </article>
-
-        <article class="card">
-          <h2 class="card-title">Recomendaciones automáticas</h2>
-          <p class="card-description">
-            La IA no solo mostrará números, también te dirá qué hacer con ellos.
-          </p>
-          <ul class="alerts-list">
-            <li class="alert-item">💡 Subir o bajar precios según margen y competencia.</li>
-            <li class="alert-item">💡 Recordatorios para cobrar fiados o pagar a proveedores.</li>
-            <li class="alert-item">💡 Sugerencias de combos y productos que más se venden.</li>
-            <li class="alert-item">💡 Metas de venta diarias y semanales basadas en tu historial.</li>
-          </ul>
-        </article>
-
-        <article class="card">
-          <h2 class="card-title">SAT e impuestos (IA)</h2>
-          <p class="card-description">
-            Con tus datos de ventas, compras y gastos, ALEX podrá explicarte tus impuestos en lenguaje sencillo.
-          </p>
-          <ul class="alerts-list">
-            <li class="alert-item">📌 Estimar cuánto debes pagar cada mes.</li>
-            <li class="alert-item">📌 Explicar por qué subió o bajó tu impuesto.</li>
-            <li class="alert-item">📌 Simular escenarios: “¿qué pasa si vendo el doble?”.</li>
-            <li class="alert-item">📌 Prepararte para el siguiente cambio de régimen.</li>
-          </ul>
-        </article>
-      </section>
-
-      <!-- Simulador rápido (ya funcional en el navegador) -->
+      <!-- Filtros -->
       <section class="card">
-        <h2 class="card-title">Simulador rápido de utilidad diaria</h2>
+        <h2 class="card-title">1. Parámetros de análisis</h2>
         <p class="card-description">
-          Ingresa tus ventas, costos y gastos para que ALEX calcule una utilidad estimada y tu margen de ganancia.
+          La IA analiza tus ventas, gastos, compras, caja e inventario del mes seleccionado.
+          Además compara el <strong>día de hoy</strong> contra el promedio del mes.
         </p>
 
         <div class="form-grid">
           <div class="form-field">
-            <label for="simVentas">Ventas del día (Q)</label>
-            <input id="simVentas" class="input" type="number" step="0.01" min="0" placeholder="Ej: 800.00">
-          </div>
-
-          <div class="form-field">
-            <label for="simCostos">Costo de mercancía (Q)</label>
-            <input id="simCostos" class="input" type="number" step="0.01" min="0" placeholder="Ej: 350.00">
-          </div>
-
-          <div class="form-field">
-            <label for="simGastos">Gastos del día (Q)</label>
-            <input id="simGastos" class="input" type="number" step="0.01" min="0" placeholder="Ej: 120.00 (envíos, luz, etc.)">
+            <label for="iaMes">Mes a analizar</label>
+            <input id="iaMes" class="input" type="month">
           </div>
         </div>
 
-        <button class="btn" id="btnSimular">Calcular utilidad</button>
-
-        <div style="margin-top: 1.5rem;">
-          <h3 class="card-title">Resultado de la simulación</h3>
-          <table class="table">
-            <tbody>
-              <tr>
-                <th>Ventas</th>
-                <td id="simResVentas">Q 0.00</td>
-              </tr>
-              <tr>
-                <th>Costos + gastos</th>
-                <td id="simResCostosGastos">Q 0.00</td>
-              </tr>
-              <tr>
-                <th>Utilidad estimada</th>
-                <td id="simResUtilidad">Q 0.00</td>
-              </tr>
-              <tr>
-                <th>Margen sobre ventas</th>
-                <td id="simResMargen">0.00 %</td>
-              </tr>
-            </tbody>
-          </table>
-          <p class="card-description" id="simComentario">
-            Ingresa los datos y presiona en “Calcular utilidad” para ver una interpretación rápida.
-          </p>
-        </div>
+        <p style="font-size: 0.85rem; margin-top: 0.5rem;">
+          ℹ️ Esto funciona completamente offline, solo con los datos que ya guardas en ALEX 3.0.
+        </p>
       </section>
 
-      <!-- Futuras automatizaciones -->
+      <!-- Semáforo IA -->
+      <section class="cards-grid">
+        <article class="card kpi-card">
+          <h2 class="card-title">Estado general del negocio</h2>
+          <p class="card-kpi" id="ia-kpi-estado">Analizando...</p>
+          <p class="card-kpi-sub" id="ia-kpi-estado-detalle">
+            La IA combina ventas, gastos, caja e inventario para darte un semáforo.
+          </p>
+        </article>
+
+        <article class="card kpi-card">
+          <h2 class="card-title">Ventas de hoy vs promedio</h2>
+          <p class="card-kpi" id="ia-kpi-ventas-hoy">Q 0.00</p>
+          <p class="card-kpi-sub" id="ia-kpi-ventas-detalle">
+            Promedio diario del mes: Q 0.00
+          </p>
+        </article>
+
+        <article class="card kpi-card">
+          <h2 class="card-title">Relación gastos / ventas</h2>
+          <p class="card-kpi gasto" id="ia-kpi-gastos-ventas">0 %</p>
+          <p class="card-kpi-sub" id="ia-kpi-gastos-detalle">
+            La IA revisa si estás gastando demasiado en comparación a lo que vendes.
+          </p>
+        </article>
+
+        <article class="card kpi-card">
+          <h2 class="card-title">Caja neta del mes</h2>
+          <p class="card-kpi" id="ia-kpi-caja-neta">Q 0.00</p>
+          <p class="card-kpi-sub" id="ia-kpi-caja-detalle">
+            Ingresos de caja - egresos de caja en el mes.
+          </p>
+        </article>
+      </section>
+
+      <!-- Alertas automáticas -->
       <section class="card">
-        <h2 class="card-title">Ideas de automatización futura</h2>
+        <h2 class="card-title">2. Alertas rápidas de la IA</h2>
         <p class="card-description">
-          Algunas acciones que ALEX 3.0 podrá hacer por ti de manera automática cuando se conecte a la nube:
+          Estas alertas se generan automáticamente a partir de reglas inteligentes simples
+          (sin servidor, sin internet). Más adelante se pueden volver más avanzadas con modelos de IA.
         </p>
-        <ul class="alerts-list">
-          <li class="alert-item">🤖 Enviar un resumen diario a tu WhatsApp o correo con ventas, gastos y caja.</li>
-          <li class="alert-item">🤖 Recordarte cuándo hacer pedidos a proveedores según el inventario.</li>
-          <li class="alert-item">🤖 Sugerir qué productos promocionar en redes según los más vendidos.</li>
-          <li class="alert-item">🤖 Avisarte si algún empleado registra movimientos raros en caja.</li>
+
+        <ul class="alerts-list" id="ia-alertas-list">
+          <li class="alert-item">
+            La IA está analizando tus datos...
+          </li>
         </ul>
+      </section>
+
+      <!-- Sugerencias de acción -->
+      <section class="card">
+        <h2 class="card-title">3. Sugerencias de acción para hoy</h2>
+        <p class="card-description">
+          Basado en lo que detecta la IA, aquí tienes ideas concretas para mejorar ventas,
+          controlar gastos y cuidar tu caja.
+        </p>
+
+        <ul class="alerts-list" id="ia-sugerencias-list">
+          <li class="alert-item">
+            Aún no hay sugerencias. ALEX generará recomendaciones cuando haya datos suficientes.
+          </li>
+        </ul>
+      </section>
+
+      <!-- Radar del negocio -->
+      <section class="card">
+        <h2 class="card-title">4. Radar del negocio</h2>
+        <p class="card-description">
+          Resumen rápido de puntos fuertes y débiles según ventas, gastos, caja e inventario.
+        </p>
+
+        <table class="table">
+          <thead>
+            <tr>
+              <th>Área</th>
+              <th>Situación</th>
+              <th>Nivel</th>
+            </tr>
+          </thead>
+          <tbody id="ia-radar-body">
+            <tr>
+              <td colspan="3" class="table-empty">
+                La IA está construyendo tu radar...
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </section>
+
+      <!-- Inventario en riesgo -->
+      <section class="card">
+        <h2 class="card-title">5. Productos con alerta de stock</h2>
+        <p class="card-description">
+          La IA marca productos con stock muy bajo para que no te quedes sin mercadería.
+        </p>
+
+        <table class="table">
+          <thead>
+            <tr>
+              <th>Código</th>
+              <th>Producto</th>
+              <th>Stock</th>
+              <th>Margen (%)</th>
+            </tr>
+          </thead>
+          <tbody id="ia-tabla-stock">
+            <tr>
+              <td colspan="4" class="table-empty">
+                No hay productos con alerta de stock por ahora.
+              </td>
+            </tr>
+          </tbody>
+        </table>
       </section>
     </main>
   </div>
@@ -179,19 +202,19 @@
   <!-- Scripts base -->
   <script src="alex-storage.js"></script>
   <script src="alex-roles.js"></script>
+  <script src="alex-conta.js"></script>
 
   <script>
-    // Menú móvil
+    // ===== Menú móvil =====
     const btnMenuMobile = document.getElementById('btnMenuMobile');
     const sidebar = document.querySelector('.sidebar');
-
     if (btnMenuMobile) {
       btnMenuMobile.addEventListener('click', () => {
         sidebar.classList.toggle('sidebar-open');
       });
     }
 
-    // Usuario y permisos
+    // ===== Usuario y permisos =====
     const usuarioActual = typeof getUsuarioActualObligatorio === "function"
       ? getUsuarioActualObligatorio()
       : null;
@@ -200,67 +223,425 @@
       aplicarPermisosYProteger("ia");
     }
 
-    // Mostrar nombre y rol
     const labelUser = document.getElementById("topbar-user-label");
     if (usuarioActual && labelUser) {
       const rolTexto = usuarioActual.rol === "dueno" ? "Dueño" : "Empleado";
-      labelUser.textContent = `${usuarioActual.nombre} (${rolTexto})`;
+      labelUser.textContent = usuarioActual.nombre
+        ? `${usuarioActual.nombre} (${rolTexto})`
+        : `Usuario (${rolTexto})`;
     }
 
-    // Cerrar sesión
-    const btnLogout = document.getElementById("btnLogout");
-    if (btnLogout) {
-      btnLogout.addEventListener("click", () => {
-        if (!confirm("¿Quieres cerrar sesión?")) return;
-
-        if (typeof save === "function") {
-          save("usuarioActual", null);
-        } else {
-          localStorage.removeItem("usuarioActual");
-        }
-
-        window.location.href = "index.html";
-      });
-    }
-
-    // Helper de moneda
-    function alex3FormatearMonedaLocal(valor) {
-      const num = Number(valor);
+    // ===== Helpers =====
+    function iaMoneda(n) {
+      if (typeof alex3FormatearMoneda === "function") {
+        return alex3FormatearMoneda(n);
+      }
+      const num = Number(n);
       if (isNaN(num)) return "Q 0.00";
       return "Q " + num.toFixed(2);
     }
 
-    // Lógica del simulador
-    function calcularSimulacion() {
-      const ventas = parseFloat(document.getElementById("simVentas").value) || 0;
-      const costos = parseFloat(document.getElementById("simCostos").value) || 0;
-      const gastos = parseFloat(document.getElementById("simGastos").value) || 0;
+    function iaLoad(nombre, defecto) {
+      if (typeof load === "function") {
+        const data = load(nombre, defecto);
+        if (Array.isArray(defecto) && !Array.isArray(data)) return defecto;
+        return data;
+      }
+      return defecto;
+    }
 
-      const totalCostosGastos = costos + gastos;
-      const utilidad = ventas - totalCostosGastos;
-      const margen = ventas > 0 ? (utilidad / ventas) * 100 : 0;
+    function iaMismoMes(fecha, ref) {
+      return fecha.getFullYear() === ref.getFullYear() &&
+             fecha.getMonth() === ref.getMonth();
+    }
 
-      document.getElementById("simResVentas").textContent = alex3FormatearMonedaLocal(ventas);
-      document.getElementById("simResCostosGastos").textContent = alex3FormatearMonedaLocal(totalCostosGastos);
-      document.getElementById("simResUtilidad").textContent = alex3FormatearMonedaLocal(utilidad);
-      document.getElementById("simResMargen").textContent = margen.toFixed(2) + " %";
+    const inputMes = document.getElementById("iaMes");
 
-      const comentario = document.getElementById("simComentario");
-      if (utilidad < 0) {
-        comentario.textContent = "⚠️ Estás en pérdida en esta simulación. Revisa precios, costos o gastos.";
-      } else if (margen < 10) {
-        comentario.textContent = "⚠️ Estás ganando muy poco. Tu margen es bajo, podrías ajustar precios o bajar gastos.";
-      } else if (margen >= 10 && margen < 30) {
-        comentario.textContent = "✅ Margen aceptable. Podrías mejorar un poco tus precios o buscar proveedores más baratos.";
+    // KPI elements
+    const elEstado = document.getElementById("ia-kpi-estado");
+    const elEstadoDet = document.getElementById("ia-kpi-estado-detalle");
+    const elVentasHoy = document.getElementById("ia-kpi-ventas-hoy");
+    const elVentasDet = document.getElementById("ia-kpi-ventas-detalle");
+    const elGastosVentas = document.getElementById("ia-kpi-gastos-ventas");
+    const elGastosDet = document.getElementById("ia-kpi-gastos-detalle");
+    const elCajaNeta = document.getElementById("ia-kpi-caja-neta");
+    const elCajaDet = document.getElementById("ia-kpi-caja-detalle");
+
+    const ulAlertas = document.getElementById("ia-alertas-list");
+    const ulSugerencias = document.getElementById("ia-sugerencias-list");
+    const tbodyRadar = document.getElementById("ia-radar-body");
+    const tbodyStock = document.getElementById("ia-tabla-stock");
+
+    function obtenerFechaReferencia() {
+      if (inputMes && inputMes.value) {
+        const [year, month] = inputMes.value.split("-").map(Number);
+        if (!isNaN(year) && !isNaN(month)) {
+          return new Date(year, month - 1, 1);
+        }
+      }
+      return new Date();
+    }
+
+    function analizarIA() {
+      const ref = obtenerFechaReferencia();
+      const hoy = new Date();
+
+      // Datos base
+      const ventas = iaLoad("ventas", []);
+      const compras = iaLoad("compras", []);
+      const gastos = iaLoad("gastos", []);
+      const movCaja1 = iaLoad("caja_movimientos", []);
+      const movCaja2 = iaLoad("movimientosCaja", []);
+      const movimientosCaja =
+        Array.isArray(movCaja1) && movCaja1.length ? movCaja1 : movCaja2;
+
+      const productos = iaLoad("productos", []);
+
+      // Filtrar por mes
+      const ventasMes = ventas.filter(v => {
+        const f = new Date(v.fechaHora || v.fecha || Date.now());
+        return iaMismoMes(f, ref);
+      });
+
+      const comprasMes = compras.filter(c => {
+        const f = new Date(c.fechaHora || c.fecha || Date.now());
+        return iaMismoMes(f, ref);
+      });
+
+      const gastosMes = gastos.filter(g => {
+        const f = new Date(g.fechaHora || g.fecha || Date.now());
+        return iaMismoMes(f, ref);
+      });
+
+      const movCajaMes = movimientosCaja.filter(m => {
+        const f = new Date(m.fechaHora || m.fecha || m.fecha || Date.now());
+        return iaMismoMes(f, ref);
+      });
+
+      // === Cálculos ventas ===
+      let totalVentasMes = 0;
+      let totalVentasHoy = 0;
+      const diasConVentas = new Set();
+
+      ventasMes.forEach(v => {
+        const total = Number(v.total) || 0;
+        const fecha = new Date(v.fechaHora || v.fecha || Date.now());
+        totalVentasMes += total;
+
+        if (fecha.getFullYear() === hoy.getFullYear() &&
+            fecha.getMonth() === hoy.getMonth() &&
+            fecha.getDate() === hoy.getDate()) {
+          totalVentasHoy += total;
+        }
+
+        const claveDia = `${fecha.getFullYear()}-${fecha.getMonth()}-${fecha.getDate()}`;
+        diasConVentas.add(claveDia);
+      });
+
+      const numDiasVentas = diasConVentas.size || 1;
+      const promedioDiario = totalVentasMes / numDiasVentas;
+
+      // === Cálculos gastos ===
+      const totalGastosMes = gastosMes.reduce(
+        (acc, g) => acc + (Number(g.monto) || 0),
+        0
+      );
+
+      // === Caja ===
+      let ingresosCaja = 0;
+      let egresosCaja = 0;
+      movCajaMes.forEach(m => {
+        const monto = Number(m.monto) || 0;
+        if (m.tipo === "INGRESO" || m.tipo === "ingreso") {
+          ingresosCaja += monto;
+        } else if (m.tipo === "EGRESO" || m.tipo === "egreso") {
+          egresosCaja += monto;
+        }
+      });
+      const cajaNetaMes = ingresosCaja - egresosCaja;
+
+      // === Ratios ===
+      const ratioGastosVentas =
+        totalVentasMes > 0 ? (totalGastosMes / totalVentasMes) : 0;
+
+      // === Semáforo negocio ===
+      let score = 0;
+      const alertas = [];
+      const sugerencias = [];
+      const radar = [];
+
+      // Regla 1: Día flojo de ventas
+      if (promedioDiario > 0) {
+        const ratioHoy = totalVentasHoy / promedioDiario;
+        if (ratioHoy < 0.5) {
+          score += 2;
+          alertas.push("📉 Ventas de hoy muy por debajo del promedio del mes.");
+          sugerencias.push(
+            "Lanza una promoción rápida hoy (descuento pequeño o envío gratis) para mover inventario."
+          );
+          radar.push({
+            area: "Ventas diarias",
+            situacion: "Día flojo vs promedio del mes.",
+            nivel: "Alerta",
+          });
+        } else if (ratioHoy < 0.9) {
+          score += 1;
+          radar.push({
+            area: "Ventas diarias",
+            situacion: "Ventas de hoy ligeramente por debajo del promedio.",
+            nivel: "Atención",
+          });
+        } else {
+          radar.push({
+            area: "Ventas diarias",
+            situacion: "Ventas de hoy en línea o por encima del promedio.",
+            nivel: "OK",
+          });
+        }
       } else {
-        comentario.textContent = "🔥 Excelente margen. Tu negocio tiene buena rentabilidad con estos números.";
+        radar.push({
+          area: "Ventas diarias",
+          situacion: "Aún no hay datos de ventas este mes.",
+          nivel: "Sin datos",
+        });
+      }
+
+      // Regla 2: Gastos muy altos vs ventas
+      if (totalVentasMes > 0) {
+        if (ratioGastosVentas > 0.6) {
+          score += 2;
+          alertas.push("💸 Tus gastos son muy altos en relación a tus ventas (>60%).");
+          sugerencias.push(
+            "Revisa tus gastos fijos (renta, servicios, envíos) y recorta los que no generen ventas directas."
+          );
+          radar.push({
+            area: "Gastos",
+            situacion: "Gastos consumen gran parte de las ventas.",
+            nivel: "Alerta",
+          });
+        } else if (ratioGastosVentas > 0.3) {
+          score += 1;
+          radar.push({
+            area: "Gastos",
+            situacion: "Gastos moderados respecto a ventas.",
+            nivel: "Atención",
+          });
+        } else {
+          radar.push({
+            area: "Gastos",
+            situacion: "Gastos controlados en relación a las ventas.",
+            nivel: "OK",
+          });
+        }
+      } else {
+        radar.push({
+          area: "Gastos",
+          situacion: "Sin ventas registradas; no se puede comparar gastos.",
+          nivel: "Sin datos",
+        });
+      }
+
+      // Regla 3: Caja negativa o muy justa
+      if (cajaNetaMes < 0) {
+        score += 2;
+        alertas.push("🚨 Caja neta negativa en el mes (más egresos que ingresos).");
+        sugerencias.push(
+          "Evita nuevas compras grandes al contado hasta equilibrar la caja; prioriza productos que roten rápido."
+        );
+        radar.push({
+          area: "Caja",
+          situacion: "Caja neta negativa.",
+          nivel: "Alerta",
+        });
+      } else if (cajaNetaMes > 0 && cajaNetaMes < totalGastosMes * 0.5) {
+        score += 1;
+        radar.push({
+          area: "Caja",
+          situacion: "Caja positiva pero ajustada.",
+          nivel: "Atención",
+        });
+      } else {
+        radar.push({
+          area: "Caja",
+          situacion: "Caja neta del mes en buen estado.",
+          nivel: "OK",
+        });
+      }
+
+      // Regla 4: Stock bajo
+      const productosStockBajo = (productos || []).filter(p => {
+        const stock = Number(p.stock) || 0;
+        return stock > 0 && stock <= 3;
+      });
+
+      if (productosStockBajo.length > 0) {
+        score += 1;
+        alertas.push("📦 Tienes productos con stock muy bajo (≤ 3 unidades).");
+        sugerencias.push(
+          "Haz un pequeño pedido de reposición para los productos con mayor margen y rotación."
+        );
+        radar.push({
+          area: "Inventario",
+          situacion: "Varios productos con stock bajo.",
+          nivel: "Atención",
+        });
+      } else {
+        radar.push({
+          area: "Inventario",
+          situacion: "No se detectan productos con stock crítico.",
+          nivel: "OK",
+        });
+      }
+
+      // === Estado general dependiendo del score ===
+      let textoEstado = "Sin datos suficientes";
+      let textoDetalleEstado =
+        "Carga ventas, gastos, compras y movimientos de caja para que la IA pueda evaluarte.";
+
+      if (ventasMes.length || gastosMes.length || movCajaMes.length || comprasMes.length) {
+        if (score >= 4) {
+          textoEstado = "⚠️ Alerta roja";
+          textoDetalleEstado =
+            "La IA detecta varios puntos críticos. Revisa ventas, gastos y caja en detalle.";
+        } else if (score >= 2) {
+          textoEstado = "🟡 Atención";
+          textoDetalleEstado =
+            "Hay señales a vigilar. Unos pequeños ajustes pueden mejorar mucho tus números.";
+        } else {
+          textoEstado = "🟢 Estable";
+          textoDetalleEstado =
+            "En general, la salud de tu negocio se ve estable con los datos actuales.";
+        }
+      }
+
+      // === Pintar KPIs ===
+      if (elEstado) elEstado.textContent = textoEstado;
+      if (elEstadoDet) elEstadoDet.textContent = textoDetalleEstado;
+
+      if (elVentasHoy) elVentasHoy.textContent = iaMoneda(totalVentasHoy);
+      if (elVentasDet) {
+        elVentasDet.textContent =
+          "Promedio diario del mes: " + iaMoneda(promedioDiario || 0);
+      }
+
+      if (elGastosVentas) {
+        const pct = (ratioGastosVentas * 100).toFixed(1);
+        elGastosVentas.textContent = pct + " %";
+      }
+      if (elGastosDet) {
+        elGastosDet.textContent =
+          "Gastos del mes: " + iaMoneda(totalGastosMes) +
+          " vs ventas del mes: " + iaMoneda(totalVentasMes);
+      }
+
+      if (elCajaNeta) elCajaNeta.textContent = iaMoneda(cajaNetaMes);
+      if (elCajaDet) {
+        elCajaDet.textContent =
+          "Ingresos caja: " + iaMoneda(ingresosCaja) +
+          " | Egresos caja: " + iaMoneda(egresosCaja);
+      }
+
+      // === Alertas ===
+      if (ulAlertas) {
+        ulAlertas.innerHTML = "";
+        if (!alertas.length) {
+          ulAlertas.innerHTML = `
+            <li class="alert-item">
+              ✅ Por ahora no se detectan alertas críticas. Mantén tus registros al día.
+            </li>
+          `;
+        } else {
+          alertas.forEach(a => {
+            ulAlertas.innerHTML += `<li class="alert-item">${a}</li>`;
+          });
+        }
+      }
+
+      // === Sugerencias ===
+      if (ulSugerencias) {
+        ulSugerencias.innerHTML = "";
+        if (!sugerencias.length) {
+          ulSugerencias.innerHTML = `
+            <li class="alert-item">
+              A medida que registres más ventas, gastos y caja, ALEX te dará sugerencias específicas.
+            </li>
+          `;
+        } else {
+          sugerencias.forEach(s => {
+            ulSugerencias.innerHTML += `<li class="alert-item">${s}</li>`;
+          });
+        }
+      }
+
+      // === Radar ===
+      if (tbodyRadar) {
+        tbodyRadar.innerHTML = "";
+        if (!radar.length) {
+          tbodyRadar.innerHTML = `
+            <tr>
+              <td colspan="3" class="table-empty">
+                Aún no se pudo generar radar. Registra más información.
+              </td>
+            </tr>
+          `;
+        } else {
+          radar.forEach(item => {
+            tbodyRadar.innerHTML += `
+              <tr>
+                <td>${item.area}</td>
+                <td>${item.situacion}</td>
+                <td>${item.nivel}</td>
+              </tr>
+            `;
+          });
+        }
+      }
+
+      // === Tabla de productos con stock bajo ===
+      if (tbodyStock) {
+        tbodyStock.innerHTML = "";
+        if (!productosStockBajo.length) {
+          tbodyStock.innerHTML = `
+            <tr>
+              <td colspan="4" class="table-empty">
+                No hay productos con stock crítico en este momento.
+              </td>
+            </tr>
+          `;
+        } else {
+          productosStockBajo.forEach(p => {
+            const margen = p.margen != null ? p.margen : "";
+            tbodyStock.innerHTML += `
+              <tr>
+                <td>${p.codigo || "-"}</td>
+                <td>${p.nombre || "-"}</td>
+                <td>${p.stock || 0}</td>
+                <td>${margen !== "" ? margen + " %" : "-"}</td>
+              </tr>
+            `;
+          });
+        }
       }
     }
 
-    const btnSimular = document.getElementById("btnSimular");
-    if (btnSimular) {
-      btnSimular.addEventListener("click", calcularSimulacion);
+    // Cambio de mes => recalcular
+    if (inputMes) {
+      inputMes.addEventListener("change", () => {
+        analizarIA();
+      });
     }
+
+    // Inicializar mes actual
+    (function initMesActual() {
+      if (!inputMes) return;
+      const hoy = new Date();
+      const year = hoy.getFullYear();
+      const month = String(hoy.getMonth() + 1).padStart(2, "0");
+      inputMes.value = `${year}-${month}`;
+    })();
+
+    // Primera corrida
+    analizarIA();
   </script>
 </body>
 </html>
