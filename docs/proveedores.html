@@ -8,6 +8,7 @@
 </head>
 
 <body class="dashboard-body">
+  <!-- Sidebar -->
   <aside class="sidebar">
     <div class="sidebar-header">
       <span class="logo-badge">A</span>
@@ -38,27 +39,97 @@
     </div>
   </aside>
 
+  <!-- Layout principal -->
   <div class="main-layout">
+    <!-- Topbar -->
     <header class="topbar">
       <button class="btn-menu-mobile" id="btnMenuMobile">☰</button>
 
       <div class="topbar-left">
-        <h1 class="topbar-title">Proveedores</h1>
-        <p class="topbar-subtitle">Control de quién te vende y cuánto les debes.</p>
+        <h1 class="topbar-title">Proveedores del negocio</h1>
+        <p class="topbar-subtitle">
+          Registra a tus proveedores de mercancía, insumos y servicios para vincularlos con las compras.
+        </p>
       </div>
 
       <div class="topbar-right">
         <span class="topbar-company">Mi tienda demo</span>
         <span class="topbar-divider">•</span>
-        <span class="topbar-user">Brayan (Dueño)</span>
+        <span class="topbar-user" id="topbar-user-label">Usuario (Rol)</span>
+        <button class="btn" id="btnLogout" type="button" style="margin-left: 0.75rem;">
+          Cerrar sesión
+        </button>
       </div>
     </header>
 
+    <!-- Contenido principal -->
     <main class="main-content">
+      <!-- Formulario alta proveedor -->
+      <section class="card">
+        <h2 class="card-title">Registrar nuevo proveedor</h2>
+        <p class="card-description">
+          Guarda tus proveedores principales para poder relacionar las compras, créditos y pagos en el futuro.
+        </p>
+
+        <div class="form-grid">
+          <div class="form-field">
+            <label for="prNombre">Nombre comercial / Proveedor</label>
+            <input id="prNombre" class="input" type="text" placeholder="Ej: Bodega San Juan, Importadora XYZ">
+          </div>
+
+          <div class="form-field">
+            <label for="prContacto">Persona de contacto</label>
+            <input id="prContacto" class="input" type="text" placeholder="Ej: Carlos López">
+          </div>
+
+          <div class="form-field">
+            <label for="prTelefono">Teléfono</label>
+            <input id="prTelefono" class="input" type="tel" placeholder="Ej: 5555-5555">
+          </div>
+
+          <div class="form-field">
+            <label for="prNit">NIT</label>
+            <input id="prNit" class="input" type="text" placeholder="NIT del proveedor">
+          </div>
+
+          <div class="form-field">
+            <label for="prTipo">Tipo de proveedor</label>
+            <select id="prTipo" class="input">
+              <option value="LOCAL">Local (Guatemala)</option>
+              <option value="INTERNACIONAL">Internacional</option>
+            </select>
+          </div>
+
+          <div class="form-field">
+            <label for="prFormaPago">Forma de pago principal</label>
+            <select id="prFormaPago" class="input">
+              <option value="EFECTIVO">Efectivo</option>
+              <option value="TRANSFERENCIA">Transferencia / Depósito</option>
+              <option value="TARJETA">Tarjeta</option>
+              <option value="CREDITO">Crédito</option>
+              <option value="OTRO">Otro</option>
+            </select>
+          </div>
+
+          <div class="form-field" style="grid-column: 1 / -1;">
+            <label for="prDireccion">Dirección</label>
+            <input id="prDireccion" class="input" type="text" placeholder="Zona, colonia, referencia, país si aplica">
+          </div>
+
+          <div class="form-field" style="grid-column: 1 / -1;">
+            <label for="prNotas">Notas</label>
+            <input id="prNotas" class="input" type="text" placeholder="Condiciones especiales, horarios, etc.">
+          </div>
+        </div>
+
+        <button class="btn" id="btnGuardarProveedor">Guardar proveedor</button>
+      </section>
+
+      <!-- Tabla de proveedores -->
       <section class="card">
         <h2 class="card-title">Listado de proveedores</h2>
         <p class="card-description">
-          Aquí verás tus proveedores, condiciones de crédito y montos pendientes.
+          Aquí verás todos los proveedores registrados. Luego se podrán vincular a las compras y reportes.
         </p>
 
         <table class="table">
@@ -67,14 +138,18 @@
               <th>Proveedor</th>
               <th>Contacto</th>
               <th>Teléfono</th>
-              <th>Saldo pendiente</th>
-              <th>Última compra</th>
+              <th>NIT</th>
+              <th>Tipo</th>
+              <th>Forma de pago</th>
+              <th>Dirección</th>
+              <th>Creado</th>
+              <th>Acciones</th>
             </tr>
           </thead>
-          <tbody>
+          <tbody id="tabla-proveedores-body">
             <tr>
-              <td colspan="5" class="table-empty">
-                Aún no hay proveedores registrados en esta versión demo.
+              <td colspan="9" class="table-empty">
+                Aún no hay proveedores registrados.
               </td>
             </tr>
           </tbody>
@@ -83,12 +158,184 @@
     </main>
   </div>
 
+  <!-- Scripts base -->
+  <script src="alex-storage.js"></script>
+  <script src="alex-roles.js"></script>
+
   <script>
+    // Menú móvil
     const btnMenuMobile = document.getElementById('btnMenuMobile');
     const sidebar = document.querySelector('.sidebar');
-    btnMenuMobile.addEventListener('click', () => {
-      sidebar.classList.toggle('sidebar-open');
-    });
+
+    if (btnMenuMobile) {
+      btnMenuMobile.addEventListener('click', () => {
+        sidebar.classList.toggle('sidebar-open');
+      });
+    }
+
+    // Usuario y permisos
+    const usuarioActual = typeof getUsuarioActualObligatorio === "function"
+      ? getUsuarioActualObligatorio()
+      : null;
+
+    if (typeof aplicarPermisosYProteger === "function") {
+      aplicarPermisosYProteger("proveedores");
+    }
+
+    // Pintar nombre y rol en el topbar
+    const labelUser = document.getElementById("topbar-user-label");
+    if (usuarioActual && labelUser) {
+      const rolTexto = usuarioActual.rol === "dueno" ? "Dueño" : "Empleado";
+      labelUser.textContent = `${usuarioActual.nombre} (${rolTexto})`;
+    }
+
+    // Botón Cerrar sesión
+    const btnLogout = document.getElementById("btnLogout");
+    if (btnLogout) {
+      btnLogout.addEventListener("click", () => {
+        if (!confirm("¿Quieres cerrar sesión?")) return;
+
+        if (typeof save === "function") {
+          save("usuarioActual", null);
+        } else {
+          localStorage.removeItem("usuarioActual");
+        }
+
+        window.location.href = "index.html";
+      });
+    }
+
+    // ====== LÓGICA DE PROVEEDORES ======
+
+    let proveedores = [];
+    if (typeof load === "function") {
+      const pData = load("proveedores", []);
+      proveedores = Array.isArray(pData) ? pData : [];
+    }
+
+    function renderTablaProveedores() {
+      const tbody = document.getElementById("tabla-proveedores-body");
+      tbody.innerHTML = "";
+
+      if (!proveedores.length) {
+        tbody.innerHTML = `
+          <tr>
+            <td colspan="9" class="table-empty">Aún no hay proveedores registrados.</td>
+          </tr>
+        `;
+        return;
+      }
+
+      const ordenados = [...proveedores].sort((a, b) => {
+        const fa = new Date(a.creadoEnIso || a.creadoEn || 0).getTime();
+        const fb = new Date(b.creadoEnIso || b.creadoEn || 0).getTime();
+        return fb - fa;
+      });
+
+      ordenados.forEach((pr, index) => {
+        let tipoTexto = "Local";
+        if (pr.tipo === "INTERNACIONAL") tipoTexto = "Internacional";
+
+        let formaPagoTexto = "";
+        switch (pr.formaPagoPrincipal) {
+          case "EFECTIVO": formaPagoTexto = "Efectivo"; break;
+          case "TRANSFERENCIA": formaPagoTexto = "Transferencia / Depósito"; break;
+          case "TARJETA": formaPagoTexto = "Tarjeta"; break;
+          case "CREDITO": formaPagoTexto = "Crédito"; break;
+          case "OTRO": formaPagoTexto = "Otro"; break;
+          default: formaPagoTexto = pr.formaPagoPrincipal || ""; break;
+        }
+
+        const creado = pr.creadoEn || "";
+
+        tbody.innerHTML += `
+          <tr>
+            <td>${pr.nombre || ""}</td>
+            <td>${pr.contacto || ""}</td>
+            <td>${pr.telefono || ""}</td>
+            <td>${pr.nit || ""}</td>
+            <td>${tipoTexto}</td>
+            <td>${formaPagoTexto}</td>
+            <td>${pr.direccion || ""}</td>
+            <td>${creado}</td>
+            <td>
+              <button onclick="eliminarProveedor(${index})">🗑️</button>
+            </td>
+          </tr>
+        `;
+      });
+    }
+
+    function registrarProveedor() {
+      const nombre = document.getElementById("prNombre").value.trim();
+      const contacto = document.getElementById("prContacto").value.trim();
+      const telefono = document.getElementById("prTelefono").value.trim();
+      const nit = document.getElementById("prNit").value.trim();
+      const tipo = document.getElementById("prTipo").value;
+      const formaPago = document.getElementById("prFormaPago").value;
+      const direccion = document.getElementById("prDireccion").value.trim();
+      const notas = document.getElementById("prNotas").value.trim();
+
+      if (!nombre) {
+        alert("El nombre comercial del proveedor es obligatorio.");
+        return;
+      }
+
+      const ahora = new Date();
+      const nuevo = {
+        id: Date.now(),
+        nombre,
+        contacto,
+        telefono,
+        nit,
+        tipo, // LOCAL o INTERNACIONAL
+        formaPagoPrincipal: formaPago,
+        direccion,
+        notas,
+        creadoEn: ahora.toLocaleString("es-GT"),
+        creadoEnIso: ahora.toISOString(),
+        usuario: usuarioActual ? usuarioActual.usuario : null
+      };
+
+      proveedores.push(nuevo);
+      if (typeof save === "function") {
+        save("proveedores", proveedores);
+      }
+
+      // Limpiar formulario
+      document.getElementById("prNombre").value = "";
+      document.getElementById("prContacto").value = "";
+      document.getElementById("prTelefono").value = "";
+      document.getElementById("prNit").value = "";
+      document.getElementById("prTipo").value = "LOCAL";
+      document.getElementById("prFormaPago").value = "EFECTIVO";
+      document.getElementById("prDireccion").value = "";
+      document.getElementById("prNotas").value = "";
+
+      renderTablaProveedores();
+      alert("Proveedor registrado correctamente.");
+    }
+
+    function eliminarProveedor(index) {
+      if (!confirm("¿Seguro que quieres eliminar este proveedor?")) return;
+      proveedores.splice(index, 1);
+      if (typeof save === "function") {
+        save("proveedores", proveedores);
+      }
+      renderTablaProveedores();
+    }
+
+    // Hacer accesible desde HTML
+    window.eliminarProveedor = eliminarProveedor;
+
+    // Botón guardar
+    const btnGuardarProveedor = document.getElementById("btnGuardarProveedor");
+    if (btnGuardarProveedor) {
+      btnGuardarProveedor.addEventListener("click", registrarProveedor);
+    }
+
+    // Primera carga
+    renderTablaProveedores();
   </script>
 </body>
 </html>
