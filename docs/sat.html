@@ -8,6 +8,7 @@
 </head>
 
 <body class="dashboard-body">
+  <!-- Sidebar -->
   <aside class="sidebar">
     <div class="sidebar-header">
       <span class="logo-badge">A</span>
@@ -38,39 +39,152 @@
     </div>
   </aside>
 
+  <!-- Layout -->
   <div class="main-layout">
+    <!-- Topbar -->
     <header class="topbar">
       <button class="btn-menu-mobile" id="btnMenuMobile">☰</button>
 
       <div class="topbar-left">
         <h1 class="topbar-title">SAT Guatemala</h1>
-        <p class="topbar-subtitle">Módulo pensado para facturación e informes tributarios.</p>
+        <p class="topbar-subtitle">Información, regímenes y futuras integraciones DTE.</p>
       </div>
 
       <div class="topbar-right">
         <span class="topbar-company">Mi tienda demo</span>
         <span class="topbar-divider">•</span>
-        <span class="topbar-user">Brayan (Dueño)</span>
+        <span class="topbar-user" id="topbar-user-label">Usuario</span>
+        <button class="btn" id="btnLogout" style="margin-left: 0.75rem;">Cerrar sesión</button>
       </div>
     </header>
 
+    <!-- Contenido principal -->
     <main class="main-content">
+      
+      <!-- Sección regímenes -->
+      <section class="cards-grid">
+        <article class="card">
+          <h2 class="card-title">Pequeño Contribuyente</h2>
+          <p class="card-description">
+            Ideal para negocios con ingresos hasta <strong>Q150,000 al año</strong>.
+          </p>
+          <ul class="alerts-list">
+            <li class="alert-item">➡️ Impuesto del <strong>5%</strong> mensual sobre ventas.</li>
+            <li class="alert-item">➡️ No requiere contabilidad avanzada.</li>
+            <li class="alert-item">➡️ Puede emitir <strong>Factura Electrónica</strong> (FEL).</li>
+            <li class="alert-item">➡️ No maneja crédito fiscal.</li>
+          </ul>
+        </article>
+
+        <article class="card">
+          <h2 class="card-title">Régimen General</h2>
+          <p class="card-description">
+            Para negocios más grandes o con facturación completa.
+          </p>
+          <ul class="alerts-list">
+            <li class="alert-item">➡️ Pago de IVA (12%).</li>
+            <li class="alert-item">➡️ Declaración mensual o trimestral.</li>
+            <li class="alert-item">➡️ Manejo de costos, crédito fiscal y compras.</li>
+            <li class="alert-item">➡️ Requiere contabilidad profesional.</li>
+          </ul>
+        </article>
+
+        <article class="card">
+          <h2 class="card-title">¿Cuál me conviene?</h2>
+          <p class="card-description">
+            ALEX analizará tus ventas y te recomendará automáticamente el mejor régimen.
+          </p>
+          <ul class="alerts-list">
+            <li class="alert-item">📌 Si tus ventas superan Q150,000 → Régimen General.</li>
+            <li class="alert-item">📌 Si quieres emitir facturas con crédito fiscal → General.</li>
+            <li class="alert-item">📌 Para pequeños negocios → Pequeño Contribuyente.</li>
+          </ul>
+        </article>
+      </section>
+
+      <!-- Integración DTE -->
       <section class="card">
-        <h2 class="card-title">Integración con SAT (demo)</h2>
+        <h2 class="card-title">Integración DTE (Próximamente)</h2>
         <p class="card-description">
-          Aquí se mostrarán futuros enlaces para emisión de DTE, libros de compras y ventas,
-          y resúmenes para regímenes pequeño contribuyente y general.
+          En una versión futura, ALEX 3.0 podrá conectarse directamente con SAT para emitir:
+        </p>
+
+        <ul class="alerts-list">
+          <li class="alert-item">📄 Factura electrónica FEL</li>
+          <li class="alert-item">📄 Recibos</li>
+          <li class="alert-item">📄 Notas de crédito</li>
+          <li class="alert-item">📄 Facturas especiales</li>
+        </ul>
+
+        <button class="btn btn-primary" disabled>
+          Conectar con SAT (Próximamente)
+        </button>
+      </section>
+
+      <!-- Explicador IA -->
+      <section class="card">
+        <h2 class="card-title">Explicador de impuestos (IA)</h2>
+        <p class="card-description">
+          En la versión avanzada podrás escribir aquí preguntas como:
+        </p>
+
+        <ul class="alerts-list">
+          <li class="alert-item">❓ ¿Qué impuesto debo pagar este mes?</li>
+          <li class="alert-item">❓ ¿Cuánto debo pagar si vendí Q8,000?</li>
+          <li class="alert-item">❓ ¿Qué beneficios tengo en régimen pequeño contribuyente?</li>
+        </ul>
+
+        <div class="form-grid">
+          <input type="text" class="input" disabled placeholder="Escribe tu pregunta aquí (Próximamente)">
+        </div>
+      </section>
+
+      <!-- Advertencias -->
+      <section class="card">
+        <h2 class="card-title">Advertencias comunes de SAT</h2>
+        <ul class="alerts-list">
+          <li class="alert-item">⚠️ Multas por no declarar a tiempo.</li>
+          <li class="alert-item">⚠️ Cierre temporal del negocio por incumplimiento.</li>
+          <li class="alert-item">⚠️ Bloqueo de NIT.</li>
+          <li class="alert-item">⚠️ Problemas para emitir facturas.</li>
+        </ul>
+        <p class="card-description">
+          ALEX 3.0 te alertará cuando falte poco para tu declaración mensual o trimestral.
         </p>
       </section>
+
     </main>
   </div>
 
+  <!-- Scripts -->
+  <script src="alex-storage.js"></script>
+  <script src="alex-roles.js"></script>
+
   <script>
+    // Menú móvil
     const btnMenuMobile = document.getElementById('btnMenuMobile');
     const sidebar = document.querySelector('.sidebar');
     btnMenuMobile.addEventListener('click', () => {
       sidebar.classList.toggle('sidebar-open');
     });
+
+    // Usuario actual
+    const usuario = getUsuarioActualObligatorio();
+    const labelUser = document.getElementById("topbar-user-label");
+
+    if (usuario && labelUser) {
+      const rolTexto = usuario.rol === "dueno" ? "Dueño" : "Empleado";
+      labelUser.textContent = `${usuario.nombre} (${rolTexto})`;
+    }
+
+    aplicarPermisosYProteger("sat");
+
+    // Cerrar sesión
+    document.getElementById("btnLogout").onclick = () => {
+      if (!confirm("¿Deseas cerrar sesión?")) return;
+      save("usuarioActual", null);
+      window.location.href = "index.html";
+    };
   </script>
 </body>
 </html>
