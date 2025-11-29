@@ -241,7 +241,7 @@
   </div>
 
   <!-- Scripts base -->
-  <script src="alex-storage.js"></script>
+   <script src="alex-storage.js"></script>
   <script src="alex-roles.js"></script>
 
   <script>
@@ -443,14 +443,16 @@
       }
 
       tablaResultados.innerHTML = "";
-      resultados.forEach((p, idx) => {
+      resultados.forEach((p) => {
         const stock = Number(p.stock) || 0;
         const precioVenta = Number(p.venta) || 0;
 
         tablaResultados.innerHTML += `
-          <tr>
+          <tr data-codigo="${p.codigo}">
             <td>${p.codigo}</td>
-            <td>${p.nombre}</td>
+            <td data-add-from-name="${p.codigo}" style="cursor:pointer; text-decoration:underline;">
+              ${p.nombre}
+            </td>
             <td>${alex3FormatearMonedaSeguro(precioVenta)}</td>
             <td>${stock}</td>
             <td>
@@ -473,26 +475,20 @@
       });
     }
 
+    // Botón buscar (sigue funcionando)
     if (btnBuscarProducto) {
       btnBuscarProducto.addEventListener("click", buscarProductos);
     }
 
-    // Buscar también al presionar Enter en el campo de texto
+    // 🔄 Búsqueda automática mientras escribes
     if (inputBuscarTexto) {
-      inputBuscarTexto.addEventListener("keydown", (e) => {
-        if (e.key === "Enter") {
-          e.preventDefault();
-          buscarProductos();
-        }
+      inputBuscarTexto.addEventListener("input", () => {
+        buscarProductos();
       });
     }
 
-    // Agregar producto al carrito
-    tablaResultados.addEventListener("click", (e) => {
-      const btn = e.target.closest("button[data-add-codigo]");
-      if (!btn) return;
-
-      const codigo = btn.getAttribute("data-add-codigo");
+    // Función reutilizable para agregar producto al carrito
+    function agregarProductoAlCarrito(codigo) {
       const producto = productos.find(p => String(p.codigo) === String(codigo));
       if (!producto) {
         alert("Producto no encontrado en inventario.");
@@ -510,7 +506,6 @@
       }
 
       const precioUnit = Number(producto.venta) || 0;
-      const subtotal = cant * precioUnit;
 
       // Si ya existe en el carrito, solo sumar cantidad
       const existente = carrito.find(item => item.codigo === codigo);
@@ -527,11 +522,27 @@
           nombre: producto.nombre,
           precio: precioUnit,
           cantidad: cant,
-          subtotal: subtotal
+          subtotal: cant * precioUnit
         });
       }
 
       renderCarrito();
+    }
+
+    // Clicks en resultados: botón "Agregar" o nombre del producto
+    tablaResultados.addEventListener("click", (e) => {
+      const btn = e.target.closest("button[data-add-codigo]");
+      const nameCell = e.target.closest("[data-add-from-name]");
+
+      let codigo = null;
+      if (btn) {
+        codigo = btn.getAttribute("data-add-codigo");
+      } else if (nameCell) {
+        codigo = nameCell.getAttribute("data-add-from-name");
+      }
+
+      if (!codigo) return;
+      agregarProductoAlCarrito(codigo);
     });
 
     // ===== KPIs de ventas =====
@@ -753,5 +764,7 @@
     recalcularKPIsVentas();
     renderTablaVentas();
   </script>
+
 </body>
 </html>
+
