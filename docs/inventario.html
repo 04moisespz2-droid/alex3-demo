@@ -63,25 +63,25 @@
       <section class="cards-grid">
         <article class="card kpi-card">
           <h2 class="card-title">Productos activos</h2>
-          <p class="card-kpi">0</p>
+          <p class="card-kpi" id="kpi-productos">0</p>
           <p class="card-kpi-sub">Cantidad de productos registrados.</p>
         </article>
 
         <article class="card kpi-card">
           <h2 class="card-title">Stock bajo</h2>
-          <p class="card-kpi">0</p>
+          <p class="card-kpi" id="kpi-stock-bajo">0</p>
           <p class="card-kpi-sub">Productos por debajo del mínimo.</p>
         </article>
 
         <article class="card kpi-card">
           <h2 class="card-title">Servicios activos</h2>
-          <p class="card-kpi">0</p>
+          <p class="card-kpi" id="kpi-servicios">0</p>
           <p class="card-kpi-sub">Servicios que se pueden vender.</p>
         </article>
 
         <article class="card kpi-card">
           <h2 class="card-title">Valor estimado del inventario</h2>
-          <p class="card-kpi">Q 0.00</p>
+          <p class="card-kpi" id="kpi-valor-inventario">Q 0.00</p>
           <p class="card-kpi-sub">Costo total aproximado.</p>
         </article>
       </section>
@@ -90,7 +90,7 @@
       <section class="card">
         <h2 class="card-title">Listado de productos</h2>
         <p class="card-description">
-          Aquí verás tus productos con stock, costo y precio cuando se conecte la base de datos.
+          Aquí verás tus productos con stock, costo y precio. De momento se cargan datos de ejemplo.
         </p>
 
         <table class="table">
@@ -103,12 +103,8 @@
               <th>Precio venta</th>
             </tr>
           </thead>
-          <tbody>
-            <tr>
-              <td colspan="5" class="table-empty">
-                Aún no hay productos registrados en esta versión demo.
-              </td>
-            </tr>
+          <tbody id="tabla-productos">
+            <!-- Aquí llenará inventario.js -->
           </tbody>
         </table>
       </section>
@@ -116,12 +112,15 @@
   </div>
 
   <script>
+    // Menú móvil (mismo script en todas las pantallas)
     const btnMenuMobile = document.getElementById('btnMenuMobile');
     const sidebar = document.querySelector('.sidebar');
-
-    btnMenuMobile.addEventListener('click', () => {
-      sidebar.classList.toggle('sidebar-open');
-    });
+    if (btnMenuMobile && sidebar) {
+      btnMenuMobile.addEventListener('click', () => {
+        sidebar.classList.toggle('sidebar-open');
+      });
+    }
   </script>
+  <script src="inventario.js"></script>
 </body>
 </html>
