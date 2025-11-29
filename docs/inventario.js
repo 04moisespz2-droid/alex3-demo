@@ -99,3 +99,36 @@ document.addEventListener('DOMContentLoaded', () => {
 
   console.log('Inventario demo cargado correctamente.');
 });
+// ==========================
+// ALEX 3.0 - INVENTARIO
+// ==========================
+
+// Productos de ejemplo (demo)
+const productosDemo = [
+  { codigo: "A001", nombre: "Camisa deportiva", categoria: "Ropa", stock: 15, precio: 120 },
+  { codigo: "A002", nombre: "Gorra WAESCAPS", categoria: "Accesorios", stock: 8, precio: 85 },
+  { codigo: "A003", nombre: "Perfume 212 Men", categoria: "Perfumes", stock: 5, precio: 140 },
+  { codigo: "A004", nombre: "Lámpara LED RGB", categoria: "Hogar", stock: 12, precio: 95 }
+];
+
+// Cargar tabla
+function cargarTabla() {
+  const tbody = document.querySelector("tbody");
+  tbody.innerHTML = "";
+
+  productosDemo.forEach(p => {
+    const fila = `
+      <tr>
+        <td>${p.codigo}</td>
+        <td>${p.nombre}</td>
+        <td>${p.categoria}</td>
+        <td>${p.stock}</td>
+        <td>Q ${p.precio}</td>
+      </tr>
+    `;
+    tbody.innerHTML += fila;
+  });
+}
+
+// Ejecutar al cargar
+cargarTabla();
