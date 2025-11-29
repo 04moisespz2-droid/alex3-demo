@@ -8,6 +8,7 @@
 </head>
 
 <body class="dashboard-body">
+  <!-- Sidebar -->
   <aside class="sidebar">
     <div class="sidebar-header">
       <span class="logo-badge">A</span>
@@ -38,39 +39,289 @@
     </div>
   </aside>
 
+  <!-- Layout principal -->
   <div class="main-layout">
+    <!-- Topbar -->
     <header class="topbar">
       <button class="btn-menu-mobile" id="btnMenuMobile">☰</button>
 
       <div class="topbar-left">
-        <h1 class="topbar-title">Configuración</h1>
-        <p class="topbar-subtitle">Datos del negocio, usuarios y preferencias del sistema.</p>
+        <h1 class="topbar-title">Configuración del negocio</h1>
+        <p class="topbar-subtitle">
+          Ajusta datos generales, régimen SAT y parámetros básicos de ALEX 3.0.
+        </p>
       </div>
 
       <div class="topbar-right">
-        <span class="topbar-company">Mi tienda demo</span>
+        <span class="topbar-company" id="topbar-company">Mi tienda demo</span>
         <span class="topbar-divider">•</span>
-        <span class="topbar-user">Brayan (Dueño)</span>
+        <span class="topbar-user" id="topbar-user-label">Usuario (Rol)</span>
+        <button class="btn" id="btnLogout" type="button" style="margin-left: 0.75rem;">
+          Cerrar sesión
+        </button>
       </div>
     </header>
 
+    <!-- Contenido principal -->
     <main class="main-content">
+      <!-- Datos generales -->
       <section class="card">
-        <h2 class="card-title">Opciones de configuración (demo)</h2>
+        <h2 class="card-title">Datos generales de la empresa</h2>
         <p class="card-description">
-          Aquí podrás ajustar información del negocio, moneda, impuestos, usuarios y más
-          cuando se integre la configuración completa.
+          Estos datos se utilizarán para personalizar el sistema y, en el futuro, para emitir facturas electrónicas.
+        </p>
+
+        <div class="form-grid">
+          <div class="form-field">
+            <label for="cfgNombreEmpresa">Nombre de la empresa</label>
+            <input id="cfgNombreEmpresa" class="input" type="text"
+                   placeholder="Ej: Tienda ALEX, Importadora Brayan">
+          </div>
+
+          <div class="form-field">
+            <label for="cfgNombreCorto">Nombre corto (para el panel)</label>
+            <input id="cfgNombreCorto" class="input" type="text"
+                   placeholder="Ej: Mi tienda demo">
+          </div>
+
+          <div class="form-field">
+            <label for="cfgNit">NIT</label>
+            <input id="cfgNit" class="input" type="text" placeholder="Ej: 1234567-8">
+          </div>
+
+          <div class="form-field">
+            <label for="cfgRegimenSat">Régimen SAT</label>
+            <select id="cfgRegimenSat" class="input">
+              <option value="PEQUENIO">Pequeño contribuyente</option>
+              <option value="GENERAL">Régimen general</option>
+            </select>
+          </div>
+        </div>
+      </section>
+
+      <!-- Parámetros financieros -->
+      <section class="card">
+        <h2 class="card-title">Parámetros financieros básicos</h2>
+        <p class="card-description">
+          Estos valores se usan en módulos como Caja, Dashboard y Contabilidad.
+        </p>
+
+        <div class="form-grid">
+          <div class="form-field">
+            <label for="cfgSaldoInicialCaja">Saldo inicial en caja (Q)</label>
+            <input id="cfgSaldoInicialCaja" class="input" type="number" step="0.01" min="0"
+                   placeholder="Ej: 500.00">
+          </div>
+
+          <div class="form-field">
+            <label for="cfgObjetivoDiarioVentas">Objetivo diario de ventas (Q)</label>
+            <input id="cfgObjetivoDiarioVentas" class="input" type="number" step="0.01" min="0"
+                   placeholder="Ej: 1000.00">
+          </div>
+        </div>
+
+        <button class="btn" id="btnGuardarConfig">Guardar configuración</button>
+      </section>
+
+      <!-- Vista rápida -->
+      <section class="card">
+        <h2 class="card-title">Resumen de configuración actual</h2>
+        <table class="table">
+          <tbody>
+            <tr>
+              <th>Empresa</th>
+              <td id="resEmpresa">-</td>
+            </tr>
+            <tr>
+              <th>NIT</th>
+              <td id="resNit">-</td>
+            </tr>
+            <tr>
+              <th>Régimen SAT</th>
+              <td id="resRegimen">-</td>
+            </tr>
+            <tr>
+              <th>Saldo inicial en caja</th>
+              <td id="resSaldoInicial">Q 0.00</td>
+            </tr>
+            <tr>
+              <th>Objetivo diario de ventas</th>
+              <td id="resObjetivo">Q 0.00</td>
+            </tr>
+          </tbody>
+        </table>
+        <p class="card-description">
+          El saldo inicial en caja se utiliza en el módulo de Caja. El objetivo diario de ventas
+          puede usarse en el Dashboard para medir tu progreso.
         </p>
       </section>
     </main>
   </div>
 
+  <!-- Scripts base -->
+  <script src="alex-storage.js"></script>
+  <script src="alex-roles.js"></script>
+
   <script>
+    // Menú móvil
     const btnMenuMobile = document.getElementById('btnMenuMobile');
     const sidebar = document.querySelector('.sidebar');
-    btnMenuMobile.addEventListener('click', () => {
-      sidebar.classList.toggle('sidebar-open');
-    });
+
+    if (btnMenuMobile) {
+      btnMenuMobile.addEventListener('click', () => {
+        sidebar.classList.toggle('sidebar-open');
+      });
+    }
+
+    // Usuario actual y permisos
+    const usuarioActual = typeof getUsuarioActualObligatorio === "function"
+      ? getUsuarioActualObligatorio()
+      : null;
+
+    if (typeof aplicarPermisosYProteger === "function") {
+      aplicarPermisosYProteger("configuracion");
+    }
+
+    const labelUser = document.getElementById("topbar-user-label");
+    const labelCompany = document.getElementById("topbar-company");
+
+    if (usuarioActual && labelUser) {
+      const rolTexto = usuarioActual.rol === "dueno" ? "Dueño" : "Empleado";
+      labelUser.textContent = `${usuarioActual.nombre} (${rolTexto})`;
+    }
+
+    // Cerrar sesión
+    const btnLogout = document.getElementById("btnLogout");
+    if (btnLogout) {
+      btnLogout.addEventListener("click", () => {
+        if (!confirm("¿Quieres cerrar sesión?")) return;
+
+        if (typeof save === "function") {
+          save("usuarioActual", null);
+        } else {
+          localStorage.removeItem("usuarioActual");
+        }
+
+        window.location.href = "index.html";
+      });
+    }
+
+    // Helper de moneda local
+    function alex3FormatearMonedaLocal(valor) {
+      const num = Number(valor);
+      if (isNaN(num)) return "Q 0.00";
+      return "Q " + num.toFixed(2);
+    }
+
+    // Cargar configuración existente
+    let configEmpresa = {};
+    if (typeof load === "function") {
+      const cData = load("configEmpresa", null);
+      if (cData && typeof cData === "object") {
+        configEmpresa = cData;
+      }
+
+      const saldoIniGuardado = load("saldoInicial", null);
+      if (saldoIniGuardado !== null && saldoIniGuardado !== undefined) {
+        configEmpresa.saldoInicialCaja = Number(saldoIniGuardado) || 0;
+      }
+
+      const objetivoGuardado = load("objetivoDiarioVentas", null);
+      if (objetivoGuardado !== null && objetivoGuardado !== undefined) {
+        configEmpresa.objetivoDiarioVentas = Number(objetivoGuardado) || 0;
+      }
+    }
+
+    // Referencias a inputs
+    const inpNombre = document.getElementById("cfgNombreEmpresa");
+    const inpNombreCorto = document.getElementById("cfgNombreCorto");
+    const inpNit = document.getElementById("cfgNit");
+    const inpRegimen = document.getElementById("cfgRegimenSat");
+    const inpSaldoInicial = document.getElementById("cfgSaldoInicialCaja");
+    const inpObjetivo = document.getElementById("cfgObjetivoDiarioVentas");
+
+    // Referencias a resumen
+    const resEmpresa = document.getElementById("resEmpresa");
+    const resNit = document.getElementById("resNit");
+    const resRegimen = document.getElementById("resRegimen");
+    const resSaldoInicial = document.getElementById("resSaldoInicial");
+    const resObjetivo = document.getElementById("resObjetivo");
+
+    function regimenLegible(codigo) {
+      if (codigo === "GENERAL") return "Régimen general";
+      return "Pequeño contribuyente";
+    }
+
+    // Pintar configuración actual en formulario y resumen
+    function cargarConfigEnUI() {
+      if (!configEmpresa) configEmpresa = {};
+
+      inpNombre.value = configEmpresa.nombre || "";
+      inpNombreCorto.value = configEmpresa.nombreCorto || "";
+      inpNit.value = configEmpresa.nit || "";
+      inpRegimen.value = configEmpresa.regimenSat || "PEQUENIO";
+
+      const saldoInicial = configEmpresa.saldoInicialCaja || 0;
+      const objetivo = configEmpresa.objetivoDiarioVentas || 0;
+
+      inpSaldoInicial.value = saldoInicial ? saldoInicial : "";
+      inpObjetivo.value = objetivo ? objetivo : "";
+
+      // Topbar empresa
+      if (labelCompany) {
+        if (configEmpresa.nombreCorto) {
+          labelCompany.textContent = configEmpresa.nombreCorto;
+        } else if (configEmpresa.nombre) {
+          labelCompany.textContent = configEmpresa.nombre;
+        } else {
+          labelCompany.textContent = "Mi tienda demo";
+        }
+      }
+
+      // Resumen
+      resEmpresa.textContent = configEmpresa.nombre || "Sin definir";
+      resNit.textContent = configEmpresa.nit || "Sin definir";
+      resRegimen.textContent = regimenLegible(configEmpresa.regimenSat);
+      resSaldoInicial.textContent = alex3FormatearMonedaLocal(saldoInicial);
+      resObjetivo.textContent = alex3FormatearMonedaLocal(objetivo);
+    }
+
+    // Guardar configuración
+    function guardarConfiguracion() {
+      const nombre = inpNombre.value.trim();
+      const nombreCorto = inpNombreCorto.value.trim();
+      const nit = inpNit.value.trim();
+      const regimenSat = inpRegimen.value;
+      const saldoInicialCaja = parseFloat(inpSaldoInicial.value) || 0;
+      const objetivoDiarioVentas = parseFloat(inpObjetivo.value) || 0;
+
+      configEmpresa = {
+        nombre,
+        nombreCorto,
+        nit,
+        regimenSat,
+        saldoInicialCaja,
+        objetivoDiarioVentas
+      };
+
+      if (typeof save === "function") {
+        save("configEmpresa", configEmpresa);
+        // Para módulos que ya usan directamente estas claves:
+        save("saldoInicial", saldoInicialCaja);
+        save("objetivoDiarioVentas", objetivoDiarioVentas);
+      }
+
+      cargarConfigEnUI();
+      alert("Configuración guardada correctamente.");
+    }
+
+    const btnGuardarConfig = document.getElementById("btnGuardarConfig");
+    if (btnGuardarConfig) {
+      btnGuardarConfig.addEventListener("click", guardarConfiguracion);
+    }
+
+    // Primera carga de UI
+    cargarConfigEnUI();
   </script>
 </body>
 </html>
