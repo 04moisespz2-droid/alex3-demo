@@ -18,22 +18,20 @@
       </div>
     </div>
 
-   <nav class="sidebar-nav">
-  <a href="dashboard.html" class="sidebar-link active">📊 Dashboard</a>
-  <a href="ventas.html" class="sidebar-link">💵 Ventas</a>
-  <a href="inventario.html" class="sidebar-link">📦 Inventario</a>
-  <a href="caja.html" class="sidebar-link">💰 Caja</a>
-  <a href="compras.html" class="sidebar-link">🧾 Compras</a>
-  <a href="gastos.html" class="sidebar-link">📉 Gastos</a>
-  <a href="clientes.html" class="sidebar-link">👥 Clientes</a>
-  <a href="proveedores.html" class="sidebar-link">🚚 Proveedores</a>
-  <a href="contabilidad.html" class="sidebar-link">📚 Contabilidad</a>
-  <a href="sat.html" class="sidebar-link">🇬🇹 SAT Guatemala</a>
-  <a href="ia.html" class="sidebar-link">🤖 IA empresarial</a>
-  <a href="configuracion.html" class="sidebar-link">⚙️ Configuración</a>
-</nav>
-
-
+    <nav class="sidebar-nav">
+      <a href="dashboard.html" class="sidebar-link active">📊 Dashboard</a>
+      <a href="ventas.html" class="sidebar-link">💵 Ventas</a>
+      <a href="inventario.html" class="sidebar-link">📦 Inventario</a>
+      <a href="caja.html" class="sidebar-link">💰 Caja</a>
+      <a href="compras.html" class="sidebar-link">🧾 Compras</a>
+      <a href="gastos.html" class="sidebar-link">📉 Gastos</a>
+      <a href="clientes.html" class="sidebar-link">👥 Clientes</a>
+      <a href="proveedores.html" class="sidebar-link">🚚 Proveedores</a>
+      <a href="contabilidad.html" class="sidebar-link">📚 Contabilidad</a>
+      <a href="sat.html" class="sidebar-link">🇬🇹 SAT Guatemala</a>
+      <a href="ia.html" class="sidebar-link">🤖 IA empresarial</a>
+      <a href="configuracion.html" class="sidebar-link">⚙️ Configuración</a>
+    </nav>
 
     <div class="sidebar-footer">
       <span class="sidebar-footer-title">Empresa demo</span>
@@ -65,25 +63,25 @@
       <section class="cards-grid">
         <article class="card kpi-card">
           <h2 class="card-title">Ventas de hoy</h2>
-          <p class="card-kpi">Q 0.00</p>
+          <p class="card-kpi" id="kpi-dashboard-ventas-hoy">Q 0.00</p>
           <p class="card-kpi-sub">Objetivo diario: Q 1,000</p>
         </article>
 
         <article class="card kpi-card">
           <h2 class="card-title">Gastos de hoy</h2>
-          <p class="card-kpi gasto">Q 0.00</p>
+          <p class="card-kpi gasto" id="kpi-dashboard-gastos-hoy">Q 0.00</p>
           <p class="card-kpi-sub">Incluye compras y egresos de caja</p>
         </article>
 
         <article class="card kpi-card">
           <h2 class="card-title">Utilidad estimada</h2>
-          <p class="card-kpi utilidad">Q 0.00</p>
-          <p class="card-kpi-sub">Ventas - costo estimado - gastos</p>
+          <p class="card-kpi utilidad" id="kpi-dashboard-utilidad">Q 0.00</p>
+          <p class="card-kpi-sub">Ventas - gastos (estimado rápido)</p>
         </article>
 
         <article class="card kpi-card">
           <h2 class="card-title">Caja actual</h2>
-          <p class="card-kpi caja">Q 0.00</p>
+          <p class="card-kpi caja" id="kpi-dashboard-caja">Q 0.00</p>
           <p class="card-kpi-sub">Control por billetes y movimientos</p>
         </article>
       </section>
@@ -134,16 +132,130 @@
     </main>
   </div>
 
+  <!-- Scripts base -->
+  <script src="alex-storage.js"></script>
+  <script src="alex-roles.js"></script>
+
   <script>
     // Menú móvil: solo muestra/oculta el sidebar en pantallas pequeñas
     const btnMenuMobile = document.getElementById('btnMenuMobile');
     const sidebar = document.querySelector('.sidebar');
 
-    btnMenuMobile.addEventListener('click', () => {
-      sidebar.classList.toggle('sidebar-open');
-    });
+    if (btnMenuMobile) {
+      btnMenuMobile.addEventListener('click', () => {
+        sidebar.classList.toggle('sidebar-open');
+      });
+    }
+
+    // Usuario y permisos
+    const usuarioActual = typeof getUsuarioActualObligatorio === "function"
+      ? getUsuarioActualObligatorio()
+      : null;
+
+    if (typeof aplicarPermisosYProteger === "function") {
+      aplicarPermisosYProteger("dashboard");
+    }
+
+    // Cargar datos desde almacenamiento
+    let ventas = [];
+    let movimientosCaja = [];
+    let gastos = [];
+
+    if (typeof load === "function") {
+      const vData = load("ventas", []);
+      ventas = Array.isArray(vData) ? vData : [];
+
+      const mData = load("caja_movimientos", []);
+      movimientosCaja = Array.isArray(mData) ? mData : [];
+
+      // En un futuro, puedes usar un módulo separado de gastos:
+      const gData = load("gastos", []);
+      gastos = Array.isArray(gData) ? gData : [];
+    }
+
+    // Helpers
+    function alex3FormatearMonedaSeguro(valor) {
+      if (typeof alex3FormatearMoneda === "function") {
+        return alex3FormatearMoneda(valor);
+      }
+      const num = Number(valor);
+      if (isNaN(num)) return "Q 0.00";
+      return "Q " + num.toFixed(2);
+    }
+
+    function mismaFecha(d1, d2) {
+      return (
+        d1.getFullYear() === d2.getFullYear() &&
+        d1.getMonth() === d2.getMonth() &&
+        d1.getDate() === d2.getDate()
+      );
+    }
+
+    // Cálculo principal del dashboard
+    function recalcularDashboard() {
+      const hoy = new Date();
+
+      // Ventas de hoy
+      let ventasHoy = 0;
+      ventas.forEach(v => {
+        const fecha = new Date(v.fecha || v.fechaHora || Date.now());
+        const total = Number(v.total) || 0;
+        if (mismaFecha(fecha, hoy)) {
+          ventasHoy += total;
+        }
+      });
+
+      // Movimientos de caja (ingresos y egresos)
+      let ingresosTotales = 0;
+      let egresosTotales = 0;
+      let egresosHoy = 0;
+
+      movimientosCaja.forEach(m => {
+        const fecha = new Date(m.fecha || m.fechaHora || Date.now());
+        const monto = Number(m.monto) || 0;
+
+        if (m.tipo === "INGRESO") {
+          ingresosTotales += monto;
+        } else if (m.tipo === "EGRESO") {
+          egresosTotales += monto;
+          if (mismaFecha(fecha, hoy)) {
+            egresosHoy += monto;
+          }
+        }
+      });
+
+      // Gastos adicionales del módulo gastos (opcional/futuro)
+      let gastosHoyExtra = 0;
+      gastos.forEach(g => {
+        const fecha = new Date(g.fecha || g.fechaHora || Date.now());
+        const monto = Number(g.monto) || 0;
+        if (mismaFecha(fecha, hoy)) {
+          gastosHoyExtra += monto;
+        }
+      });
+
+      const gastosHoyTotal = egresosHoy + gastosHoyExtra;
+
+      // Caja actual (simple): ingresos + ventas - egresos
+      const cajaActual = ingresosTotales + ventasHoy - egresosTotales;
+
+      // Utilidad estimada (versión simple): ventas hoy - gastos hoy
+      const utilidadEstim = ventasHoy - gastosHoyTotal;
+
+      // Pintar en pantalla
+      const elVentasHoy = document.getElementById("kpi-dashboard-ventas-hoy");
+      const elGastosHoy = document.getElementById("kpi-dashboard-gastos-hoy");
+      const elUtilidad = document.getElementById("kpi-dashboard-utilidad");
+      const elCaja = document.getElementById("kpi-dashboard-caja");
+
+      if (elVentasHoy) elVentasHoy.textContent = alex3FormatearMonedaSeguro(ventasHoy);
+      if (elGastosHoy) elGastosHoy.textContent = alex3FormatearMonedaSeguro(gastosHoyTotal);
+      if (elUtilidad) elUtilidad.textContent = alex3FormatearMonedaSeguro(utilidadEstim);
+      if (elCaja) elCaja.textContent = alex3FormatearMonedaSeguro(cajaActual);
+    }
+
+    // Primera carga
+    recalcularDashboard();
   </script>
 </body>
 </html>
-
-
