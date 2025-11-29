@@ -47,7 +47,7 @@
 
       <div class="topbar-left">
         <h1 class="topbar-title">Ventas</h1>
-        <p class="topbar-subtitle">Registra y revisa todas las ventas del negocio.</p>
+        <p class="topbar-subtitle">Registra ventas reales usando los productos del inventario.</p>
       </div>
 
       <div class="topbar-right">
@@ -67,13 +67,13 @@
         <article class="card kpi-card">
           <h2 class="card-title">Ventas de hoy</h2>
           <p class="card-kpi" id="kpi-ventas-hoy">Q 0.00</p>
-          <p class="card-kpi-sub">Incluye efectivo, tarjeta y transferencias.</p>
+          <p class="card-kpi-sub">Incluye todas las formas de pago.</p>
         </article>
 
         <article class="card kpi-card">
           <h2 class="card-title">Ventas del mes</h2>
           <p class="card-kpi" id="kpi-ventas-mes">Q 0.00</p>
-          <p class="card-kpi-sub">Resumen de todas las ventas registradas.</p>
+          <p class="card-kpi-sub">Total de ventas registradas este mes.</p>
         </article>
 
         <article class="card kpi-card">
@@ -89,11 +89,86 @@
         </article>
       </section>
 
-      <!-- Formulario: registrar venta rápida -->
+      <!-- Zona de venta: buscador + carrito -->
+      <section class="grid-2">
+        <!-- Buscar producto -->
+        <article class="card">
+          <h2 class="card-title">1. Buscar producto del inventario</h2>
+          <p class="card-description">
+            Escribe código o nombre para buscar productos y agrégalos al carrito.
+          </p>
+
+          <div class="form-grid">
+            <div class="form-field" style="grid-column: 1 / -1;">
+              <label for="buscarTexto">Buscar producto</label>
+              <input id="buscarTexto" class="input" type="text"
+                     placeholder="Ej: 001, perfume, cargador, etc.">
+            </div>
+          </div>
+
+          <button class="btn" id="btnBuscarProducto" style="margin-top: 0.75rem;">
+            Buscar en inventario
+          </button>
+
+          <table class="table" style="margin-top: 1rem;">
+            <thead>
+              <tr>
+                <th>Código</th>
+                <th>Nombre</th>
+                <th>Precio</th>
+                <th>Stock</th>
+                <th>Cant.</th>
+                <th>Agregar</th>
+              </tr>
+            </thead>
+            <tbody id="tabla-resultados-productos">
+              <tr>
+                <td colspan="6" class="table-empty">
+                  Escribe algo y presiona “Buscar en inventario”.
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </article>
+
+        <!-- Carrito -->
+        <article class="card">
+          <h2 class="card-title">2. Carrito de venta</h2>
+          <p class="card-description">
+            Revisa los productos agregados antes de confirmar la venta.
+          </p>
+
+          <table class="table">
+            <thead>
+              <tr>
+                <th>Producto</th>
+                <th>Cant.</th>
+                <th>P. unit</th>
+                <th>Subtotal</th>
+                <th></th>
+              </tr>
+            </thead>
+            <tbody id="tabla-carrito">
+              <tr>
+                <td colspan="5" class="table-empty">
+                  Aún no hay productos en el carrito.
+                </td>
+              </tr>
+            </tbody>
+          </table>
+
+          <div style="margin-top: 1rem; display: flex; justify-content: space-between; align-items: center;">
+            <span class="card-title">Total:</span>
+            <span class="card-kpi" id="lbl-total-carrito">Q 0.00</span>
+          </div>
+        </article>
+      </section>
+
+      <!-- Datos de la venta -->
       <section class="card">
-        <h2 class="card-title">Registrar venta rápida</h2>
+        <h2 class="card-title">3. Datos de la venta</h2>
         <p class="card-description">
-          Usa este formulario para registrar ventas totales. En una versión futura se conectará con el carrito y el inventario.
+          Completa los datos del cliente y forma de pago para registrar la venta y actualizar inventario y caja.
         </p>
 
         <div class="form-grid">
@@ -104,7 +179,7 @@
 
           <div class="form-field">
             <label for="vCliente">Cliente (opcional)</label>
-            <input id="vCliente" class="input" type="text" placeholder="Ej: Cliente contado, nombre o empresa">
+            <input id="vCliente" class="input" type="text" placeholder="Ej: Cliente contado, Juan Pérez">
           </div>
 
           <div class="form-field">
@@ -125,23 +200,20 @@
             </select>
           </div>
 
-          <div class="form-field">
-            <label for="vTotal">Total de la venta (Q)</label>
-            <input id="vTotal" class="input" type="number" step="0.01" min="0" placeholder="Ej: 250.00">
-          </div>
-
           <div class="form-field" style="grid-column: 1 / -1;">
             <label for="vNotas">Notas (opcional)</label>
-            <input id="vNotas" class="input" type="text" placeholder="Ej: Envío incluido, promo, etc.">
+            <input id="vNotas" class="input" type="text" placeholder="Ej: Incluye envío, promoción, etc.">
           </div>
         </div>
 
-        <button class="btn" id="btnRegistrarVenta">Guardar venta</button>
+        <button class="btn" id="btnConfirmarVenta" style="margin-top: 1rem;">
+          Confirmar venta y actualizar inventario
+        </button>
       </section>
 
-      <!-- Tabla de ventas -->
+      <!-- Historial de ventas rápidas (últimas) -->
       <section class="card">
-        <h2 class="card-title">Últimas ventas registradas</h2>
+        <h2 class="card-title">4. Últimas ventas registradas</h2>
         <p class="card-description">
           Las ventas más recientes aparecen primero.
         </p>
@@ -159,7 +231,7 @@
           <tbody id="tabla-ventas-body">
             <tr>
               <td colspan="5" class="table-empty">
-                Aún no hay ventas registradas en esta versión demo.
+                Aún no hay ventas registradas.
               </td>
             </tr>
           </tbody>
@@ -173,7 +245,7 @@
   <script src="alex-roles.js"></script>
 
   <script>
-    // Menú móvil
+    // ===== Menú móvil =====
     const btnMenuMobile = document.getElementById('btnMenuMobile');
     const sidebar = document.querySelector('.sidebar');
     if (btnMenuMobile) {
@@ -182,7 +254,7 @@
       });
     }
 
-    // Usuario y permisos
+    // ===== Usuario y permisos =====
     const usuarioActual = typeof getUsuarioActualObligatorio === "function"
       ? getUsuarioActualObligatorio()
       : null;
@@ -191,7 +263,6 @@
       aplicarPermisosYProteger("ventas");
     }
 
-    // Mostrar nombre y rol en topbar
     const labelUser = document.getElementById("topbar-user-label");
     if (usuarioActual && labelUser) {
       const rolTexto = usuarioActual.rol === "dueno" ? "Dueño" : "Empleado";
@@ -203,44 +274,16 @@
     if (btnLogout) {
       btnLogout.addEventListener("click", () => {
         if (!confirm("¿Quieres cerrar sesión?")) return;
-
         if (typeof save === "function") {
           save("usuarioActual", null);
         } else {
           localStorage.removeItem("usuarioActual");
         }
-
         window.location.href = "index.html";
       });
     }
 
-    // ==== Datos base ====
-    let ventas = [];
-    let cajaMovs = [];
-
-    if (typeof load === "function") {
-      const vData = load("ventas", []);
-      ventas = Array.isArray(vData) ? vData : [];
-
-      const mData = load("caja_movimientos", []);
-      cajaMovs = Array.isArray(mData) ? mData : [];
-    }
-
-    function guardarVentas() {
-      if (typeof save === "function") {
-        save("ventas", ventas);
-      }
-    }
-
-    function guardarCajaMovs() {
-      if (typeof save === "function") {
-        save("caja_movimientos", cajaMovs);
-        // Por compatibilidad con otros módulos:
-        save("movimientosCaja", cajaMovs);
-      }
-    }
-
-    // Helpers
+    // ===== Helpers =====
     function alex3FormatearMonedaSeguro(valor) {
       if (typeof alex3FormatearMoneda === "function") {
         return alex3FormatearMoneda(valor);
@@ -261,7 +304,237 @@
              a.getMonth() === b.getMonth();
     }
 
-    // ==== KPIs ====
+    function formatearFechaLocal(fechaIso) {
+      const d = new Date(fechaIso);
+      if (isNaN(d.getTime())) return "-";
+      return d.toLocaleString("es-GT");
+    }
+
+    // ===== Datos base (inventario, ventas, caja) =====
+    let productos = [];
+    let ventas = [];
+    let movimientosCaja = [];
+
+    if (typeof load === "function") {
+      const pData = load("productos", []);
+      productos = Array.isArray(pData) ? pData : [];
+
+      const vData = load("ventas", []);
+      ventas = Array.isArray(vData) ? vData : [];
+
+      const mData = load("caja_movimientos", []);
+      movimientosCaja = Array.isArray(mData) ? mData : [];
+    }
+
+    function guardarProductos() {
+      if (typeof save === "function") {
+        save("productos", productos);
+      }
+    }
+
+    function guardarVentas() {
+      if (typeof save === "function") {
+        save("ventas", ventas);
+      }
+    }
+
+    function guardarMovimientosCaja() {
+      if (typeof save === "function") {
+        save("caja_movimientos", movimientosCaja);
+        save("movimientosCaja", movimientosCaja); // compatibilidad con otros módulos
+      }
+    }
+
+    // ===== Carrito =====
+    let carrito = []; // {codigo, nombre, precio, cantidad, subtotal}
+
+    function recalcularTotalCarrito() {
+      const total = carrito.reduce((acc, item) => acc + item.subtotal, 0);
+      const lblTotal = document.getElementById("lbl-total-carrito");
+      if (lblTotal) {
+        lblTotal.textContent = alex3FormatearMonedaSeguro(total);
+      }
+      return total;
+    }
+
+    function renderCarrito() {
+      const tbody = document.getElementById("tabla-carrito");
+      tbody.innerHTML = "";
+
+      if (!carrito.length) {
+        tbody.innerHTML = `
+          <tr>
+            <td colspan="5" class="table-empty">
+              Aún no hay productos en el carrito.
+            </td>
+          </tr>
+        `;
+        recalcularTotalCarrito();
+        return;
+      }
+
+      carrito.forEach((item, index) => {
+        tbody.innerHTML += `
+          <tr>
+            <td>${item.nombre}</td>
+            <td>${item.cantidad}</td>
+            <td>${alex3FormatearMonedaSeguro(item.precio)}</td>
+            <td>${alex3FormatearMonedaSeguro(item.subtotal)}</td>
+            <td>
+              <button class="btn" data-remove-index="${index}">🗑️</button>
+            </td>
+          </tr>
+        `;
+      });
+
+      recalcularTotalCarrito();
+    }
+
+    // Eliminar item del carrito
+    document.getElementById("tabla-carrito").addEventListener("click", (e) => {
+      const btn = e.target.closest("button[data-remove-index]");
+      if (!btn) return;
+      const idx = parseInt(btn.getAttribute("data-remove-index"));
+      if (isNaN(idx)) return;
+      carrito.splice(idx, 1);
+      renderCarrito();
+    });
+
+    // ===== Búsqueda de productos =====
+    const inputBuscarTexto = document.getElementById("buscarTexto");
+    const btnBuscarProducto = document.getElementById("btnBuscarProducto");
+    const tablaResultados = document.getElementById("tabla-resultados-productos");
+
+    function buscarProductos() {
+      const query = (inputBuscarTexto.value || "").trim().toLowerCase();
+      let resultados = [];
+
+      if (!productos.length) {
+        tablaResultados.innerHTML = `
+          <tr>
+            <td colspan="6" class="table-empty">
+              No hay productos en el inventario.
+            </td>
+          </tr>
+        `;
+        return;
+      }
+
+      if (!query) {
+        // Sin texto: mostrar primeros 10 productos
+        resultados = productos.slice(0, 10);
+      } else {
+        resultados = productos.filter(p => {
+          const cod = String(p.codigo || "").toLowerCase();
+          const nom = String(p.nombre || "").toLowerCase();
+          return cod.includes(query) || nom.includes(query);
+        });
+      }
+
+      if (!resultados.length) {
+        tablaResultados.innerHTML = `
+          <tr>
+            <td colspan="6" class="table-empty">
+              No se encontraron productos con ese texto.
+            </td>
+          </tr>
+        `;
+        return;
+      }
+
+      tablaResultados.innerHTML = "";
+      resultados.forEach((p, idx) => {
+        const stock = Number(p.stock) || 0;
+        const precioVenta = Number(p.venta) || 0;
+
+        tablaResultados.innerHTML += `
+          <tr>
+            <td>${p.codigo}</td>
+            <td>${p.nombre}</td>
+            <td>${alex3FormatearMonedaSeguro(precioVenta)}</td>
+            <td>${stock}</td>
+            <td>
+              <input type="number"
+                     class="input"
+                     style="max-width: 80px;"
+                     min="1"
+                     max="${stock}"
+                     value="1"
+                     data-cant-codigo="${p.codigo}">
+            </td>
+            <td>
+              <button class="btn"
+                      data-add-codigo="${p.codigo}">
+                Agregar
+              </button>
+            </td>
+          </tr>
+        `;
+      });
+    }
+
+    if (btnBuscarProducto) {
+      btnBuscarProducto.addEventListener("click", buscarProductos);
+    }
+
+    // Buscar también al presionar Enter en el campo de texto
+    if (inputBuscarTexto) {
+      inputBuscarTexto.addEventListener("keydown", (e) => {
+        if (e.key === "Enter") {
+          e.preventDefault();
+          buscarProductos();
+        }
+      });
+    }
+
+    // Agregar producto al carrito
+    tablaResultados.addEventListener("click", (e) => {
+      const btn = e.target.closest("button[data-add-codigo]");
+      if (!btn) return;
+
+      const codigo = btn.getAttribute("data-add-codigo");
+      const producto = productos.find(p => String(p.codigo) === String(codigo));
+      if (!producto) {
+        alert("Producto no encontrado en inventario.");
+        return;
+      }
+
+      const inputCant = tablaResultados.querySelector(`input[data-cant-codigo="${codigo}"]`);
+      let cant = inputCant ? parseInt(inputCant.value) : 1;
+      if (isNaN(cant) || cant <= 0) cant = 1;
+
+      const stockDisponible = Number(producto.stock) || 0;
+      if (cant > stockDisponible) {
+        alert("No hay suficiente stock para esa cantidad.");
+        return;
+      }
+
+      const precioUnit = Number(producto.venta) || 0;
+      const subtotal = cant * precioUnit;
+
+      // Si ya existe en el carrito, solo sumar cantidad
+      const existente = carrito.find(item => item.codigo === codigo);
+      if (existente) {
+        if (existente.cantidad + cant > stockDisponible) {
+          alert("No hay suficiente stock para sumar esa cantidad.");
+          return;
+        }
+        existente.cantidad += cant;
+        existente.subtotal = existente.cantidad * existente.precio;
+      } else {
+        carrito.push({
+          codigo: producto.codigo,
+          nombre: producto.nombre,
+          precio: precioUnit,
+          cantidad: cant,
+          subtotal: subtotal
+        });
+      }
+
+      renderCarrito();
+    });
+
+    // ===== KPIs de ventas =====
     function recalcularKPIsVentas() {
       const hoy = new Date();
       let totalHoy = 0;
@@ -293,15 +566,19 @@
       if (elProm) elProm.textContent = alex3FormatearMonedaSeguro(promedio);
     }
 
-    // ==== Tabla de ventas ====
+    // ===== Tabla de ventas =====
     function renderTablaVentas() {
       const tbody = document.getElementById("tabla-ventas-body");
+      if (!tbody) return;
+
       tbody.innerHTML = "";
 
       if (!ventas.length) {
         tbody.innerHTML = `
           <tr>
-            <td colspan="5" class="table-empty">Aún no hay ventas registradas en esta versión demo.</td>
+            <td colspan="5" class="table-empty">
+              Aún no hay ventas registradas.
+            </td>
           </tr>
         `;
         return;
@@ -314,7 +591,7 @@
       });
 
       ordenadas.forEach(v => {
-        const fechaTxt = v.fecha || new Date(v.fechaHora || Date.now()).toLocaleString("es-GT");
+        const fechaTxt = v.fecha || formatearFechaLocal(v.fechaHora || "");
         const doc = v.documento || "-";
         const cliente = v.cliente || "Contado";
         const forma = v.formaPago || "-";
@@ -332,63 +609,97 @@
       });
     }
 
-    // ==== Registrar venta ====
-    function registrarVenta() {
+    // ===== Confirmar venta =====
+    const btnConfirmarVenta = document.getElementById("btnConfirmarVenta");
+
+    function confirmarVenta() {
+      if (!carrito.length) {
+        alert("Agrega al menos un producto al carrito antes de confirmar la venta.");
+        return;
+      }
+
+      const total = recalcularTotalCarrito();
+      if (total <= 0) {
+        alert("El total de la venta debe ser mayor a cero.");
+        return;
+      }
+
       const inputFecha = document.getElementById("vFecha");
       const inputCliente = document.getElementById("vCliente");
       const inputDoc = document.getElementById("vDocumento");
       const inputForma = document.getElementById("vFormaPago");
-      const inputTotal = document.getElementById("vTotal");
       const inputNotas = document.getElementById("vNotas");
 
       const fechaVal = inputFecha.value;
-      const cliente = inputCliente.value.trim();
-      const documento = inputDoc.value;
-      const formaPago = inputForma.value;
-      const totalNum = parseFloat(inputTotal.value);
-      const notas = inputNotas.value.trim();
-
-      if (isNaN(totalNum) || totalNum <= 0) {
-        alert("Ingresa un total válido para la venta.");
-        return;
-      }
-
-      if (!formaPago) {
-        alert("Selecciona una forma de pago.");
-        return;
-      }
-
       let fechaObj;
       if (fechaVal) {
         fechaObj = new Date(fechaVal);
       } else {
         fechaObj = new Date();
       }
-
-      if (isNaN(fechaObj.getTime())) {
-        fechaObj = new Date();
-      }
+      if (isNaN(fechaObj.getTime())) fechaObj = new Date();
 
       const fechaLocal = fechaObj.toLocaleString("es-GT");
       const fechaIso = fechaObj.toISOString();
 
-      const nuevaVenta = {
+      const cliente = inputCliente.value.trim() || "Cliente contado";
+      const documento = inputDoc.value;
+      const formaPago = inputForma.value;
+      const notas = inputNotas.value.trim();
+
+      if (!documento) {
+        alert("Selecciona un tipo de documento.");
+        return;
+      }
+      if (!formaPago) {
+        alert("Selecciona una forma de pago.");
+        return;
+      }
+
+      // Validar stock antes de confirmar
+      for (const item of carrito) {
+        const prod = productos.find(p => String(p.codigo) === String(item.codigo));
+        const stockActual = prod ? Number(prod.stock) || 0 : 0;
+        if (!prod || item.cantidad > stockActual) {
+          alert("El producto " + item.nombre + " ya no tiene stock suficiente.");
+          return;
+        }
+      }
+
+      // Actualizar inventario (restar stock)
+      carrito.forEach(item => {
+        const prod = productos.find(p => String(p.codigo) === String(item.codigo));
+        if (!prod) return;
+        const stockActual = Number(prod.stock) || 0;
+        prod.stock = stockActual - item.cantidad;
+      });
+      guardarProductos();
+
+      // Construir venta
+      const venta = {
         id: "venta_" + Date.now(),
         fecha: fechaLocal,
         fechaHora: fechaIso,
-        cliente: cliente || "Cliente contado",
+        cliente,
         documento,
         formaPago,
-        total: totalNum,
+        total: total,
         notas,
-        origen: "venta_rapida",
+        items: carrito.map(item => ({
+          codigo: item.codigo,
+          nombre: item.nombre,
+          cantidad: item.cantidad,
+          precio: item.precio,
+          subtotal: item.subtotal
+        })),
+        origen: "venta_inventario",
         usuario: usuarioActual ? usuarioActual.usuario : null
       };
 
-      ventas.push(nuevaVenta);
+      ventas.push(venta);
       guardarVentas();
 
-      // Si es EFECTIVO, crear movimiento de caja
+      // Registrar movimiento de caja si es EFECTIVO
       if (formaPago === "EFECTIVO") {
         const mov = {
           id: "caja_venta_" + Date.now(),
@@ -396,37 +707,51 @@
           fecha: fechaLocal,
           tipo: "INGRESO",
           categoria: "Ventas en efectivo",
-          descripcion: `Venta rápida (${nuevaVenta.cliente})`,
-          monto: totalNum,
+          descripcion: `Venta a ${cliente}`,
+          monto: total,
           origen: "venta",
-          ventaId: nuevaVenta.id,
+          ventaId: venta.id,
           usuario: usuarioActual ? usuarioActual.usuario : null
         };
-        cajaMovs.push(mov);
-        guardarCajaMovs();
+        movimientosCaja.push(mov);
+        guardarMovimientosCaja();
       }
 
-      // Limpiar formulario
+      // Limpiar carrito y formulario
+      carrito = [];
+      renderCarrito();
+
       inputFecha.value = "";
       inputCliente.value = "";
       inputDoc.value = "Ticket interno";
       inputForma.value = "EFECTIVO";
-      inputTotal.value = "";
       inputNotas.value = "";
 
-      renderTablaVentas();
+      // Refrescar KPI y tabla
       recalcularKPIsVentas();
+      renderTablaVentas();
+
       alert("Venta registrada correctamente.");
     }
 
-    const btnRegistrarVenta = document.getElementById("btnRegistrarVenta");
-    if (btnRegistrarVenta) {
-      btnRegistrarVenta.addEventListener("click", registrarVenta);
+    if (btnConfirmarVenta) {
+      btnConfirmarVenta.addEventListener("click", confirmarVenta);
     }
 
-    // Primera carga
-    renderTablaVentas();
+    // ===== Primera carga =====
+    // Prellenar fecha con ahora
+    const inputFechaVenta = document.getElementById("vFecha");
+    if (inputFechaVenta) {
+      const ahora = new Date();
+      const isoLocal = new Date(ahora.getTime() - ahora.getTimezoneOffset() * 60000)
+        .toISOString()
+        .slice(0, 16);
+      inputFechaVenta.value = isoLocal;
+    }
+
+    renderCarrito();
     recalcularKPIsVentas();
+    renderTablaVentas();
   </script>
 </body>
 </html>
