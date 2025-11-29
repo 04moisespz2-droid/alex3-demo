@@ -8,6 +8,7 @@
 </head>
 
 <body class="dashboard-body">
+  <!-- Sidebar -->
   <aside class="sidebar">
     <div class="sidebar-header">
       <span class="logo-badge">A</span>
@@ -38,43 +39,99 @@
     </div>
   </aside>
 
+  <!-- Layout principal -->
   <div class="main-layout">
+    <!-- Topbar -->
     <header class="topbar">
       <button class="btn-menu-mobile" id="btnMenuMobile">☰</button>
 
       <div class="topbar-left">
-        <h1 class="topbar-title">Gastos</h1>
-        <p class="topbar-subtitle">Egresos del negocio: servicios, rentas, sueldos y más.</p>
+        <h1 class="topbar-title">Gastos del negocio</h1>
+        <p class="topbar-subtitle">Registra y controla todos los egresos de tu empresa.</p>
       </div>
 
       <div class="topbar-right">
         <span class="topbar-company">Mi tienda demo</span>
         <span class="topbar-divider">•</span>
-        <span class="topbar-user">Brayan (Dueño)</span>
+        <span class="topbar-user" id="topbar-user-label">Usuario (Rol)</span>
+        <button class="btn" id="btnLogout" type="button" style="margin-left: 0.75rem;">
+          Cerrar sesión
+        </button>
       </div>
     </header>
 
+    <!-- Contenido principal -->
     <main class="main-content">
+      <!-- Formulario para registrar gasto -->
       <section class="card">
-        <h2 class="card-title">Listado de gastos</h2>
+        <h2 class="card-title">Registrar nuevo gasto</h2>
         <p class="card-description">
-          Aquí se verán todos los gastos registrados y su impacto en la utilidad.
+          Usa este formulario para registrar rentas, pagos de servicios, compras menores, nómina y otros egresos.
+          Si el gasto se paga en efectivo de caja, se registrará automáticamente como <strong>EGRESO</strong> en la caja.
+        </p>
+
+        <div class="form-grid">
+          <div class="form-field">
+            <label for="gCategoria">Categoría del gasto</label>
+            <select id="gCategoria" class="input">
+              <option value="">Selecciona una categoría</option>
+              <option value="Renta local">Renta de local</option>
+              <option value="Servicios básicos">Servicios básicos (luz, agua, internet)</option>
+              <option value="Mercancía / Proveedor">Mercancía / Proveedor</option>
+              <option value="Nómina / Sueldos">Nómina / Sueldos</option>
+              <option value="Publicidad / Marketing">Publicidad / Marketing</option>
+              <option value="Transporte / Envíos">Transporte / Envíos</option>
+              <option value="Impuestos / Bancos">Impuestos / Bancos</option>
+              <option value="Otros">Otros gastos</option>
+            </select>
+          </div>
+
+          <div class="form-field">
+            <label for="gDescripcion">Descripción</label>
+            <input id="gDescripcion" class="input" type="text" placeholder="Ej: Pago de luz, pago a proveedor, etc.">
+          </div>
+
+          <div class="form-field">
+            <label for="gMonto">Monto (Q)</label>
+            <input id="gMonto" class="input" type="number" step="0.01" min="0" placeholder="0.00">
+          </div>
+
+          <div class="form-field">
+            <label for="gFormaPago">Forma de pago</label>
+            <select id="gFormaPago" class="input">
+              <option value="EFECTIVO_CAJA">Efectivo en caja</option>
+              <option value="TRANSFERENCIA">Transferencia / Depósito</option>
+              <option value="TARJETA">Tarjeta</option>
+              <option value="OTRO">Otro</option>
+            </select>
+          </div>
+        </div>
+
+        <button class="btn" id="btnGuardarGasto">Guardar gasto</button>
+      </section>
+
+      <!-- Tabla de gastos -->
+      <section class="card">
+        <h2 class="card-title">Historial de gastos</h2>
+        <p class="card-description">
+          Lista de los gastos registrados en el sistema. Estos movimientos se consideran en
+          el cálculo de utilidad y, cuando son en efectivo, en el saldo de caja.
         </p>
 
         <table class="table">
           <thead>
             <tr>
-              <th>Fecha</th>
+              <th>Fecha / Hora</th>
               <th>Categoría</th>
               <th>Descripción</th>
-              <th>Método de pago</th>
+              <th>Forma de pago</th>
               <th>Monto</th>
             </tr>
           </thead>
-          <tbody>
+          <tbody id="tabla-gastos-body">
             <tr>
               <td colspan="5" class="table-empty">
-                Aún no hay gastos registrados en esta versión demo.
+                Aún no hay gastos registrados.
               </td>
             </tr>
           </tbody>
@@ -83,12 +140,197 @@
     </main>
   </div>
 
+  <!-- Scripts base -->
+  <script src="alex-storage.js"></script>
+  <script src="alex-roles.js"></script>
+
   <script>
+    // Menú móvil
     const btnMenuMobile = document.getElementById('btnMenuMobile');
     const sidebar = document.querySelector('.sidebar');
-    btnMenuMobile.addEventListener('click', () => {
-      sidebar.classList.toggle('sidebar-open');
-    });
+
+    if (btnMenuMobile) {
+      btnMenuMobile.addEventListener('click', () => {
+        sidebar.classList.toggle('sidebar-open');
+      });
+    }
+
+    // Usuario y permisos
+    const usuarioActual = typeof getUsuarioActualObligatorio === "function"
+      ? getUsuarioActualObligatorio()
+      : null;
+
+    if (typeof aplicarPermisosYProteger === "function") {
+      aplicarPermisosYProteger("gastos");
+    }
+
+    // Pintar nombre y rol en el topbar
+    const labelUser = document.getElementById("topbar-user-label");
+    if (usuarioActual && labelUser) {
+      const rolTexto = usuarioActual.rol === "dueno" ? "Dueño" : "Empleado";
+      labelUser.textContent = usuarioActual.nombre + " (" + rolTexto + ")";
+    }
+
+    // Botón Cerrar sesión
+    const btnLogout = document.getElementById("btnLogout");
+    if (btnLogout) {
+      btnLogout.addEventListener("click", () => {
+        if (!confirm("¿Quieres cerrar sesión?")) return;
+
+        if (typeof save === "function") {
+          save("usuarioActual", null);
+        } else {
+          localStorage.removeItem("usuarioActual");
+        }
+
+        window.location.href = "index.html";
+      });
+    }
+
+    // ====== LÓGICA DE GASTOS ======
+
+    // Cargar datos
+    let gastos = [];
+    let cajaMovimientos = [];
+
+    if (typeof load === "function") {
+      const gData = load("gastos", []);
+      gastos = Array.isArray(gData) ? gData : [];
+
+      const cData = load("caja_movimientos", []);
+      cajaMovimientos = Array.isArray(cData) ? cData : [];
+    }
+
+    function alex3FormatearMonedaSeguro(valor) {
+      if (typeof alex3FormatearMoneda === "function") {
+        return alex3FormatearMoneda(valor);
+      }
+      const num = Number(valor);
+      if (isNaN(num)) return "Q 0.00";
+      return "Q " + num.toFixed(2);
+    }
+
+    function formatearFechaBonita(fechaIso) {
+      const d = new Date(fechaIso);
+      if (isNaN(d.getTime())) return fechaIso || "-";
+      const dia = String(d.getDate()).padStart(2, "0");
+      const mes = String(d.getMonth() + 1).padStart(2, "0");
+      const anio = d.getFullYear();
+      const horas = String(d.getHours()).padStart(2, "0");
+      const mins = String(d.getMinutes()).padStart(2, "0");
+      return `${dia}/${mes}/${anio} ${horas}:${mins}`;
+    }
+
+    function renderTablaGastos() {
+      const tbody = document.getElementById("tabla-gastos-body");
+      tbody.innerHTML = "";
+
+      if (!gastos.length) {
+        tbody.innerHTML = `
+          <tr>
+            <td colspan="5" class="table-empty">Aún no hay gastos registrados.</td>
+          </tr>
+        `;
+        return;
+      }
+
+      // Ordenar del más reciente al más antiguo
+      const ordenados = [...gastos].sort((a, b) => {
+        const fa = new Date(a.fechaHora || a.fecha || 0).getTime();
+        const fb = new Date(b.fechaHora || b.fecha || 0).getTime();
+        return fb - fa;
+      });
+
+      ordenados.forEach(g => {
+        const fecha = formatearFechaBonita(g.fechaHora || g.fecha || "");
+        const categoria = g.categoria || "";
+        const descripcion = g.descripcion || "";
+        const formaPagoTexto = (function(fp) {
+          switch (fp) {
+            case "EFECTIVO_CAJA": return "Efectivo en caja";
+            case "TRANSFERENCIA": return "Transferencia / Depósito";
+            case "TARJETA": return "Tarjeta";
+            case "OTRO": return "Otro";
+            default: return fp || "";
+          }
+        })(g.formaPago);
+        const monto = alex3FormatearMonedaSeguro(g.monto);
+
+        tbody.innerHTML += `
+          <tr>
+            <td>${fecha}</td>
+            <td>${categoria}</td>
+            <td>${descripcion}</td>
+            <td>${formaPagoTexto}</td>
+            <td>${monto}</td>
+          </tr>
+        `;
+      });
+    }
+
+    function registrarGasto() {
+      const categoria = document.getElementById("gCategoria").value;
+      const descripcion = document.getElementById("gDescripcion").value.trim();
+      const monto = parseFloat(document.getElementById("gMonto").value);
+      const formaPago = document.getElementById("gFormaPago").value;
+
+      if (!categoria || !descripcion || isNaN(monto) || monto <= 0) {
+        alert("Por favor completa categoría, descripción y un monto válido.");
+        return;
+      }
+
+      const ahora = new Date().toISOString();
+
+      const nuevoGasto = {
+        id: Date.now(),
+        fechaHora: ahora,
+        categoria,
+        descripcion,
+        monto,
+        formaPago,
+        usuario: usuarioActual ? usuarioActual.usuario : null
+      };
+
+      gastos.push(nuevoGasto);
+      if (typeof save === "function") {
+        save("gastos", gastos);
+      }
+
+      // Si el gasto fue en efectivo de caja, registramos EGRESO en caja_movimientos
+      if (formaPago === "EFECTIVO_CAJA") {
+        const movimiento = {
+          id: "gasto_" + Date.now(),
+          fechaHora: ahora,
+          tipo: "EGRESO",
+          categoria: "Gasto - " + categoria,
+          descripcion: descripcion,
+          monto: monto,
+          origen: "gasto",
+          usuario: usuarioActual ? usuarioActual.usuario : null
+        };
+        cajaMovimientos.push(movimiento);
+        if (typeof save === "function") {
+          save("caja_movimientos", cajaMovimientos);
+        }
+      }
+
+      // Limpiar formulario
+      document.getElementById("gCategoria").value = "";
+      document.getElementById("gDescripcion").value = "";
+      document.getElementById("gMonto").value = "";
+      document.getElementById("gFormaPago").value = "EFECTIVO_CAJA";
+
+      renderTablaGastos();
+      alert("Gasto registrado correctamente.");
+    }
+
+    const btnGuardarGasto = document.getElementById("btnGuardarGasto");
+    if (btnGuardarGasto) {
+      btnGuardarGasto.addEventListener("click", registrarGasto);
+    }
+
+    // Primera carga
+    renderTablaGastos();
   </script>
 </body>
 </html>
