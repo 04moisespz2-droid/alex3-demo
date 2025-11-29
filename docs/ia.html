@@ -2,12 +2,13 @@
 <html lang="es">
 <head>
   <meta charset="UTF-8">
-  <title>ALEX 3.0 - IA empresarial</title>
+  <title>ALEX 3.0 - IA Empresarial</title>
   <link rel="stylesheet" href="styles.css">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
 </head>
 
 <body class="dashboard-body">
+  <!-- Sidebar -->
   <aside class="sidebar">
     <div class="sidebar-header">
       <span class="logo-badge">A</span>
@@ -38,39 +39,228 @@
     </div>
   </aside>
 
+  <!-- Layout principal -->
   <div class="main-layout">
+    <!-- Topbar -->
     <header class="topbar">
       <button class="btn-menu-mobile" id="btnMenuMobile">☰</button>
 
       <div class="topbar-left">
-        <h1 class="topbar-title">IA empresarial</h1>
-        <p class="topbar-subtitle">Sugerencias y alertas inteligentes para tu negocio.</p>
+        <h1 class="topbar-title">IA empresarial de ALEX 3.0</h1>
+        <p class="topbar-subtitle">
+          Alertas inteligentes, simulaciones y decisiones automáticas para tu negocio.
+        </p>
       </div>
 
       <div class="topbar-right">
         <span class="topbar-company">Mi tienda demo</span>
         <span class="topbar-divider">•</span>
-        <span class="topbar-user">Brayan (Dueño)</span>
+        <span class="topbar-user" id="topbar-user-label">Usuario (Rol)</span>
+        <button class="btn" id="btnLogout" type="button" style="margin-left: 0.75rem;">
+          Cerrar sesión
+        </button>
       </div>
     </header>
 
+    <!-- Contenido principal -->
     <main class="main-content">
+      <!-- Qué hará la IA -->
+      <section class="cards-grid">
+        <article class="card">
+          <h2 class="card-title">Alertas inteligentes</h2>
+          <p class="card-description">
+            ALEX 3.0 analizará tus datos de forma automática y te avisará cuando algo importante esté pasando.
+          </p>
+          <ul class="alerts-list">
+            <li class="alert-item">🔔 <strong>Stock bajo:</strong> productos que se están quedando sin inventario.</li>
+            <li class="alert-item">🔔 <strong>Días flojos:</strong> ventas muy bajas comparadas con el promedio.</li>
+            <li class="alert-item">🔔 <strong>Fiados peligrosos:</strong> clientes con saldo muy alto o atrasado.</li>
+            <li class="alert-item">🔔 <strong>Caja sospechosa:</strong> diferencias entre sistema y efectivo físico.</li>
+          </ul>
+        </article>
+
+        <article class="card">
+          <h2 class="card-title">Recomendaciones automáticas</h2>
+          <p class="card-description">
+            La IA no solo mostrará números, también te dirá qué hacer con ellos.
+          </p>
+          <ul class="alerts-list">
+            <li class="alert-item">💡 Subir o bajar precios según margen y competencia.</li>
+            <li class="alert-item">💡 Recordatorios para cobrar fiados o pagar a proveedores.</li>
+            <li class="alert-item">💡 Sugerencias de combos y productos que más se venden.</li>
+            <li class="alert-item">💡 Metas de venta diarias y semanales basadas en tu historial.</li>
+          </ul>
+        </article>
+
+        <article class="card">
+          <h2 class="card-title">SAT e impuestos (IA)</h2>
+          <p class="card-description">
+            Con tus datos de ventas, compras y gastos, ALEX podrá explicarte tus impuestos en lenguaje sencillo.
+          </p>
+          <ul class="alerts-list">
+            <li class="alert-item">📌 Estimar cuánto debes pagar cada mes.</li>
+            <li class="alert-item">📌 Explicar por qué subió o bajó tu impuesto.</li>
+            <li class="alert-item">📌 Simular escenarios: “¿qué pasa si vendo el doble?”.</li>
+            <li class="alert-item">📌 Prepararte para el siguiente cambio de régimen.</li>
+          </ul>
+        </article>
+      </section>
+
+      <!-- Simulador rápido (ya funcional en el navegador) -->
       <section class="card">
-        <h2 class="card-title">Panel de IA (demo)</h2>
+        <h2 class="card-title">Simulador rápido de utilidad diaria</h2>
         <p class="card-description">
-          Aquí ALEX 3.0 mostrará recomendaciones como:
-          días más fuertes de venta, productos a impulsar, fiados peligrosos, etc.
+          Ingresa tus ventas, costos y gastos para que ALEX calcule una utilidad estimada y tu margen de ganancia.
         </p>
+
+        <div class="form-grid">
+          <div class="form-field">
+            <label for="simVentas">Ventas del día (Q)</label>
+            <input id="simVentas" class="input" type="number" step="0.01" min="0" placeholder="Ej: 800.00">
+          </div>
+
+          <div class="form-field">
+            <label for="simCostos">Costo de mercancía (Q)</label>
+            <input id="simCostos" class="input" type="number" step="0.01" min="0" placeholder="Ej: 350.00">
+          </div>
+
+          <div class="form-field">
+            <label for="simGastos">Gastos del día (Q)</label>
+            <input id="simGastos" class="input" type="number" step="0.01" min="0" placeholder="Ej: 120.00 (envíos, luz, etc.)">
+          </div>
+        </div>
+
+        <button class="btn" id="btnSimular">Calcular utilidad</button>
+
+        <div style="margin-top: 1.5rem;">
+          <h3 class="card-title">Resultado de la simulación</h3>
+          <table class="table">
+            <tbody>
+              <tr>
+                <th>Ventas</th>
+                <td id="simResVentas">Q 0.00</td>
+              </tr>
+              <tr>
+                <th>Costos + gastos</th>
+                <td id="simResCostosGastos">Q 0.00</td>
+              </tr>
+              <tr>
+                <th>Utilidad estimada</th>
+                <td id="simResUtilidad">Q 0.00</td>
+              </tr>
+              <tr>
+                <th>Margen sobre ventas</th>
+                <td id="simResMargen">0.00 %</td>
+              </tr>
+            </tbody>
+          </table>
+          <p class="card-description" id="simComentario">
+            Ingresa los datos y presiona en “Calcular utilidad” para ver una interpretación rápida.
+          </p>
+        </div>
+      </section>
+
+      <!-- Futuras automatizaciones -->
+      <section class="card">
+        <h2 class="card-title">Ideas de automatización futura</h2>
+        <p class="card-description">
+          Algunas acciones que ALEX 3.0 podrá hacer por ti de manera automática cuando se conecte a la nube:
+        </p>
+        <ul class="alerts-list">
+          <li class="alert-item">🤖 Enviar un resumen diario a tu WhatsApp o correo con ventas, gastos y caja.</li>
+          <li class="alert-item">🤖 Recordarte cuándo hacer pedidos a proveedores según el inventario.</li>
+          <li class="alert-item">🤖 Sugerir qué productos promocionar en redes según los más vendidos.</li>
+          <li class="alert-item">🤖 Avisarte si algún empleado registra movimientos raros en caja.</li>
+        </ul>
       </section>
     </main>
   </div>
 
+  <!-- Scripts base -->
+  <script src="alex-storage.js"></script>
+  <script src="alex-roles.js"></script>
+
   <script>
+    // Menú móvil
     const btnMenuMobile = document.getElementById('btnMenuMobile');
     const sidebar = document.querySelector('.sidebar');
-    btnMenuMobile.addEventListener('click', () => {
-      sidebar.classList.toggle('sidebar-open');
-    });
+
+    if (btnMenuMobile) {
+      btnMenuMobile.addEventListener('click', () => {
+        sidebar.classList.toggle('sidebar-open');
+      });
+    }
+
+    // Usuario y permisos
+    const usuarioActual = typeof getUsuarioActualObligatorio === "function"
+      ? getUsuarioActualObligatorio()
+      : null;
+
+    if (typeof aplicarPermisosYProteger === "function") {
+      aplicarPermisosYProteger("ia");
+    }
+
+    // Mostrar nombre y rol
+    const labelUser = document.getElementById("topbar-user-label");
+    if (usuarioActual && labelUser) {
+      const rolTexto = usuarioActual.rol === "dueno" ? "Dueño" : "Empleado";
+      labelUser.textContent = `${usuarioActual.nombre} (${rolTexto})`;
+    }
+
+    // Cerrar sesión
+    const btnLogout = document.getElementById("btnLogout");
+    if (btnLogout) {
+      btnLogout.addEventListener("click", () => {
+        if (!confirm("¿Quieres cerrar sesión?")) return;
+
+        if (typeof save === "function") {
+          save("usuarioActual", null);
+        } else {
+          localStorage.removeItem("usuarioActual");
+        }
+
+        window.location.href = "index.html";
+      });
+    }
+
+    // Helper de moneda
+    function alex3FormatearMonedaLocal(valor) {
+      const num = Number(valor);
+      if (isNaN(num)) return "Q 0.00";
+      return "Q " + num.toFixed(2);
+    }
+
+    // Lógica del simulador
+    function calcularSimulacion() {
+      const ventas = parseFloat(document.getElementById("simVentas").value) || 0;
+      const costos = parseFloat(document.getElementById("simCostos").value) || 0;
+      const gastos = parseFloat(document.getElementById("simGastos").value) || 0;
+
+      const totalCostosGastos = costos + gastos;
+      const utilidad = ventas - totalCostosGastos;
+      const margen = ventas > 0 ? (utilidad / ventas) * 100 : 0;
+
+      document.getElementById("simResVentas").textContent = alex3FormatearMonedaLocal(ventas);
+      document.getElementById("simResCostosGastos").textContent = alex3FormatearMonedaLocal(totalCostosGastos);
+      document.getElementById("simResUtilidad").textContent = alex3FormatearMonedaLocal(utilidad);
+      document.getElementById("simResMargen").textContent = margen.toFixed(2) + " %";
+
+      const comentario = document.getElementById("simComentario");
+      if (utilidad < 0) {
+        comentario.textContent = "⚠️ Estás en pérdida en esta simulación. Revisa precios, costos o gastos.";
+      } else if (margen < 10) {
+        comentario.textContent = "⚠️ Estás ganando muy poco. Tu margen es bajo, podrías ajustar precios o bajar gastos.";
+      } else if (margen >= 10 && margen < 30) {
+        comentario.textContent = "✅ Margen aceptable. Podrías mejorar un poco tus precios o buscar proveedores más baratos.";
+      } else {
+        comentario.textContent = "🔥 Excelente margen. Tu negocio tiene buena rentabilidad con estos números.";
+      }
+    }
+
+    const btnSimular = document.getElementById("btnSimular");
+    if (btnSimular) {
+      btnSimular.addEventListener("click", calcularSimulacion);
+    }
   </script>
 </body>
 </html>
