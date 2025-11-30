@@ -27,107 +27,143 @@
       <a href="gastos.html" class="sidebar-link">📉 Gastos</a>
       <a href="clientes.html" class="sidebar-link">👥 Clientes</a>
       <a href="proveedores.html" class="sidebar-link">🚚 Proveedores</a>
-      <a href="contabilidad.html" class="sidebar-link">📚 Contabilidad</a>
-      <a href="sat.html" class="sidebar-link">🇬🇹 SAT Guatemala</a>
+      <a href="reportes.html" class="sidebar-link">📚 Reportes</a>
       <a href="ia.html" class="sidebar-link">🤖 IA empresarial</a>
       <a href="configuracion.html" class="sidebar-link">⚙️ Configuración</a>
     </nav>
 
     <div class="sidebar-footer">
-      <span class="sidebar-footer-title">Mi negocio</span>
-      <span class="sidebar-footer-sub">Panel activo</span>
+      <span class="sidebar-footer-title" id="sidebar-footer-title">Mi negocio</span>
+      <span class="sidebar-footer-sub">Resumen general</span>
     </div>
   </aside>
 
-  <!-- Área principal -->
+  <!-- Layout principal -->
   <div class="main-layout">
     <!-- Topbar -->
     <header class="topbar">
       <button class="btn-menu-mobile" id="btnMenuMobile">☰</button>
 
       <div class="topbar-left">
-        <h1 class="topbar-title">Resumen del día</h1>
-        <p class="topbar-subtitle">Ventas, gastos, utilidad y caja en tiempo real.</p>
+        <h1 class="topbar-title">Dashboard</h1>
+        <p class="topbar-subtitle">
+          Visión general del negocio: ventas, caja e inventario en un solo lugar.
+        </p>
       </div>
 
       <div class="topbar-right">
-        <span class="topbar-company">Mi negocio</span>
+        <span class="topbar-company" id="topbar-company-label">Mi negocio</span>
         <span class="topbar-divider">•</span>
         <span class="topbar-user" id="topbar-user-label">Usuario (Rol)</span>
       </div>
     </header>
 
-    <!-- Contenido -->
+    <!-- Contenido principal -->
     <main class="main-content">
-      <!-- Cards principales -->
+      <!-- KPIs principales -->
       <section class="cards-grid">
         <article class="card kpi-card">
           <h2 class="card-title">Ventas de hoy</h2>
-          <p class="card-kpi" id="kpi-dashboard-ventas-hoy">Q 0.00</p>
-          <p class="card-kpi-sub">Ventas registradas (todas las formas de pago).</p>
+          <p class="card-kpi" id="dash-ventas-hoy">Q 0.00</p>
+          <p class="card-kpi-sub">Total de ventas registradas hoy.</p>
         </article>
 
         <article class="card kpi-card">
-          <h2 class="card-title">Gastos de hoy</h2>
-          <p class="card-kpi gasto" id="kpi-dashboard-gastos-hoy">Q 0.00</p>
-          <p class="card-kpi-sub">Incluye compras y gastos operativos.</p>
+          <h2 class="card-title">Ventas del mes</h2>
+          <p class="card-kpi" id="dash-ventas-mes">Q 0.00</p>
+          <p class="card-kpi-sub">Sumatoria del mes actual (todas las formas de pago).</p>
         </article>
 
         <article class="card kpi-card">
-          <h2 class="card-title">Utilidad estimada hoy</h2>
-          <p class="card-kpi utilidad" id="kpi-dashboard-utilidad">Q 0.00</p>
-          <p class="card-kpi-sub">Ventas de hoy - gastos de hoy (visión rápida).</p>
+          <h2 class="card-title">Tickets emitidos</h2>
+          <p class="card-kpi" id="dash-tickets">0</p>
+          <p class="card-kpi-sub">Número de ventas registradas.</p>
         </article>
 
         <article class="card kpi-card">
-          <h2 class="card-title">Caja actual</h2>
-          <p class="card-kpi caja" id="kpi-dashboard-caja">Q 0.00</p>
-          <p class="card-kpi-sub">Saldo real según movimientos de caja.</p>
+          <h2 class="card-title">Saldo actual en caja</h2>
+          <p class="card-kpi" id="dash-saldo-caja">Q 0.00</p>
+          <p class="card-kpi-sub">Ingresos - egresos en efectivo (toda la historia).</p>
         </article>
       </section>
 
-      <!-- Sección secundaria -->
-      <section class="grid-2">
+      <!-- Segunda fila: resumen por tipo + pequeño texto -->
+      <section class="cards-grid">
         <article class="card">
-          <h2 class="card-title">Productos más vendidos (próximamente)</h2>
-          <p class="card-description">
-            Aquí se mostrarán los productos con mayor rotación cuando se conecten los reportes de ventas por producto.
+          <h2 class="card-title">Resumen rápido de hoy</h2>
+          <p class="card-description" id="dash-resumen-hoy">
+            Cargando datos del día...
           </p>
-          <table class="table">
-            <thead>
-              <tr>
-                <th>Producto</th>
-                <th>Vendidos</th>
-                <th>Ingresos</th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr>
-                <td colspan="3" class="table-empty">
-                  Aún no hay datos detallados por producto.
-                </td>
-              </tr>
-            </tbody>
-          </table>
+
+          <ul class="bullet-list" id="dash-detalle-hoy">
+            <!-- Se rellena por JS -->
+          </ul>
         </article>
 
         <article class="card">
-          <h2 class="card-title">Alertas rápidas</h2>
-          <ul class="alerts-list">
-            <li class="alert-item">
-              🔔 <strong>Stock bajo:</strong> Próximamente se mostrarán productos con stock crítico.
-            </li>
-            <li class="alert-item">
-              🔔 <strong>Gastos altos:</strong> ALEX avisará cuando los gastos del mes sean muy altos.
-            </li>
-            <li class="alert-item">
-              🔔 <strong>Días flojos:</strong> Detectará días con ventas muy por debajo del promedio.
-            </li>
-          </ul>
-          <p class="card-description">
-            Estas alertas serán generadas automáticamente por la IA empresarial en siguientes versiones.
+          <h2 class="card-title">Estado general del inventario</h2>
+          <p class="card-description" id="dash-resumen-inventario">
+            Cargando inventario...
           </p>
+
+          <ul class="bullet-list" id="dash-detalle-inventario">
+            <!-- Se rellena por JS -->
+          </ul>
         </article>
+      </section>
+
+      <!-- Últimas ventas -->
+      <section class="card">
+        <h2 class="card-title">Últimas ventas</h2>
+        <p class="card-description">
+          Las ventas más recientes. Si necesitas detalles completos, ve al módulo de Ventas.
+        </p>
+
+        <table class="table">
+          <thead>
+            <tr>
+              <th>Fecha</th>
+              <th>Cliente</th>
+              <th>Documento</th>
+              <th>Forma de pago</th>
+              <th>Total</th>
+            </tr>
+          </thead>
+          <tbody id="dash-ventas-body">
+            <tr>
+              <td colspan="5" class="table-empty">
+                Aún no hay ventas registradas.
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </section>
+
+      <!-- Productos con poco stock -->
+      <section class="card">
+        <h2 class="card-title">Productos con poco stock</h2>
+        <p class="card-description">
+          ALEX te muestra los productos con menos existencia para que sepas qué reponer antes de que se acaben.
+        </p>
+
+        <table class="table">
+          <thead>
+            <tr>
+              <th>Código</th>
+              <th>Nombre</th>
+              <th>Tipo</th>
+              <th>Stock</th>
+              <th>Precio venta</th>
+            </tr>
+          </thead>
+          <tbody id="dash-stock-body">
+            <tr>
+              <td colspan="5" class="table-empty">
+                Por ahora no hay productos con stock bajo.
+              </td>
+            </tr>
+          </tbody>
+        </table>
       </section>
     </main>
   </div>
@@ -140,14 +176,13 @@
     // ===== Menú móvil =====
     const btnMenuMobile = document.getElementById('btnMenuMobile');
     const sidebar = document.querySelector('.sidebar');
-
     if (btnMenuMobile) {
       btnMenuMobile.addEventListener('click', () => {
         sidebar.classList.toggle('sidebar-open');
       });
     }
 
-    // ===== Usuario y permisos =====
+    // ===== Usuario, permisos y configuración negocio =====
     const usuarioActual = typeof getUsuarioActualObligatorio === "function"
       ? getUsuarioActualObligatorio()
       : null;
@@ -157,6 +192,27 @@
     }
 
     const labelUser = document.getElementById("topbar-user-label");
+    const labelCompany = document.getElementById("topbar-company-label");
+    const sidebarFooterTitle = document.getElementById("sidebar-footer-title");
+
+    let negocioConfig = {
+      nombre: "Mi negocio",
+      tipo: "tienda",
+      usaProductosUnidad: true,
+      usaPorPeso: false,
+      usaServicios: false
+    };
+
+    if (typeof load === "function") {
+      const cfg = load("negocio_config", null);
+      if (cfg && typeof cfg === "object") {
+        negocioConfig = Object.assign(negocioConfig, cfg);
+      }
+    }
+
+    if (labelCompany) labelCompany.textContent = negocioConfig.nombre || "Mi negocio";
+    if (sidebarFooterTitle) sidebarFooterTitle.textContent = negocioConfig.nombre || "Mi negocio";
+
     if (usuarioActual && labelUser) {
       const rolTexto = usuarioActual.rol === "dueno" ? "Dueño" : "Empleado";
       labelUser.textContent = `${usuarioActual.nombre} (${rolTexto})`;
@@ -172,95 +228,290 @@
       return "Q " + num.toFixed(2);
     }
 
-    function mismaFecha(d1, d2) {
-      return (
-        d1.getFullYear() === d2.getFullYear() &&
-        d1.getMonth() === d2.getMonth() &&
-        d1.getDate() === d2.getDate()
-      );
+    function esMismoDia(a, b) {
+      return a.getFullYear() === b.getFullYear() &&
+             a.getMonth() === b.getMonth() &&
+             a.getDate() === b.getDate();
     }
 
-    // ===== Cargar datos desde almacenamiento =====
+    function esMismoMes(a, b) {
+      return a.getFullYear() === b.getFullYear() &&
+             a.getMonth() === b.getMonth();
+    }
+
+    function formatearFechaLocal(fechaIso) {
+      const d = new Date(fechaIso);
+      if (isNaN(d.getTime())) return "-";
+      return d.toLocaleString("es-GT");
+    }
+
+    function textoTipoItem(tipo) {
+      switch (tipo) {
+        case "unidad": return "Producto por unidad";
+        case "peso": return "Producto por peso";
+        case "servicio": return "Servicio";
+        default: return "Producto";
+      }
+    }
+
+    function textoUnidad(unidadPeso, tipoItem) {
+      if (tipoItem === "servicio") return "-";
+      if (tipoItem === "unidad") return "Unidad";
+      if (tipoItem === "peso") {
+        if (unidadPeso === "kg") return "KG";
+        return "LB";
+      }
+      return "-";
+    }
+
+    // ===== Datos cargados desde storage =====
     let ventas = [];
-    let gastos = [];
     let movimientosCaja = [];
-    let saldoInicial = 0;
+    let productos = [];
 
     if (typeof load === "function") {
       const vData = load("ventas", []);
       ventas = Array.isArray(vData) ? vData : [];
 
-      const gData = load("gastos", []);
-      gastos = Array.isArray(gData) ? gData : [];
-
       const m1 = load("caja_movimientos", []);
       const m2 = load("movimientosCaja", []);
       if (Array.isArray(m1) && m1.length > 0) {
         movimientosCaja = m1;
-      } else if (Array.isArray(m2)) {
+      } else if (Array.isArray(m2) && m2.length > 0) {
         movimientosCaja = m2;
       }
 
-      saldoInicial = Number(load("saldoInicial", 0)) || 0;
+      const pData = load("productos", []);
+      if (Array.isArray(pData)) {
+        productos = pData.map(p => {
+          if (!p.tipoItem) p.tipoItem = "unidad";
+          if (!p.unidadPeso && p.tipoItem === "peso") p.unidadPeso = "lb";
+          return p;
+        });
+      }
     }
 
-    // ===== Recalcular KPIs del dashboard =====
-    function recalcularDashboard() {
+    // ===== KPIs de ventas y caja =====
+    function recalcularKPIs() {
       const hoy = new Date();
+      let totalHoy = 0;
+      let totalMes = 0;
+      let tickets = 0;
 
-      // Ventas de hoy (todas las formas de pago)
-      let ventasHoy = 0;
       ventas.forEach(v => {
         const fecha = new Date(v.fechaHora || v.fecha || Date.now());
         const total = Number(v.total) || 0;
-        if (mismaFecha(fecha, hoy)) {
-          ventasHoy += total;
+        if (esMismoDia(fecha, hoy)) {
+          totalHoy += total;
+        }
+        if (esMismoMes(fecha, hoy)) {
+          totalMes += total;
         }
       });
 
-      // Gastos de hoy (desde módulo de gastos + compras en efectivo YA están en caja)
-      let gastosHoy = 0;
-      gastos.forEach(g => {
-        const fecha = new Date(g.fechaHora || g.fecha || Date.now());
-        const monto = Number(g.monto) || 0;
-        if (mismaFecha(fecha, hoy)) {
-          gastosHoy += monto;
-        }
+      tickets = ventas.length;
+
+      let saldoCaja = 0;
+      movimientosCaja.forEach(mov => {
+        const monto = Number(mov.monto) || 0;
+        const tipo = mov.tipo || "INGRESO";
+        if (tipo === "INGRESO") saldoCaja += monto;
+        else if (tipo === "EGRESO") saldoCaja -= monto;
       });
 
-      // Caja actual: igual que en caja.html
-      let totalIngresos = 0;
-      let totalEgresos = 0;
+      const elHoy = document.getElementById("dash-ventas-hoy");
+      const elMes = document.getElementById("dash-ventas-mes");
+      const elTickets = document.getElementById("dash-tickets");
+      const elSaldoCaja = document.getElementById("dash-saldo-caja");
 
-      movimientosCaja.forEach(m => {
-        const tipo = (m.tipo || "").toUpperCase();
-        const monto = Number(m.monto) || 0;
-        if (tipo === "INGRESO") {
-          totalIngresos += monto;
-        } else if (tipo === "EGRESO") {
-          totalEgresos += monto;
+      if (elHoy) elHoy.textContent = alex3FormatearMonedaSeguro(totalHoy);
+      if (elMes) elMes.textContent = alex3FormatearMonedaSeguro(totalMes);
+      if (elTickets) elTickets.textContent = String(tickets);
+      if (elSaldoCaja) elSaldoCaja.textContent = alex3FormatearMonedaSeguro(saldoCaja);
+
+      // Texto resumen hoy
+      const resumenHoy = document.getElementById("dash-resumen-hoy");
+      const detalleHoy = document.getElementById("dash-detalle-hoy");
+      if (resumenHoy && detalleHoy) {
+        if (!ventas.length) {
+          resumenHoy.textContent = "Todavía no hay ventas registradas. Cuando registres ventas, aquí verás un resumen rápido del día.";
+          detalleHoy.innerHTML = "";
+        } else {
+          resumenHoy.textContent = "Así va tu día hoy:";
+          const ventasHoyCount = ventas.filter(v => esMismoDia(new Date(v.fechaHora || v.fecha || Date.now()), hoy)).length;
+
+          detalleHoy.innerHTML = `
+            <li><strong>Ventas de hoy:</strong> ${ventasHoyCount} ticket(s)</li>
+            <li><strong>Total de hoy:</strong> ${alex3FormatearMonedaSeguro(totalHoy)}</li>
+            <li><strong>Ventas este mes:</strong> ${alex3FormatearMonedaSeguro(totalMes)}</li>
+            <li><strong>Saldo actual en caja:</strong> ${alex3FormatearMonedaSeguro(saldoCaja)}</li>
+          `;
         }
-      });
-
-      const cajaActual = saldoInicial + totalIngresos - totalEgresos;
-
-      // Utilidad estimada simple del día
-      const utilidadEstim = ventasHoy - gastosHoy;
-
-      // Pintar en pantalla
-      const elVentasHoy = document.getElementById("kpi-dashboard-ventas-hoy");
-      const elGastosHoy = document.getElementById("kpi-dashboard-gastos-hoy");
-      const elUtilidad = document.getElementById("kpi-dashboard-utilidad");
-      const elCaja = document.getElementById("kpi-dashboard-caja");
-
-      if (elVentasHoy) elVentasHoy.textContent = alex3FormatearMonedaSeguro(ventasHoy);
-      if (elGastosHoy) elGastosHoy.textContent = alex3FormatearMonedaSeguro(gastosHoy);
-      if (elUtilidad) elUtilidad.textContent = alex3FormatearMonedaSeguro(utilidadEstim);
-      if (elCaja) elCaja.textContent = alex3FormatearMonedaSeguro(cajaActual);
+      }
     }
 
-    // Primera carga
-    recalcularDashboard();
+    // ===== Resumen de inventario =====
+    function recalcularResumenInventario() {
+      const resumenInv = document.getElementById("dash-resumen-inventario");
+      const detalleInv = document.getElementById("dash-detalle-inventario");
+
+      if (!resumenInv || !detalleInv) return;
+
+      if (!productos.length) {
+        resumenInv.textContent = "Aún no hay productos o servicios registrados en el inventario.";
+        detalleInv.innerHTML = "";
+        return;
+      }
+
+      let totalItems = productos.length;
+      let cuentaUnidad = 0;
+      let cuentaPeso = 0;
+      let cuentaServicios = 0;
+
+      productos.forEach(p => {
+        if (p.tipoItem === "servicio") cuentaServicios++;
+        else if (p.tipoItem === "peso") cuentaPeso++;
+        else cuentaUnidad++;
+      });
+
+      resumenInv.textContent = `Tienes ${totalItems} ítem(s) registrados en el inventario.`;
+
+      detalleInv.innerHTML = `
+        <li><strong>Productos por unidad:</strong> ${cuentaUnidad}</li>
+        <li><strong>Productos por peso:</strong> ${cuentaPeso}</li>
+        <li><strong>Servicios:</strong> ${cuentaServicios}</li>
+      `;
+    }
+
+    // ===== Últimas ventas (tabla) =====
+    function renderUltimasVentas() {
+      const tbody = document.getElementById("dash-ventas-body");
+      if (!tbody) return;
+
+      tbody.innerHTML = "";
+
+      if (!ventas.length) {
+        tbody.innerHTML = `
+          <tr>
+            <td colspan="5" class="table-empty">
+              Aún no hay ventas registradas.
+            </td>
+          </tr>
+        `;
+        return;
+      }
+
+      const ordenadas = [...ventas].sort((a, b) => {
+        const fa = new Date(a.fechaHora || a.fecha || 0).getTime();
+        const fb = new Date(b.fechaHora || b.fecha || 0).getTime();
+        return fb - fa;
+      });
+
+      const ultimas = ordenadas.slice(0, 10); // Máximo 10
+
+      ultimas.forEach(v => {
+        const fechaTxt = v.fecha || (v.fechaHora ? formatearFechaLocal(v.fechaHora) : "-");
+        const clienteTxt = v.clienteNombre || "Cliente general";
+        const docTxt = v.documentoTipo
+          ? (v.documentoNumero ? `${v.documentoTipo} ${v.documentoNumero}` : v.documentoTipo)
+          : (v.documentoNumero || "-");
+        const formaPagoTxt = v.formaPago || "-";
+        const totalTxt = alex3FormatearMonedaSeguro(v.total || 0);
+
+        tbody.innerHTML += `
+          <tr>
+            <td>${fechaTxt}</td>
+            <td>${clienteTxt}</td>
+            <td>${docTxt}</td>
+            <td>${formaPagoTxt}</td>
+            <td>${totalTxt}</td>
+          </tr>
+        `;
+      });
+    }
+
+    // ===== Productos con poco stock =====
+    function renderStockBajo() {
+      const tbody = document.getElementById("dash-stock-body");
+      if (!tbody) return;
+
+      tbody.innerHTML = "";
+
+      if (!productos.length) {
+        tbody.innerHTML = `
+          <tr>
+            <td colspan="5" class="table-empty">
+              Aún no hay productos registrados.
+            </td>
+          </tr>
+        `;
+        return;
+      }
+
+      // Definimos umbrales de stock bajo:
+      // - Productos por unidad: stock <= 3
+      // - Productos por peso: stock <= 2 (lb/kg)
+      const stockBajo = productos.filter(p => {
+        if (p.tipoItem === "servicio") return false;
+        const st = Number(p.stock);
+        if (isNaN(st)) return false;
+        if (p.tipoItem === "unidad") return st <= 3;
+        if (p.tipoItem === "peso") return st <= 2;
+        return false;
+      });
+
+      if (!stockBajo.length) {
+        tbody.innerHTML = `
+          <tr>
+            <td colspan="5" class="table-empty">
+              Por ahora no hay productos con stock bajo. 👌
+            </td>
+          </tr>
+        `;
+        return;
+      }
+
+      // Ordenar por stock ascendente (menos stock primero)
+      stockBajo.sort((a, b) => {
+        const sa = Number(a.stock) || 0;
+        const sb = Number(b.stock) || 0;
+        return sa - sb;
+      });
+
+      // Máximo 10 ítems
+      stockBajo.slice(0, 10).forEach(p => {
+        const tipoTxt = textoTipoItem(p.tipoItem);
+        const unidadTxt = textoUnidad(p.unidadPeso, p.tipoItem);
+
+        let stockTxt = "-";
+        const st = Number(p.stock);
+        if (!isNaN(st)) {
+          if (p.tipoItem === "peso") {
+            stockTxt = st.toFixed(2) + " " + unidadTxt;
+          } else {
+            stockTxt = String(st);
+          }
+        }
+
+        const precioFmt = alex3FormatearMonedaSeguro(p.venta || 0);
+
+        tbody.innerHTML += `
+          <tr>
+            <td>${p.codigo || "-"}</td>
+            <td>${p.nombre || "(Sin nombre)"}</td>
+            <td>${tipoTxt}</td>
+            <td>${stockTxt}</td>
+            <td>${precioFmt}</td>
+          </tr>
+        `;
+      });
+    }
+
+    // ===== Primera carga =====
+    recalcularKPIs();
+    recalcularResumenInventario();
+    renderUltimasVentas();
+    renderStockBajo();
   </script>
 </body>
 </html>
