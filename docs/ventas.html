@@ -47,7 +47,7 @@
       <div class="topbar-left">
         <h1 class="topbar-title">Ventas</h1>
         <p class="topbar-subtitle">
-          Registra ventas reales y que ALEX actualice caja, inventario y dashboard automáticamente.
+          Registra ventas reales y deja que ALEX actualice caja, inventario y dashboard automáticamente.
         </p>
       </div>
 
@@ -91,9 +91,8 @@
       <section class="card">
         <h2 class="card-title">1. Registrar una nueva venta</h2>
         <p class="card-description">
-          Selecciona un cliente guardado o escribe uno manual. Si usas productos del inventario,
-          agrega los productos al carrito con código o cámara. Si la venta es en efectivo, ALEX
-          registrará automáticamente un ingreso en caja.
+          Puedes vender productos por unidad, productos por peso (lb/kg) y servicios,
+          según lo que tengas configurado en tu inventario.
         </p>
 
         <div class="form-grid">
@@ -136,18 +135,19 @@
           <div class="form-field">
             <label for="vCodigoProducto">Código / código de barras</label>
             <input id="vCodigoProducto" class="input" type="text"
-                   placeholder="Escribe o escanea el código del producto">
+                   placeholder="Escribe o escanea el código del ítem">
           </div>
 
           <div class="form-field">
-            <label for="vCantidadProducto">Cantidad</label>
-            <input id="vCantidadProducto" class="input" type="number" min="1" step="1" value="1">
+            <label for="vCantidadProducto">Cantidad / peso</label>
+            <input id="vCantidadProducto" class="input" type="number"
+                   min="0.01" step="0.01" value="1">
           </div>
 
           <div class="form-field">
             <label for="vMonto">Monto total (Q)</label>
             <input id="vMonto" class="input" type="number" min="0" step="0.01"
-                   placeholder="Se llena automáticamente con el carrito (o escríbelo si es un servicio)">
+                   placeholder="Se llena automáticamente con el carrito (o escríbelo si es un servicio suelto)">
           </div>
 
           <div class="form-field">
@@ -182,7 +182,7 @@
         <div id="scannerContainer"
              style="display:none; margin-top:0.75rem; padding:0.75rem; border-radius:0.75rem; border:1px solid #ddd;">
           <p class="card-description" style="margin-bottom:0.5rem;">
-            Apunta la cámara al código de barras. Al detectar un producto, se agregará al carrito.
+            Apunta la cámara al código de barras. Al detectar un ítem del inventario, se agregará al carrito.
           </p>
           <video id="videoScanner" autoplay playsinline
                  style="width:100%; max-height:260px; border-radius:0.75rem; background:#000;"></video>
@@ -192,18 +192,17 @@
         </div>
 
         <!-- Carrito de productos -->
-        <h3 class="card-title" style="margin-top:1.25rem;">2. Carrito de productos de esta venta</h3>
+        <h3 class="card-title" style="margin-top:1.25rem;">2. Carrito de ítems de esta venta</h3>
         <p class="card-description">
-          Escanea o escribe el código y presiona Enter para agregar productos. Puedes ajustar cantidades
-          y eliminar líneas. El total se actualiza automáticamente.
+          Escanea o escribe el código y presiona Enter para agregar ítems. ALEX respetará si es por unidad, por peso o servicio.
         </p>
 
         <table class="table">
           <thead>
             <tr>
               <th>Código</th>
-              <th>Producto</th>
-              <th>Cantidad</th>
+              <th>Ítem</th>
+              <th>Cantidad / Peso</th>
               <th>Precio (Q)</th>
               <th>Subtotal (Q)</th>
               <th>Acciones</th>
@@ -212,7 +211,7 @@
           <tbody id="carrito-body">
             <tr>
               <td colspan="6" class="table-empty">
-                Aún no hay productos en el carrito.
+                Aún no hay ítems en el carrito.
               </td>
             </tr>
           </tbody>
@@ -324,6 +323,21 @@
       return d.toLocaleString("es-GT");
     }
 
+    function textoTipoItem(tipo) {
+      switch (tipo) {
+        case "unidad": return "Producto por unidad";
+        case "peso": return "Producto por peso";
+        case "servicio": return "Servicio";
+        default: return "Producto";
+      }
+    }
+
+    function textoUnidadPeso(unidadPeso) {
+      if (unidadPeso === "kg") return "KG";
+      if (unidadPeso === "lb") return "LB";
+      return "";
+    }
+
     // ===== Datos base: ventas, clientes, caja, productos, carrito =====
     let ventas = [];
     let clientes = [];
@@ -347,7 +361,13 @@
       }
 
       const pData = load("productos", []);
-      productos = Array.isArray(pData) ? pData : [];
+      if (Array.isArray(pData)) {
+        productos = pData.map(p => {
+          if (!p.tipoItem) p.tipoItem = "unidad";
+          if (!p.unidadPeso && p.tipoItem === "peso") p.unidadPeso = "lb";
+          return p;
+        });
+      }
     }
 
     function guardarVentas() {
@@ -455,7 +475,7 @@
         tbodyCarrito.innerHTML = `
           <tr>
             <td colspan="6" class="table-empty">
-              Aún no hay productos en el carrito.
+              Aún no hay ítems en el carrito.
             </td>
           </tr>
         `;
@@ -467,11 +487,19 @@
         const precioFmt = alex3FormatearMonedaSeguro(item.precioUnit);
         const subtotalFmt = alex3FormatearMonedaSeguro(item.subtotal);
 
+        let cantidadTxt = "";
+        if (item.tipoItem === "peso") {
+          const unidadTxt = textoUnidadPeso(item.unidadPeso);
+          cantidadTxt = `${item.cantidad.toFixed(2)} ${unidadTxt}`;
+        } else {
+          cantidadTxt = String(item.cantidad);
+        }
+
         tbodyCarrito.innerHTML += `
           <tr>
             <td>${item.codigo}</td>
             <td>${item.nombre}</td>
-            <td>${item.cantidad}</td>
+            <td>${cantidadTxt}</td>
             <td>${precioFmt}</td>
             <td>${subtotalFmt}</td>
             <td>
@@ -494,20 +522,37 @@
         const action = btn.getAttribute("data-cart-action");
         if (isNaN(idx) || !carrito[idx]) return;
 
+        const item = carrito[idx];
+        const esPeso = item.tipoItem === "peso";
+        const step = esPeso ? 0.10 : 1;
+
         if (action === "mas") {
-          carrito[idx].cantidad += 1;
-          carrito[idx].subtotal = carrito[idx].cantidad * carrito[idx].precioUnit;
+          const nuevaCantidad = item.cantidad + step;
+          item.cantidad = esPeso ? Number(nuevaCantidad.toFixed(2)) : Math.round(nuevaCantidad);
+          item.subtotal = item.cantidad * item.precioUnit;
         } else if (action === "menos") {
-          if (carrito[idx].cantidad > 1) {
-            carrito[idx].cantidad -= 1;
-            carrito[idx].subtotal = carrito[idx].cantidad * carrito[idx].precioUnit;
+          const nuevaCantidad = item.cantidad - step;
+          if (esPeso) {
+            if (nuevaCantidad <= 0.01) {
+              if (confirm("¿Quitar este ítem del carrito?")) {
+                carrito.splice(idx, 1);
+              }
+            } else {
+              item.cantidad = Number(nuevaCantidad.toFixed(2));
+              item.subtotal = item.cantidad * item.precioUnit;
+            }
           } else {
-            if (confirm("¿Quitar este producto del carrito?")) {
-              carrito.splice(idx, 1);
+            if (nuevaCantidad < 1) {
+              if (confirm("¿Quitar este ítem del carrito?")) {
+                carrito.splice(idx, 1);
+              }
+            } else {
+              item.cantidad = Math.round(nuevaCantidad);
+              item.subtotal = item.cantidad * item.precioUnit;
             }
           }
         } else if (action === "eliminar") {
-          if (confirm("¿Quitar este producto del carrito?")) {
+          if (confirm("¿Quitar este ítem del carrito?")) {
             carrito.splice(idx, 1);
           }
         }
@@ -516,47 +561,63 @@
       });
     }
 
-    // ===== Agregar producto al carrito =====
+    // ===== Agregar ítem al carrito =====
     function usarProductoEnVenta() {
       if (!inpCodigoProducto) return;
 
       const codigo = inpCodigoProducto.value.trim();
       if (!codigo) {
-        alert("Escribe o escanea un código de producto.");
+        alert("Escribe o escanea un código de ítem.");
         return;
       }
 
       const prod = buscarProductoPorCodigo(codigo);
 
       if (!prod) {
-        alert("No se encontró ningún producto con ese código. Verifica el código o regístralo en inventario.");
+        alert("No se encontró ningún ítem con ese código en el inventario. Revísalo en el módulo de Inventario.");
         return;
       }
 
+      const tipoItem = prod.tipoItem || "unidad";
+      const unidadPeso = prod.unidadPeso || null;
+
       let cantidad = 1;
       if (inpCantidadProducto && inpCantidadProducto.value) {
-        const c = parseInt(inpCantidadProducto.value, 10);
-        if (!isNaN(c) && c > 0) cantidad = c;
+        const raw = parseFloat(inpCantidadProducto.value);
+        if (!isNaN(raw) && raw > 0) {
+          if (tipoItem === "peso") {
+            cantidad = Math.round(raw * 100) / 100; // 2 decimales
+          } else {
+            cantidad = Math.max(1, Math.round(raw));
+          }
+        }
       }
 
       const precioUnit = Number(prod.venta) || 0;
       if (precioUnit <= 0) {
-        alert("El producto encontrado tiene un precio de venta inválido o en 0.");
+        alert("El ítem encontrado tiene un precio de venta inválido o en 0.");
         return;
       }
 
-      // Si ya existe en carrito, solo sumamos cantidad
+      // Si ya existe en carrito, sumamos cantidad (también para servicios, por si repiten)
       const existente = carrito.find(item =>
         String(item.codigo).trim().toLowerCase() === String(codigo).trim().toLowerCase()
       );
 
       if (existente) {
         existente.cantidad += cantidad;
+        if (existente.tipoItem === "peso") {
+          existente.cantidad = Number(existente.cantidad.toFixed(2));
+        } else {
+          existente.cantidad = Math.max(1, Math.round(existente.cantidad));
+        }
         existente.subtotal = existente.cantidad * existente.precioUnit;
       } else {
         carrito.push({
           codigo: prod.codigo,
           nombre: prod.nombre || "(Sin nombre)",
+          tipoItem,
+          unidadPeso,
           cantidad,
           precioUnit,
           subtotal: precioUnit * cantidad
@@ -564,10 +625,10 @@
       }
 
       if (inpNotas && !inpNotas.value.trim()) {
-        inpNotas.value = `Venta con carrito (primer producto: ${prod.nombre || ""})`;
+        inpNotas.value = `Venta con carrito (primer ítem: ${prod.nombre || ""})`;
       }
 
-      // Limpiar inputs de código/cantidad para el siguiente producto
+      // Limpiar inputs de código/cantidad para el siguiente ítem
       inpCodigoProducto.value = "";
       if (inpCantidadProducto) inpCantidadProducto.value = "1";
       inpCodigoProducto.focus();
@@ -813,12 +874,12 @@
       const notas = (inpNotas && inpNotas.value.trim()) || "";
 
       if (isNaN(total) || total <= 0) {
-        alert("Escribe un monto válido mayor a 0, o agrega productos al carrito.");
+        alert("Escribe un monto válido mayor a 0, o agrega ítems al carrito.");
         return;
       }
 
       // Ajuste de inventario:
-      // Si hay carrito, usamos todos los productos del carrito
+      // Si hay carrito, usamos todos los ítems del carrito
       if (carrito.length > 0) {
         for (const item of carrito) {
           const prod = buscarProductoPorCodigo(item.codigo);
@@ -826,7 +887,7 @@
             const stockActual = Number(prod.stock) || 0;
             if (stockActual < item.cantidad) {
               const continuar = confirm(
-                `El producto "${item.nombre}" tiene stock ${stockActual} y estás vendiendo ${item.cantidad}. ` +
+                `El ítem "${item.nombre}" tiene stock ${stockActual} y estás vendiendo ${item.cantidad}. ` +
                 `¿Deseas continuar de todos modos?`
               );
               if (!continuar) {
@@ -847,11 +908,11 @@
         }
         guardarProductos();
       } else {
-        // Modo antiguo: un solo producto usando código + cantidad (por si se quiere usar sin carrito)
+        // Modo antiguo: un solo ítem usando código + cantidad (por si se quiere usar sin carrito)
         let codigoProd = inpCodigoProducto ? inpCodigoProducto.value.trim() : "";
         let cantidadProd = 0;
         if (inpCantidadProducto && inpCantidadProducto.value) {
-          const c = parseInt(inpCantidadProducto.value, 10);
+          const c = parseFloat(inpCantidadProducto.value);
           if (!isNaN(c) && c > 0) cantidadProd = c;
         }
 
