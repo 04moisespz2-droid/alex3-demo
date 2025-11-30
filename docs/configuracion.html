@@ -27,15 +27,14 @@
       <a href="gastos.html" class="sidebar-link">📉 Gastos</a>
       <a href="clientes.html" class="sidebar-link">👥 Clientes</a>
       <a href="proveedores.html" class="sidebar-link">🚚 Proveedores</a>
-      <a href="contabilidad.html" class="sidebar-link">📚 Contabilidad</a>
-      <a href="sat.html" class="sidebar-link">🇬🇹 SAT Guatemala</a>
+      <a href="reportes.html" class="sidebar-link">📚 Reportes</a>
       <a href="ia.html" class="sidebar-link">🤖 IA empresarial</a>
       <a href="configuracion.html" class="sidebar-link active">⚙️ Configuración</a>
     </nav>
 
     <div class="sidebar-footer">
-      <span class="sidebar-footer-title">Empresa demo</span>
-      <span class="sidebar-footer-sub">Versión 1.0</span>
+      <span class="sidebar-footer-title">Mi negocio</span>
+      <span class="sidebar-footer-sub">Centro de control</span>
     </div>
   </aside>
 
@@ -48,111 +47,103 @@
       <div class="topbar-left">
         <h1 class="topbar-title">Configuración del negocio</h1>
         <p class="topbar-subtitle">
-          Ajusta datos generales, régimen SAT y parámetros básicos de ALEX 3.0.
+          Define el tipo de negocio y cómo funcionará ALEX 3.0 para este perfil.
         </p>
       </div>
 
       <div class="topbar-right">
-        <span class="topbar-company" id="topbar-company">Mi tienda demo</span>
+        <span class="topbar-company" id="topbar-company-label">Mi negocio</span>
         <span class="topbar-divider">•</span>
         <span class="topbar-user" id="topbar-user-label">Usuario (Rol)</span>
-        <button class="btn" id="btnLogout" type="button" style="margin-left: 0.75rem;">
-          Cerrar sesión
-        </button>
       </div>
     </header>
 
     <!-- Contenido principal -->
     <main class="main-content">
-      <!-- Datos generales -->
+      <!-- Perfil del negocio -->
       <section class="card">
-        <h2 class="card-title">Datos generales de la empresa</h2>
+        <h2 class="card-title">1. Perfil del negocio</h2>
         <p class="card-description">
-          Estos datos se utilizarán para personalizar el sistema y, en el futuro, para emitir facturas electrónicas.
+          Esta configuración se usa en todos los módulos (Inventario, Ventas, Caja, etc.)
+          para que ALEX se adapte al tipo de negocio y no muestre cosas innecesarias.
         </p>
 
         <div class="form-grid">
-          <div class="form-field">
-            <label for="cfgNombreEmpresa">Nombre de la empresa</label>
-            <input id="cfgNombreEmpresa" class="input" type="text"
-                   placeholder="Ej: Tienda ALEX, Importadora Brayan">
+          <div class="form-field" style="grid-column: 1 / -1;">
+            <label for="negocioNombre">Nombre del negocio</label>
+            <input id="negocioNombre" class="input" type="text"
+                   placeholder="Ej: Tienda Brayan, Barbería ALEX, Carnicería El Centro">
           </div>
 
-          <div class="form-field">
-            <label for="cfgNombreCorto">Nombre corto (para el panel)</label>
-            <input id="cfgNombreCorto" class="input" type="text"
-                   placeholder="Ej: Mi tienda demo">
-          </div>
-
-          <div class="form-field">
-            <label for="cfgNit">NIT</label>
-            <input id="cfgNit" class="input" type="text" placeholder="Ej: 1234567-8">
-          </div>
-
-          <div class="form-field">
-            <label for="cfgRegimenSat">Régimen SAT</label>
-            <select id="cfgRegimenSat" class="input">
-              <option value="PEQUENIO">Pequeño contribuyente</option>
-              <option value="GENERAL">Régimen general</option>
+          <div class="form-field" style="grid-column: 1 / -1;">
+            <label for="negocioTipo">Tipo principal de negocio</label>
+            <select id="negocioTipo" class="input">
+              <option value="tienda">🛒 Tienda / Abarrotería</option>
+              <option value="carniceria">🥩 Carnicería / Granel</option>
+              <option value="servicios">💇 Salón / Barbería / Servicios</option>
+              <option value="restaurante">🍽️ Restaurante / Cafetería</option>
+              <option value="mixto">🧰 Negocio mixto (varios tipos)</option>
             </select>
           </div>
         </div>
       </section>
 
-      <!-- Parámetros financieros -->
+      <!-- Comportamiento de inventario y ventas -->
       <section class="card">
-        <h2 class="card-title">Parámetros financieros básicos</h2>
+        <h2 class="card-title">2. ¿Qué manejará ALEX en este negocio?</h2>
         <p class="card-description">
-          Estos valores se usan en módulos como Caja, Dashboard y Contabilidad.
+          Marca solo lo que este negocio realmente usa. ALEX ocultará campos innecesarios en
+          Inventario y Ventas para que la pantalla no se vea cargada.
         </p>
 
         <div class="form-grid">
-          <div class="form-field">
-            <label for="cfgSaldoInicialCaja">Saldo inicial en caja (Q)</label>
-            <input id="cfgSaldoInicialCaja" class="input" type="number" step="0.01" min="0"
-                   placeholder="Ej: 500.00">
+          <div class="form-field" style="grid-column: 1 / -1;">
+            <label class="checkbox-label">
+              <input type="checkbox" id="usaProductosUnidad">
+              <span>Productos por unidad (ej: galletas, shampoos, celulares, gorras)</span>
+            </label>
           </div>
 
-          <div class="form-field">
-            <label for="cfgObjetivoDiarioVentas">Objetivo diario de ventas (Q)</label>
-            <input id="cfgObjetivoDiarioVentas" class="input" type="number" step="0.01" min="0"
-                   placeholder="Ej: 1000.00">
+          <div class="form-field" style="grid-column: 1 / -1;">
+            <label class="checkbox-label">
+              <input type="checkbox" id="usaPorPeso">
+              <span>Productos por peso / granel (ej: carne por libra/kilo, frutas, verduras)</span>
+            </label>
+          </div>
+
+          <div class="form-field" style="grid-column: 1 / -1;">
+            <label class="checkbox-label">
+              <input type="checkbox" id="usaServicios">
+              <span>Servicios (ej: cortes de cabello, uñas, diseño, mantenimiento, consultas)</span>
+            </label>
           </div>
         </div>
 
-        <button class="btn" id="btnGuardarConfig">Guardar configuración</button>
+        <div class="info-box" id="resumenPerfil" style="margin-top:0.75rem; font-size:0.9rem;">
+          <!-- Aquí pinto un resumen amigable -->
+        </div>
+
+        <button class="btn" id="btnGuardarPerfil" style="margin-top:0.75rem;">
+          Guardar configuración del negocio
+        </button>
       </section>
 
-      <!-- Vista rápida -->
+      <!-- Información -->
       <section class="card">
-        <h2 class="card-title">Resumen de configuración actual</h2>
-        <table class="table">
-          <tbody>
-            <tr>
-              <th>Empresa</th>
-              <td id="resEmpresa">-</td>
-            </tr>
-            <tr>
-              <th>NIT</th>
-              <td id="resNit">-</td>
-            </tr>
-            <tr>
-              <th>Régimen SAT</th>
-              <td id="resRegimen">-</td>
-            </tr>
-            <tr>
-              <th>Saldo inicial en caja</th>
-              <td id="resSaldoInicial">Q 0.00</td>
-            </tr>
-            <tr>
-              <th>Objetivo diario de ventas</th>
-              <td id="resObjetivo">Q 0.00</td>
-            </tr>
-          </tbody>
-        </table>
+        <h2 class="card-title">3. ¿Cómo usa esto ALEX 3.0?</h2>
         <p class="card-description">
-          El saldo inicial en caja se utiliza en el módulo de Caja. El objetivo diario de ventas
-          puede usarse en el Dashboard para medir tu progreso.
+          ALEX leerá estos datos en cada módulo y se adaptará:
+        </p>
+
+        <ul class="bullet-list">
+          <li><strong>Inventario</strong> solo mostrará los campos que correspondan (productos, servicios, por peso).</li>
+          <li><strong>Ventas</strong> ajustará cómo funciona el carrito (unidades, peso, servicios sin stock).</li>
+          <li><strong>Dashboard y Caja</strong> podrán mostrar métricas por tipo de negocio.</li>
+        </ul>
+
+        <p class="card-description">
+          Más adelante, cuando te agregue módulos especiales (salones, carnicerías, restaurantes),
+          esta configuración evitará que todo se vea junto y amontonado.
         </p>
       </section>
     </main>
@@ -163,17 +154,16 @@
   <script src="alex-roles.js"></script>
 
   <script>
-    // Menú móvil
+    // ===== Menú móvil =====
     const btnMenuMobile = document.getElementById('btnMenuMobile');
     const sidebar = document.querySelector('.sidebar');
-
     if (btnMenuMobile) {
       btnMenuMobile.addEventListener('click', () => {
         sidebar.classList.toggle('sidebar-open');
       });
     }
 
-    // Usuario actual y permisos
+    // ===== Usuario y permisos =====
     const usuarioActual = typeof getUsuarioActualObligatorio === "function"
       ? getUsuarioActualObligatorio()
       : null;
@@ -183,145 +173,175 @@
     }
 
     const labelUser = document.getElementById("topbar-user-label");
-    const labelCompany = document.getElementById("topbar-company");
+    const labelCompany = document.getElementById("topbar-company-label");
 
-    if (usuarioActual && labelUser) {
-      const rolTexto = usuarioActual.rol === "dueno" ? "Dueño" : "Empleado";
-      labelUser.textContent = `${usuarioActual.nombre} (${rolTexto})`;
-    }
+    // ===== Cargar configuración del negocio =====
+    let negocioConfig = {
+      nombre: "Mi negocio",
+      tipo: "tienda",
+      usaProductosUnidad: true,
+      usaPorPeso: false,
+      usaServicios: false
+    };
 
-    // Cerrar sesión
-    const btnLogout = document.getElementById("btnLogout");
-    if (btnLogout) {
-      btnLogout.addEventListener("click", () => {
-        if (!confirm("¿Quieres cerrar sesión?")) return;
-
-        if (typeof save === "function") {
-          save("usuarioActual", null);
-        } else {
-          localStorage.removeItem("usuarioActual");
-        }
-
-        window.location.href = "index.html";
-      });
-    }
-
-    // Helper de moneda local
-    function alex3FormatearMonedaLocal(valor) {
-      const num = Number(valor);
-      if (isNaN(num)) return "Q 0.00";
-      return "Q " + num.toFixed(2);
-    }
-
-    // Cargar configuración existente
-    let configEmpresa = {};
     if (typeof load === "function") {
-      const cData = load("configEmpresa", null);
-      if (cData && typeof cData === "object") {
-        configEmpresa = cData;
-      }
-
-      const saldoIniGuardado = load("saldoInicial", null);
-      if (saldoIniGuardado !== null && saldoIniGuardado !== undefined) {
-        configEmpresa.saldoInicialCaja = Number(saldoIniGuardado) || 0;
-      }
-
-      const objetivoGuardado = load("objetivoDiarioVentas", null);
-      if (objetivoGuardado !== null && objetivoGuardado !== undefined) {
-        configEmpresa.objetivoDiarioVentas = Number(objetivoGuardado) || 0;
+      const data = load("negocio_config", null);
+      if (data && typeof data === "object") {
+        negocioConfig = Object.assign(negocioConfig, data);
       }
     }
 
-    // Referencias a inputs
-    const inpNombre = document.getElementById("cfgNombreEmpresa");
-    const inpNombreCorto = document.getElementById("cfgNombreCorto");
-    const inpNit = document.getElementById("cfgNit");
-    const inpRegimen = document.getElementById("cfgRegimenSat");
-    const inpSaldoInicial = document.getElementById("cfgSaldoInicialCaja");
-    const inpObjetivo = document.getElementById("cfgObjetivoDiarioVentas");
+    const inpNombre = document.getElementById("negocioNombre");
+    const selTipo = document.getElementById("negocioTipo");
+    const chkUnidad = document.getElementById("usaProductosUnidad");
+    const chkPeso = document.getElementById("usaPorPeso");
+    const chkServicios = document.getElementById("usaServicios");
+    const resumenPerfil = document.getElementById("resumenPerfil");
+    const btnGuardarPerfil = document.getElementById("btnGuardarPerfil");
 
-    // Referencias a resumen
-    const resEmpresa = document.getElementById("resEmpresa");
-    const resNit = document.getElementById("resNit");
-    const resRegimen = document.getElementById("resRegimen");
-    const resSaldoInicial = document.getElementById("resSaldoInicial");
-    const resObjetivo = document.getElementById("resObjetivo");
+    function aplicarConfigEnUI() {
+      if (inpNombre) inpNombre.value = negocioConfig.nombre || "";
+      if (selTipo) selTipo.value = negocioConfig.tipo || "tienda";
+      if (chkUnidad) chkUnidad.checked = !!negocioConfig.usaProductosUnidad;
+      if (chkPeso) chkPeso.checked = !!negocioConfig.usaPorPeso;
+      if (chkServicios) chkServicios.checked = !!negocioConfig.usaServicios;
 
-    function regimenLegible(codigo) {
-      if (codigo === "GENERAL") return "Régimen general";
-      return "Pequeño contribuyente";
-    }
-
-    // Pintar configuración actual en formulario y resumen
-    function cargarConfigEnUI() {
-      if (!configEmpresa) configEmpresa = {};
-
-      inpNombre.value = configEmpresa.nombre || "";
-      inpNombreCorto.value = configEmpresa.nombreCorto || "";
-      inpNit.value = configEmpresa.nit || "";
-      inpRegimen.value = configEmpresa.regimenSat || "PEQUENIO";
-
-      const saldoInicial = configEmpresa.saldoInicialCaja || 0;
-      const objetivo = configEmpresa.objetivoDiarioVentas || 0;
-
-      inpSaldoInicial.value = saldoInicial ? saldoInicial : "";
-      inpObjetivo.value = objetivo ? objetivo : "";
-
-      // Topbar empresa
       if (labelCompany) {
-        if (configEmpresa.nombreCorto) {
-          labelCompany.textContent = configEmpresa.nombreCorto;
-        } else if (configEmpresa.nombre) {
-          labelCompany.textContent = configEmpresa.nombre;
-        } else {
-          labelCompany.textContent = "Mi tienda demo";
-        }
+        labelCompany.textContent = negocioConfig.nombre || "Mi negocio";
       }
 
-      // Resumen
-      resEmpresa.textContent = configEmpresa.nombre || "Sin definir";
-      resNit.textContent = configEmpresa.nit || "Sin definir";
-      resRegimen.textContent = regimenLegible(configEmpresa.regimenSat);
-      resSaldoInicial.textContent = alex3FormatearMonedaLocal(saldoInicial);
-      resObjetivo.textContent = alex3FormatearMonedaLocal(objetivo);
+      if (usuarioActual && labelUser) {
+        const rolTexto = usuarioActual.rol === "dueno" ? "Dueño" : "Empleado";
+        labelUser.textContent = `${usuarioActual.nombre} (${rolTexto})`;
+      }
+
+      pintarResumenPerfil();
     }
 
-    // Guardar configuración
-    function guardarConfiguracion() {
-      const nombre = inpNombre.value.trim();
-      const nombreCorto = inpNombreCorto.value.trim();
-      const nit = inpNit.value.trim();
-      const regimenSat = inpRegimen.value;
-      const saldoInicialCaja = parseFloat(inpSaldoInicial.value) || 0;
-      const objetivoDiarioVentas = parseFloat(inpObjetivo.value) || 0;
+    function pintarResumenPerfil() {
+      if (!resumenPerfil) return;
 
-      configEmpresa = {
+      const partes = [];
+      partes.push(`Tipo de negocio: <strong>${textoTipoNegocio(negocioConfig.tipo)}</strong>`);
+
+      const cosas = [];
+      if (negocioConfig.usaProductosUnidad) cosas.push("productos por unidad");
+      if (negocioConfig.usaPorPeso) cosas.push("productos por peso/granel");
+      if (negocioConfig.usaServicios) cosas.push("servicios");
+
+      let detalle = "";
+      if (cosas.length === 0) {
+        detalle = "No has marcado qué maneja este negocio. Te recomiendo seleccionar al menos una opción.";
+      } else {
+        detalle = "ALEX manejará: <strong>" + cosas.join(", ") + "</strong>.";
+      }
+
+      resumenPerfil.innerHTML = `
+        <p>${partes.join(" • ")}</p>
+        <p>${detalle}</p>
+      `;
+    }
+
+    function textoTipoNegocio(tipo) {
+      switch (tipo) {
+        case "tienda": return "Tienda / Abarrotería";
+        case "carniceria": return "Carnicería / Granel";
+        case "servicios": return "Salón / Barbería / Servicios";
+        case "restaurante": return "Restaurante / Cafetería";
+        case "mixto": return "Negocio mixto";
+        default: return "No definido";
+      }
+    }
+
+    function guardarPerfilNegocio() {
+      const nombre = inpNombre ? inpNombre.value.trim() : "";
+      const tipo = selTipo ? selTipo.value : "tienda";
+      const usaUnidad = chkUnidad ? chkUnidad.checked : false;
+      const usaPeso = chkPeso ? chkPeso.checked : false;
+      const usaServ = chkServicios ? chkServicios.checked : false;
+
+      if (!nombre) {
+        alert("Escribe un nombre para el negocio.");
+        if (inpNombre) inpNombre.focus();
+        return;
+      }
+
+      if (!usaUnidad && !usaPeso && !usaServ) {
+        const continuar = confirm(
+          "No marcaste ninguna opción (productos, peso, servicios). " +
+          "¿Seguro que quieres guardar así? ALEX usará el perfil, pero algunos módulos podrían no tener sentido."
+        );
+        if (!continuar) return;
+      }
+
+      negocioConfig = {
         nombre,
-        nombreCorto,
-        nit,
-        regimenSat,
-        saldoInicialCaja,
-        objetivoDiarioVentas
+        tipo,
+        usaProductosUnidad: usaUnidad,
+        usaPorPeso: usaPeso,
+        usaServicios: usaServ
       };
 
       if (typeof save === "function") {
-        save("configEmpresa", configEmpresa);
-        // Para módulos que ya usan directamente estas claves:
-        save("saldoInicial", saldoInicialCaja);
-        save("objetivoDiarioVentas", objetivoDiarioVentas);
+        save("negocio_config", negocioConfig);
       }
 
-      cargarConfigEnUI();
-      alert("Configuración guardada correctamente.");
+      aplicarConfigEnUI();
+      alert("Configuración del negocio guardada correctamente.");
     }
 
-    const btnGuardarConfig = document.getElementById("btnGuardarConfig");
-    if (btnGuardarConfig) {
-      btnGuardarConfig.addEventListener("click", guardarConfiguracion);
+    if (btnGuardarPerfil) {
+      btnGuardarPerfil.addEventListener("click", guardarPerfilNegocio);
     }
 
-    // Primera carga de UI
-    cargarConfigEnUI();
+    // Si el usuario cambia el tipo de negocio, podemos sugerir toggles
+    if (selTipo) {
+      selTipo.addEventListener("change", () => {
+        const tipo = selTipo.value;
+        // Sugerencias por defecto (el usuario puede cambiar luego)
+        if (tipo === "tienda") {
+          chkUnidad.checked = true;
+          chkPeso.checked = false;
+          chkServicios.checked = false;
+        } else if (tipo === "carniceria") {
+          chkUnidad.checked = false;
+          chkPeso.checked = true;
+          chkServicios.checked = false;
+        } else if (tipo === "servicios") {
+          chkUnidad.checked = false;
+          chkPeso.checked = false;
+          chkServicios.checked = true;
+        } else if (tipo === "restaurante") {
+          chkUnidad.checked = true;
+          chkPeso.checked = true;
+          chkServicios.checked = false;
+        } else if (tipo === "mixto") {
+          chkUnidad.checked = true;
+          chkPeso.checked = true;
+          chkServicios.checked = true;
+        }
+        negocioConfig.tipo = tipo;
+        negocioConfig.usaProductosUnidad = chkUnidad.checked;
+        negocioConfig.usaPorPeso = chkPeso.checked;
+        negocioConfig.usaServicios = chkServicios.checked;
+        pintarResumenPerfil();
+      });
+    }
+
+    if (chkUnidad || chkPeso || chkServicios) {
+      [chkUnidad, chkPeso, chkServicios].forEach(chk => {
+        if (!chk) return;
+        chk.addEventListener("change", () => {
+          negocioConfig.usaProductosUnidad = chkUnidad ? chkUnidad.checked : false;
+          negocioConfig.usaPorPeso = chkPeso ? chkPeso.checked : false;
+          negocioConfig.usaServicios = chkServicios ? chkServicios.checked : false;
+          pintarResumenPerfil();
+        });
+      });
+    }
+
+    // ===== Primera carga =====
+    aplicarConfigEnUI();
   </script>
 </body>
 </html>
