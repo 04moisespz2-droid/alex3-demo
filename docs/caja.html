@@ -27,15 +27,14 @@
       <a href="gastos.html" class="sidebar-link">📉 Gastos</a>
       <a href="clientes.html" class="sidebar-link">👥 Clientes</a>
       <a href="proveedores.html" class="sidebar-link">🚚 Proveedores</a>
-      <a href="contabilidad.html" class="sidebar-link">📚 Contabilidad</a>
-      <a href="sat.html" class="sidebar-link">🇬🇹 SAT Guatemala</a>
+      <a href="reportes.html" class="sidebar-link">📚 Reportes</a>
       <a href="ia.html" class="sidebar-link">🤖 IA empresarial</a>
       <a href="configuracion.html" class="sidebar-link">⚙️ Configuración</a>
     </nav>
 
     <div class="sidebar-footer">
-      <span class="sidebar-footer-title">Empresa demo</span>
-      <span class="sidebar-footer-sub">Versión 1.0</span>
+      <span class="sidebar-footer-title" id="sidebar-footer-title">Mi negocio</span>
+      <span class="sidebar-footer-sub">Módulo de caja</span>
     </div>
   </aside>
 
@@ -48,55 +47,130 @@
       <div class="topbar-left">
         <h1 class="topbar-title">Caja</h1>
         <p class="topbar-subtitle">
-          Control de entradas y salidas de efectivo del negocio.
+          Control de ingresos y egresos en efectivo. ALEX suma automáticamente las ventas en efectivo y mixtas.
         </p>
       </div>
 
       <div class="topbar-right">
-        <span class="topbar-company">Mi tienda demo</span>
+        <span class="topbar-company" id="topbar-company-label">Mi negocio</span>
         <span class="topbar-divider">•</span>
         <span class="topbar-user" id="topbar-user-label">Usuario (Rol)</span>
-        <button class="btn" id="btnLogout" type="button" style="margin-left: 0.75rem;">
-          Cerrar sesión
-        </button>
       </div>
     </header>
 
     <!-- Contenido principal -->
     <main class="main-content">
-      <!-- KPIs de caja -->
+      <!-- KPIs -->
       <section class="cards-grid">
         <article class="card kpi-card">
-          <h2 class="card-title">Saldo en caja</h2>
-          <p class="card-kpi" id="kpi-caja-saldo">Q 0.00</p>
-          <p class="card-kpi-sub">Saldo calculado con ingresos y egresos.</p>
+          <h2 class="card-title">Saldo actual en caja</h2>
+          <p class="card-kpi" id="kpi-saldo-actual">Q 0.00</p>
+          <p class="card-kpi-sub">Ingresos - egresos (toda la historia).</p>
         </article>
 
         <article class="card kpi-card">
           <h2 class="card-title">Ingresos de hoy</h2>
-          <p class="card-kpi" id="kpi-caja-ingresos-hoy">Q 0.00</p>
-          <p class="card-kpi-sub">Entradas directas a caja.</p>
+          <p class="card-kpi" id="kpi-ingresos-hoy">Q 0.00</p>
+          <p class="card-kpi-sub">Ventas en efectivo y otros ingresos de hoy.</p>
         </article>
 
         <article class="card kpi-card">
           <h2 class="card-title">Egresos de hoy</h2>
-          <p class="card-kpi gasto" id="kpi-caja-egresos-hoy">Q 0.00</p>
-          <p class="card-kpi-sub">Salidas por compras, gastos u otros.</p>
+          <p class="card-kpi" id="kpi-egresos-hoy">Q 0.00</p>
+          <p class="card-kpi-sub">Gastos, retiros y salidas de efectivo de hoy.</p>
         </article>
 
         <article class="card kpi-card">
-          <h2 class="card-title">Cortes realizados</h2>
-          <p class="card-kpi" id="kpi-caja-cortes">0</p>
-          <p class="card-kpi-sub">Número de cortes de caja registrados.</p>
+          <h2 class="card-title">Saldo al cierre de hoy</h2>
+          <p class="card-kpi" id="kpi-saldo-hoy">Q 0.00</p>
+          <p class="card-kpi-sub">Saldo actual tomando solo movimientos de hoy.</p>
         </article>
       </section>
 
-      <!-- Movimientos de caja -->
+      <!-- Registrar movimiento manual -->
       <section class="card">
-        <h2 class="card-title">Movimientos de caja</h2>
+        <h2 class="card-title">1. Registrar movimiento manual en caja</h2>
         <p class="card-description">
-          Aquí ves todos los ingresos y egresos registrados por ventas, compras, gastos u otros módulos.
+          Usa esto para registrar **ingresos o egresos en efectivo** que no vienen de una venta,
+          por ejemplo: retiros de caja, pagos en efectivo, ingresos extra, etc.
         </p>
+
+        <div class="form-grid">
+          <div class="form-field">
+            <label for="cFecha">Fecha y hora</label>
+            <input id="cFecha" class="input" type="datetime-local">
+          </div>
+
+          <div class="form-field">
+            <label for="cTipo">Tipo de movimiento</label>
+            <select id="cTipo" class="input">
+              <option value="INGRESO">INGRESO</option>
+              <option value="EGRESO">EGRESO</option>
+            </select>
+          </div>
+
+          <div class="form-field">
+            <label for="cCategoria">Categoría</label>
+            <select id="cCategoria" class="input">
+              <option value="Ventas">Ventas</option>
+              <option value="Retiros dueño">Retiros dueño</option>
+              <option value="Gastos del día">Gastos del día</option>
+              <option value="Pago proveedores">Pago a proveedores</option>
+              <option value="Otros ingresos">Otros ingresos</option>
+              <option value="Otros egresos">Otros egresos</option>
+            </select>
+          </div>
+
+          <div class="form-field">
+            <label for="cDescripcion">Descripción</label>
+            <input id="cDescripcion" class="input" type="text"
+                   placeholder="Ej: retiro personal, pago de luz, abono proveedor, etc.">
+          </div>
+
+          <div class="form-field">
+            <label for="cMonto">Monto (Q)</label>
+            <input id="cMonto" class="input" type="number" min="0" step="0.01">
+          </div>
+        </div>
+
+        <button class="btn" id="btnGuardarMovimiento" style="margin-top:0.75rem;">
+          Guardar movimiento en caja
+        </button>
+      </section>
+
+      <!-- Historial de caja -->
+      <section class="card">
+        <h2 class="card-title">2. Historial de movimientos de caja</h2>
+        <p class="card-description">
+          ALEX mezcla aquí las ventas en efectivo/mixto con los movimientos manuales de caja.
+          Usa los filtros para ver solo lo que necesites.
+        </p>
+
+        <div class="form-grid" style="margin-bottom:0.75rem;">
+          <div class="form-field">
+            <label for="filtroFecha">Filtro rápido</label>
+            <select id="filtroFecha" class="input">
+              <option value="hoy">Hoy</option>
+              <option value="mes">Este mes</option>
+              <option value="todos">Todos los movimientos</option>
+            </select>
+          </div>
+
+          <div class="form-field">
+            <label for="filtroTipo">Tipo</label>
+            <select id="filtroTipo" class="input">
+              <option value="todos">Todos</option>
+              <option value="INGRESO">Ingresos</option>
+              <option value="EGRESO">Egresos</option>
+            </select>
+          </div>
+
+          <div class="form-field" style="grid-column:1 / -1;">
+            <label for="buscarCaja">Buscar</label>
+            <input id="buscarCaja" class="input" type="text"
+                   placeholder="Filtra por categoría, descripción o usuario">
+          </div>
+        </div>
 
         <table class="table">
           <thead>
@@ -106,41 +180,19 @@
               <th>Categoría</th>
               <th>Descripción</th>
               <th>Monto</th>
+              <th>Origen</th>
+              <th>Usuario</th>
+              <th>Acciones</th>
             </tr>
           </thead>
-          <tbody id="tabla-movimientos-caja">
+          <tbody id="tabla-caja-body">
             <tr>
-              <td colspan="5" class="table-empty">
+              <td colspan="8" class="table-empty">
                 Aún no hay movimientos en caja.
               </td>
             </tr>
           </tbody>
         </table>
-      </section>
-
-      <!-- Corte de caja rápido -->
-      <section class="card">
-        <h2 class="card-title">Corte de caja rápido</h2>
-        <p class="card-description">
-          Guarda un corte de caja con el saldo actual. Esto se reflejará también en el módulo de reportes.
-        </p>
-
-        <div class="form-grid">
-          <div class="form-field">
-            <label for="corteSaldoActual">Saldo actual (solo lectura)</label>
-            <input id="corteSaldoActual" class="input" type="text" readonly value="Q 0.00">
-          </div>
-
-          <div class="form-field" style="grid-column: 1 / -1;">
-            <label for="corteObservaciones">Observaciones (opcional)</label>
-            <input id="corteObservaciones" class="input" type="text"
-                   placeholder="Ej: Corte de cierre del día, turno de la mañana, etc.">
-          </div>
-        </div>
-
-        <button class="btn" id="btnRegistrarCorte" style="margin-top: 0.75rem;">
-          Registrar corte de caja
-        </button>
       </section>
     </main>
   </div>
@@ -169,23 +221,25 @@
     }
 
     const labelUser = document.getElementById("topbar-user-label");
+    const labelCompany = document.getElementById("topbar-company-label");
+    const sidebarFooterTitle = document.getElementById("sidebar-footer-title");
+
+    // Config negocio (nombre)
+    let negocioConfig = {
+      nombre: "Mi negocio"
+    };
+    if (typeof load === "function") {
+      const cfg = load("negocio_config", null);
+      if (cfg && typeof cfg === "object") {
+        negocioConfig = Object.assign(negocioConfig, cfg);
+      }
+    }
+    if (labelCompany) labelCompany.textContent = negocioConfig.nombre || "Mi negocio";
+    if (sidebarFooterTitle) sidebarFooterTitle.textContent = negocioConfig.nombre || "Mi negocio";
+
     if (usuarioActual && labelUser) {
       const rolTexto = usuarioActual.rol === "dueno" ? "Dueño" : "Empleado";
       labelUser.textContent = `${usuarioActual.nombre} (${rolTexto})`;
-    }
-
-    // Cerrar sesión
-    const btnLogout = document.getElementById("btnLogout");
-    if (btnLogout) {
-      btnLogout.addEventListener("click", () => {
-        if (!confirm("¿Quieres cerrar sesión?")) return;
-        if (typeof save === "function") {
-          save("usuarioActual", null);
-        } else {
-          localStorage.removeItem("usuarioActual");
-        }
-        window.location.href = "index.html";
-      });
     }
 
     // ===== Helpers =====
@@ -204,173 +258,290 @@
              a.getDate() === b.getDate();
     }
 
+    function esMismoMes(a, b) {
+      return a.getFullYear() === b.getFullYear() &&
+             a.getMonth() === b.getMonth();
+    }
+
     function formatearFechaLocal(fechaIso) {
       const d = new Date(fechaIso);
       if (isNaN(d.getTime())) return "-";
       return d.toLocaleString("es-GT");
     }
 
-    // ===== Datos base: movimientos de caja, saldo inicial, cierres =====
+    // ===== Datos de caja =====
     let movimientosCaja = [];
-    let saldoInicial = 0;
-    let cierresCaja = [];
-    let ultimoSaldoCalculado = 0;
 
     if (typeof load === "function") {
       const m1 = load("caja_movimientos", []);
       const m2 = load("movimientosCaja", []);
       if (Array.isArray(m1) && m1.length > 0) {
         movimientosCaja = m1;
-      } else if (Array.isArray(m2)) {
+      } else if (Array.isArray(m2) && m2.length > 0) {
         movimientosCaja = m2;
       }
-
-      saldoInicial = Number(load("saldoInicial", 0)) || 0;
-
-      const cData = load("cierresCaja", []);
-      cierresCaja = Array.isArray(cData) ? cData : [];
     }
 
     function guardarMovimientosCaja() {
       if (typeof save === "function") {
         save("caja_movimientos", movimientosCaja);
-        save("movimientosCaja", movimientosCaja); // compatibilidad
+        save("movimientosCaja", movimientosCaja);
       }
     }
 
-    function guardarCierresCaja() {
-      if (typeof save === "function") {
-        save("cierresCaja", cierresCaja);
-      }
-    }
+    // ===== Controles del DOM =====
+    const inpFecha = document.getElementById("cFecha");
+    const selTipo = document.getElementById("cTipo");
+    const selCategoria = document.getElementById("cCategoria");
+    const inpDescripcion = document.getElementById("cDescripcion");
+    const inpMonto = document.getElementById("cMonto");
+    const btnGuardarMovimiento = document.getElementById("btnGuardarMovimiento");
 
-    // ===== KPIs de caja =====
-    function recalcularKPIsCaja() {
+    const kpiSaldoActual = document.getElementById("kpi-saldo-actual");
+    const kpiIngresosHoy = document.getElementById("kpi-ingresos-hoy");
+    const kpiEgresosHoy = document.getElementById("kpi-egresos-hoy");
+    const kpiSaldoHoy = document.getElementById("kpi-saldo-hoy");
+
+    const filtroFecha = document.getElementById("filtroFecha");
+    const filtroTipo = document.getElementById("filtroTipo");
+    const buscarCaja = document.getElementById("buscarCaja");
+    const tbodyCaja = document.getElementById("tabla-caja-body");
+
+    // ===== KPIs =====
+    function recalcularKPIs() {
       const hoy = new Date();
-
-      let totalIngresos = 0;
-      let totalEgresos = 0;
+      let saldoActual = 0;
       let ingresosHoy = 0;
       let egresosHoy = 0;
 
-      movimientosCaja.forEach(m => {
-        const fechaRef = new Date(m.fechaHora || m.fecha || Date.now());
-        const monto = Number(m.monto) || 0;
-        const tipo = (m.tipo || "").toUpperCase();
+      movimientosCaja.forEach(mov => {
+        const monto = Number(mov.monto) || 0;
+        const tipo = mov.tipo || "INGRESO";
+        const fecha = new Date(mov.fechaHora || mov.fecha || Date.now());
 
         if (tipo === "INGRESO") {
-          totalIngresos += monto;
-          if (esMismoDia(fechaRef, hoy)) {
+          saldoActual += monto;
+          if (esMismoDia(fecha, hoy)) {
             ingresosHoy += monto;
           }
         } else if (tipo === "EGRESO") {
-          totalEgresos += monto;
-          if (esMismoDia(fechaRef, hoy)) {
+          saldoActual -= monto;
+          if (esMismoDia(fecha, hoy)) {
             egresosHoy += monto;
           }
         }
       });
 
-      const saldoActual = saldoInicial + totalIngresos - totalEgresos;
-      ultimoSaldoCalculado = saldoActual;
+      const saldoHoy = ingresosHoy - egresosHoy;
 
-      const elSaldo = document.getElementById("kpi-caja-saldo");
-      const elIngHoy = document.getElementById("kpi-caja-ingresos-hoy");
-      const elEgrHoy = document.getElementById("kpi-caja-egresos-hoy");
-      const elCortes = document.getElementById("kpi-caja-cortes");
-      const inputSaldoCorte = document.getElementById("corteSaldoActual");
-
-      if (elSaldo) elSaldo.textContent = alex3FormatearMonedaSeguro(saldoActual);
-      if (elIngHoy) elIngHoy.textContent = alex3FormatearMonedaSeguro(ingresosHoy);
-      if (elEgrHoy) elEgrHoy.textContent = alex3FormatearMonedaSeguro(egresosHoy);
-      if (elCortes) elCortes.textContent = String(cierresCaja.length);
-      if (inputSaldoCorte) inputSaldoCorte.value = alex3FormatearMonedaSeguro(saldoActual);
+      if (kpiSaldoActual) kpiSaldoActual.textContent = alex3FormatearMonedaSeguro(saldoActual);
+      if (kpiIngresosHoy) kpiIngresosHoy.textContent = alex3FormatearMonedaSeguro(ingresosHoy);
+      if (kpiEgresosHoy) kpiEgresosHoy.textContent = alex3FormatearMonedaSeguro(egresosHoy);
+      if (kpiSaldoHoy) kpiSaldoHoy.textContent = alex3FormatearMonedaSeguro(saldoHoy);
     }
 
-    // ===== Tabla de movimientos =====
-    function renderMovimientosCaja() {
-      const tbody = document.getElementById("tabla-movimientos-caja");
-      if (!tbody) return;
+    // ===== Render tabla de movimientos =====
+    function renderMovimientos() {
+      if (!tbodyCaja) return;
 
-      tbody.innerHTML = "";
+      const filtroFechaVal = filtroFecha ? filtroFecha.value : "hoy";
+      const filtroTipoVal = filtroTipo ? filtroTipo.value : "todos";
+      const textoBuscar = buscarCaja ? buscarCaja.value.trim().toLowerCase() : "";
+
+      tbodyCaja.innerHTML = "";
 
       if (!movimientosCaja.length) {
-        tbody.innerHTML = `
+        tbodyCaja.innerHTML = `
           <tr>
-            <td colspan="5" class="table-empty">
+            <td colspan="8" class="table-empty">
               Aún no hay movimientos en caja.
             </td>
           </tr>
         `;
+        recalcularKPIs();
         return;
       }
 
-      const ordenados = [...movimientosCaja].sort((a, b) => {
+      const hoy = new Date();
+      const mesActual = hoy.getMonth();
+      const anioActual = hoy.getFullYear();
+
+      const filtrados = movimientosCaja.filter(mov => {
+        const fecha = new Date(mov.fechaHora || mov.fecha || Date.now());
+        const tipo = mov.tipo || "INGRESO";
+        let pasaFecha = true;
+
+        if (filtroFechaVal === "hoy") {
+          pasaFecha = esMismoDia(fecha, hoy);
+        } else if (filtroFechaVal === "mes") {
+          pasaFecha = (fecha.getFullYear() === anioActual && fecha.getMonth() === mesActual);
+        }
+
+        let pasaTipo = (filtroTipoVal === "todos") || (tipo === filtroTipoVal);
+        let pasaTexto = true;
+
+        if (textoBuscar) {
+          const txt = [
+            mov.categoria || "",
+            mov.descripcion || "",
+            mov.usuario || "",
+            mov.origen || ""
+          ].join(" ").toLowerCase();
+          pasaTexto = txt.includes(textoBuscar);
+        }
+
+        return pasaFecha && pasaTipo && pasaTexto;
+      });
+
+      if (!filtrados.length) {
+        tbodyCaja.innerHTML = `
+          <tr>
+            <td colspan="8" class="table-empty">
+              No se encontraron movimientos con esos filtros.
+            </td>
+          </tr>
+        `;
+        recalcularKPIs();
+        return;
+      }
+
+      // Ordenar por fecha más reciente
+      filtrados.sort((a, b) => {
         const fa = new Date(a.fechaHora || a.fecha || 0).getTime();
         const fb = new Date(b.fechaHora || b.fecha || 0).getTime();
         return fb - fa;
       });
 
-      ordenados.forEach(m => {
-        const fechaTxt = m.fecha || formatearFechaLocal(m.fechaHora || "");
-        const tipo = (m.tipo || "").toUpperCase() === "INGRESO" ? "Ingreso" : "Egreso";
-        const categoria = m.categoria || "-";
-        const descripcion = m.descripcion || "-";
-        const montoTxt = alex3FormatearMonedaSeguro(m.monto);
+      filtrados.forEach((mov, index) => {
+        const fechaTxt = mov.fecha || (mov.fechaHora ? formatearFechaLocal(mov.fechaHora) : "-");
+        const tipoTxt = mov.tipo || "-";
+        const catTxt = mov.categoria || "-";
+        const descTxt = mov.descripcion || "-";
+        const montoTxt = alex3FormatearMonedaSeguro(mov.monto || 0);
+        const origenTxt = mov.origen || "-";
+        const usuarioTxt = mov.usuario || "-";
 
-        tbody.innerHTML += `
+        tbodyCaja.innerHTML += `
           <tr>
             <td>${fechaTxt}</td>
-            <td>${tipo}</td>
-            <td>${categoria}</td>
-            <td>${descripcion}</td>
+            <td>${tipoTxt}</td>
+            <td>${catTxt}</td>
+            <td>${descTxt}</td>
             <td>${montoTxt}</td>
+            <td>${origenTxt}</td>
+            <td>${usuarioTxt}</td>
+            <td>
+              <button class="btn btn-small" data-delete-id="${mov.id || ''}">🗑️</button>
+            </td>
           </tr>
         `;
       });
+
+      recalcularKPIs();
     }
 
-    // ===== Corte de caja =====
-    const btnRegistrarCorte = document.getElementById("btnRegistrarCorte");
-    const inputCorteObs = document.getElementById("corteObservaciones");
+    // ===== Guardar movimiento manual =====
+    function guardarMovimientoManual() {
+      let fechaObj;
+      if (inpFecha && inpFecha.value) {
+        fechaObj = new Date(inpFecha.value);
+      } else {
+        fechaObj = new Date();
+      }
+      if (isNaN(fechaObj.getTime())) fechaObj = new Date();
 
-    function registrarCorteCaja() {
-      const saldoCorte = ultimoSaldoCalculado || 0;
-      const observaciones = (inputCorteObs && inputCorteObs.value.trim()) || "";
+      const fechaLocal = fechaObj.toLocaleString("es-GT");
+      const fechaIso = fechaObj.toISOString();
 
-      const ahora = new Date();
-      const fechaLocal = ahora.toLocaleString("es-GT");
-      const fechaIso = ahora.toISOString();
+      const tipo = selTipo ? selTipo.value : "INGRESO";
+      const categoria = selCategoria ? selCategoria.value : "Otros ingresos";
+      const descripcion = inpDescripcion ? inpDescripcion.value.trim() : "";
+      const monto = parseFloat(inpMonto && inpMonto.value ? inpMonto.value : "0");
 
-      const corte = {
-        id: "corte_" + Date.now(),
-        fecha: fechaLocal,
-        fechaHora: fechaIso,
-        saldoFinal: saldoCorte,
-        observaciones,
-        usuario: usuarioActual ? usuarioActual.usuario : null,
-        origen: "caja"
-      };
-
-      cierresCaja.push(corte);
-      guardarCierresCaja();
-
-      if (inputCorteObs) {
-        inputCorteObs.value = "";
+      if (isNaN(monto) || monto <= 0) {
+        alert("Escribe un monto válido mayor a 0.");
+        return;
       }
 
-      recalcularKPIsCaja();
+      const mov = {
+        id: "caja_manual_" + Date.now(),
+        fecha: fechaLocal,
+        fechaHora: fechaIso,
+        tipo,
+        categoria,
+        descripcion,
+        monto,
+        origen: "manual",
+        usuario: usuarioActual ? usuarioActual.usuario : null
+      };
 
-      alert("Corte de caja registrado correctamente.");
+      movimientosCaja.push(mov);
+      guardarMovimientosCaja();
+
+      // Limpiar formulario
+      if (inpDescripcion) inpDescripcion.value = "";
+      if (inpMonto) inpMonto.value = "";
+      if (selTipo) selTipo.value = "INGRESO";
+      if (selCategoria) selCategoria.value = "Otros ingresos";
+
+      renderMovimientos();
+      alert("Movimiento registrado en caja.");
     }
 
-    if (btnRegistrarCorte) {
-      btnRegistrarCorte.addEventListener("click", registrarCorteCaja);
+    if (btnGuardarMovimiento) {
+      btnGuardarMovimiento.addEventListener("click", guardarMovimientoManual);
+    }
+
+    // Enter en monto -> guardar movimiento
+    if (inpMonto) {
+      inpMonto.addEventListener("keydown", (e) => {
+        if (e.key === "Enter") {
+          e.preventDefault();
+          guardarMovimientoManual();
+        }
+      });
+    }
+
+    // Filtros
+    if (filtroFecha) {
+      filtroFecha.addEventListener("change", renderMovimientos);
+    }
+    if (filtroTipo) {
+      filtroTipo.addEventListener("change", renderMovimientos);
+    }
+    if (buscarCaja) {
+      buscarCaja.addEventListener("input", renderMovimientos);
+    }
+
+    // Eliminar movimiento
+    if (tbodyCaja) {
+      tbodyCaja.addEventListener("click", (e) => {
+        const btn = e.target.closest("button[data-delete-id]");
+        if (!btn) return;
+        const id = btn.getAttribute("data-delete-id");
+        if (!id) return;
+
+        if (!confirm("¿Seguro que quieres eliminar este movimiento de caja?")) return;
+
+        const idx = movimientosCaja.findIndex(m => (m.id || "") === id);
+        if (idx >= 0) {
+          movimientosCaja.splice(idx, 1);
+          guardarMovimientosCaja();
+          renderMovimientos();
+        }
+      });
     }
 
     // ===== Primera carga =====
-    renderMovimientosCaja();
-    recalcularKPIsCaja();
+    if (inpFecha) {
+      const ahora = new Date();
+      const isoLocal = new Date(ahora.getTime() - ahora.getTimezoneOffset() * 60000)
+        .toISOString()
+        .slice(0, 16);
+      inpFecha.value = isoLocal;
+    }
+
+    renderMovimientos();
   </script>
 </body>
 </html>
