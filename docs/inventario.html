@@ -27,9 +27,7 @@
       <a href="gastos.html" class="sidebar-link">📉 Gastos</a>
       <a href="clientes.html" class="sidebar-link">👥 Clientes</a>
       <a href="proveedores.html" class="sidebar-link">🚚 Proveedores</a>
-      <!-- Antes: Contabilidad + SAT. Ahora solo Reportes (comercial) -->
       <a href="reportes.html" class="sidebar-link">📚 Reportes</a>
-      <!-- Eliminado: <a href="sat.html" class="sidebar-link">🇬🇹 SAT Guatemala</a> -->
       <a href="ia.html" class="sidebar-link">🤖 IA empresarial</a>
       <a href="configuracion.html" class="sidebar-link">⚙️ Configuración</a>
     </nav>
@@ -54,8 +52,7 @@
       <div class="topbar-right">
         <span class="topbar-company">Mi tienda demo</span>
         <span class="topbar-divider">•</span>
-        <!-- Antes: texto fijo Brayan (Dueño). Ahora dinámico según usuario logueado -->
-        <span class="topbar-user" id="topbar-user-label">Usuario (Rol)</span>
+        <span class="topbar-user">Brayan (Dueño)</span>
       </div>
     </header>
 
@@ -70,8 +67,7 @@
 
         <div class="form-grid">
           <div class="form-field">
-            <!-- Solo cambié el texto para que también funcione como código de barras -->
-            <label for="codigo">Código / código de barras</label>
+            <label for="codigo">Código del producto</label>
             <input id="codigo" class="input" type="text" placeholder="Ej: SKU-001 o código de barras">
           </div>
 
@@ -96,7 +92,26 @@
           </div>
         </div>
 
-        <button class="btn" onclick="agregarProducto()">Agregar producto</button>
+        <!-- Escáner con cámara para código -->
+        <button class="btn" id="btnEscanearCamaraInv" style="margin-top:0.5rem;">
+          📷 Escanear código con cámara
+        </button>
+
+        <div id="scannerContainerInv"
+             style="display:none; margin-top:0.75rem; padding:0.75rem; border-radius:0.75rem; border:1px solid #ddd;">
+          <p class="card-description" style="margin-bottom:0.5rem;">
+            Apunta la cámara al código de barras. Cuando se detecte, se llenará el campo "Código del producto".
+          </p>
+          <video id="videoScannerInv" autoplay playsinline
+                 style="width:100%; max-height:260px; border-radius:0.75rem; background:#000;"></video>
+          <button class="btn btn-small" id="btnCerrarScannerInv" type="button" style="margin-top:0.5rem;">
+            Cerrar cámara
+          </button>
+        </div>
+
+        <button class="btn" onclick="agregarProducto()" style="margin-top:0.75rem;">
+          Agregar producto
+        </button>
       </section>
 
       <!-- Tabla en card -->
@@ -134,6 +149,8 @@
   <!-- Scripts base -->
   <script src="alex-storage.js"></script>
   <script src="alex-roles.js"></script>
+  <!-- Librería ZXing para leer códigos con la cámara -->
+  <script src="https://unpkg.com/@zxing/library@0.20.0"></script>
 
   <script>
     // Menú móvil
@@ -153,12 +170,6 @@
 
     if (typeof aplicarPermisosYProteger === "function") {
       aplicarPermisosYProteger("inventario");
-    }
-
-    const labelUser = document.getElementById("topbar-user-label");
-    if (usuarioActual && labelUser) {
-      const rolTexto = usuarioActual.rol === "dueno" ? "Dueño" : "Empleado";
-      labelUser.textContent = `${usuarioActual.nombre} (${rolTexto})`;
     }
 
     // Cargar productos desde almacenamiento
@@ -218,6 +229,7 @@
 
       limpiarFormulario();
       renderTabla();
+      alert("Producto agregado al inventario.");
     }
 
     function renderTabla() {
@@ -265,6 +277,86 @@
         save("productos", productos);
       }
       renderTabla();
+    }
+
+    // ===== Escáner con cámara en inventario =====
+    const inputCodigo = document.getElementById("codigo");
+    const btnEscanearCamaraInv = document.getElementById("btnEscanearCamaraInv");
+    const scannerContainerInv = document.getElementById("scannerContainerInv");
+    const videoScannerInv = document.getElementById("videoScannerInv");
+    const btnCerrarScannerInv = document.getElementById("btnCerrarScannerInv");
+    let scannerCodeReaderInv = null;
+
+    async function iniciarEscaneoCamaraInv() {
+      if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
+        alert("Este navegador no permite usar la cámara para escanear.");
+        return;
+      }
+
+      if (typeof ZXing === "undefined" || !ZXing.BrowserMultiFormatReader) {
+        alert("No se pudo cargar el lector de códigos. Verifica tu conexión a internet.");
+        return;
+      }
+
+      try {
+        scannerContainerInv.style.display = "block";
+
+        scannerCodeReaderInv = new ZXing.BrowserMultiFormatReader();
+
+        const devices = await navigator.mediaDevices.enumerateDevices();
+        const videoDevices = devices.filter(d => d.kind === "videoinput");
+        let deviceId = undefined;
+
+        if (videoDevices.length > 1) {
+          deviceId = videoDevices[videoDevices.length - 1].deviceId;
+        } else if (videoDevices.length === 1) {
+          deviceId = videoDevices[0].deviceId;
+        }
+
+        await scannerCodeReaderInv.decodeFromVideoDevice(deviceId, videoScannerInv, (result, err) => {
+          if (result) {
+            const text = result.getText ? result.getText() : result.text || "";
+            if (text) {
+              inputCodigo.value = text;
+              detenerEscaneoCamaraInv();
+              const nombreInput = document.getElementById("nombre");
+              if (nombreInput) nombreInput.focus();
+            }
+          }
+        });
+      } catch (e) {
+        console.error(e);
+        alert("No se pudo iniciar la cámara o el escaneo.");
+        detenerEscaneoCamaraInv();
+      }
+    }
+
+    function detenerEscaneoCamaraInv() {
+      if (scannerCodeReaderInv) {
+        try {
+          scannerCodeReaderInv.reset();
+        } catch (e) {
+          console.error(e);
+        }
+        scannerCodeReaderInv = null;
+      }
+      if (scannerContainerInv) {
+        scannerContainerInv.style.display = "none";
+      }
+    }
+
+    if (btnEscanearCamaraInv) {
+      btnEscanearCamaraInv.addEventListener("click", (e) => {
+        e.preventDefault();
+        iniciarEscaneoCamaraInv();
+      });
+    }
+
+    if (btnCerrarScannerInv) {
+      btnCerrarScannerInv.addEventListener("click", (e) => {
+        e.preventDefault();
+        detenerEscaneoCamaraInv();
+      });
     }
 
     // Primera carga
