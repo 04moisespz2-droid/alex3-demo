@@ -131,7 +131,7 @@
                    placeholder="Ej: T-001, F001-12345 (opcional)">
           </div>
 
-          <!-- NUEVOS CAMPOS: código + cantidad para usar productos del inventario -->
+          <!-- CÓDIGO + CANTIDAD (para usar productos del inventario) -->
           <div class="form-field">
             <label for="vCodigoProducto">Código / código de barras (buscar producto)</label>
             <input id="vCodigoProducto" class="input" type="text"
@@ -142,7 +142,6 @@
             <label for="vCantidadProducto">Cantidad</label>
             <input id="vCantidadProducto" class="input" type="number" min="1" step="1" value="1">
           </div>
-          <!-- FIN NUEVOS CAMPOS -->
 
           <div class="form-field">
             <label for="vMonto">Monto total (Q)</label>
@@ -173,10 +172,27 @@
           </div>
         </div>
 
-        <!-- Botón para usar el producto escaneado -->
+        <!-- Botones de producto -->
         <button class="btn" id="btnUsarProducto" style="margin-top: 0.5rem;">
           Usar producto del inventario (según código)
         </button>
+
+        <!-- Escáner con cámara -->
+        <button class="btn" id="btnEscanearCamara" style="margin-top: 0.5rem;">
+          📷 Escanear código con cámara
+        </button>
+
+        <div id="scannerContainer"
+             style="display:none; margin-top:0.75rem; padding:0.75rem; border-radius:0.75rem; border:1px solid #ddd;">
+          <p class="card-description" style="margin-bottom:0.5rem;">
+            Apunta la cámara al código de barras. Cuando se detecte, se llenará el código automáticamente.
+          </p>
+          <video id="videoScanner" autoplay playsinline
+                 style="width:100%; max-height:260px; border-radius:0.75rem; background:#000;"></video>
+          <button class="btn btn-small" id="btnCerrarScanner" type="button" style="margin-top:0.5rem;">
+            Cerrar cámara
+          </button>
+        </div>
 
         <button class="btn" id="btnGuardarVenta" style="margin-top: 0.75rem;">
           Guardar venta y actualizar caja
@@ -224,6 +240,8 @@
   <!-- Scripts base -->
   <script src="alex-storage.js"></script>
   <script src="alex-roles.js"></script>
+  <!-- Librería ZXing para leer códigos de barras con la cámara -->
+  <script src="https://unpkg.com/@zxing/library@0.20.0"></script>
 
   <script>
     // ===== Menú móvil =====
@@ -336,10 +354,16 @@
     const tbodyVentas = document.getElementById("tabla-ventas-body");
     const inputBuscarVenta = document.getElementById("buscarVenta");
 
-    // NUEVOS controles: código y cantidad de producto
     const inpCodigoProducto = document.getElementById("vCodigoProducto");
     const inpCantidadProducto = document.getElementById("vCantidadProducto");
     const btnUsarProducto = document.getElementById("btnUsarProducto");
+
+    // Cámara / escáner
+    const btnEscanearCamara = document.getElementById("btnEscanearCamara");
+    const scannerContainer = document.getElementById("scannerContainer");
+    const videoScanner = document.getElementById("videoScanner");
+    const btnCerrarScanner = document.getElementById("btnCerrarScanner");
+    let scannerCodeReader = null;
 
     // ===== Llenar select de clientes =====
     function llenarSelectClientes() {
@@ -373,6 +397,7 @@
       return productos.find(p => (p.codigo || "").toString().trim().toLowerCase() === code) || null;
     }
 
+    // ===== Usar producto (inventario → venta) =====
     function usarProductoEnVenta() {
       if (!inpCodigoProducto) return;
 
@@ -424,6 +449,79 @@
           e.preventDefault();
           usarProductoEnVenta();
         }
+      });
+    }
+
+    // ===== Escaneo con cámara (ZXing) =====
+    async function iniciarEscaneoCamara() {
+      if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
+        alert("Este navegador no permite usar la cámara para escanear.");
+        return;
+      }
+
+      if (typeof ZXing === "undefined" || !ZXing.BrowserMultiFormatReader) {
+        alert("No se pudo cargar el lector de códigos. Verifica tu conexión a internet.");
+        return;
+      }
+
+      try {
+        scannerContainer.style.display = "block";
+
+        scannerCodeReader = new ZXing.BrowserMultiFormatReader();
+
+        const devices = await navigator.mediaDevices.enumerateDevices();
+        const videoDevices = devices.filter(d => d.kind === "videoinput");
+        let deviceId = undefined;
+
+        if (videoDevices.length > 1) {
+          // Usar la última (normalmente cámara trasera en móviles)
+          deviceId = videoDevices[videoDevices.length - 1].deviceId;
+        } else if (videoDevices.length === 1) {
+          deviceId = videoDevices[0].deviceId;
+        }
+
+        await scannerCodeReader.decodeFromVideoDevice(deviceId, videoScanner, (result, err) => {
+          if (result) {
+            const text = result.getText ? result.getText() : result.text || "";
+            if (text) {
+              inpCodigoProducto.value = text;
+              usarProductoEnVenta();
+              detenerEscaneoCamara();
+            }
+          }
+        });
+      } catch (e) {
+        console.error(e);
+        alert("No se pudo iniciar la cámara o el escaneo.");
+        detenerEscaneoCamara();
+      }
+    }
+
+    function detenerEscaneoCamara() {
+      if (scannerCodeReader) {
+        try {
+          scannerCodeReader.reset();
+        } catch (e) {
+          console.error(e);
+        }
+        scannerCodeReader = null;
+      }
+      if (scannerContainer) {
+        scannerContainer.style.display = "none";
+      }
+    }
+
+    if (btnEscanearCamara) {
+      btnEscanearCamara.addEventListener("click", (e) => {
+        e.preventDefault();
+        iniciarEscaneoCamara();
+      });
+    }
+
+    if (btnCerrarScanner) {
+      btnCerrarScanner.addEventListener("click", (e) => {
+        e.preventDefault();
+        detenerEscaneoCamara();
       });
     }
 
@@ -578,7 +676,7 @@
         return;
       }
 
-      // ===== Ajuste de inventario si se usó código + cantidad =====
+      // Ajuste de inventario si se usó código + cantidad
       let codigoProd = inpCodigoProducto ? inpCodigoProducto.value.trim() : "";
       let cantidadProd = 0;
       if (inpCantidadProducto && inpCantidadProducto.value) {
@@ -604,7 +702,6 @@
           guardarProductos();
         }
       }
-      // ===== fin ajuste inventario =====
 
       // Monto efectivo para caja
       let montoEfectivoParaCaja = 0;
@@ -616,7 +713,7 @@
           montoEfectivoParaCaja = parcial;
         }
       } else {
-        montoEfectivoParaCaja = 0; // transferencias / tarjeta / crédito no entran a caja físico
+        montoEfectivoParaCaja = 0;
       }
 
       const venta = {
@@ -669,6 +766,7 @@
       if (inpCantidadProducto) inpCantidadProducto.value = "1";
       if (inpMonto) inpMonto.focus();
 
+      detenerEscaneoCamara();
       renderVentas();
       alert("Venta registrada correctamente.");
     }
@@ -694,7 +792,7 @@
       });
     }
 
-    // Eliminar venta (no ajusta caja ni inventario todavía)
+    // Eliminar venta (no ajusta caja ni inventario)
     if (tbodyVentas) {
       tbodyVentas.addEventListener("click", (e) => {
         const btn = e.target.closest("button[data-delete-index]");
