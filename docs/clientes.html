@@ -27,15 +27,14 @@
       <a href="gastos.html" class="sidebar-link">📉 Gastos</a>
       <a href="clientes.html" class="sidebar-link active">👥 Clientes</a>
       <a href="proveedores.html" class="sidebar-link">🚚 Proveedores</a>
-      <a href="contabilidad.html" class="sidebar-link">📚 Contabilidad</a>
-      <a href="sat.html" class="sidebar-link">🇬🇹 SAT Guatemala</a>
+      <a href="reportes.html" class="sidebar-link">📚 Reportes</a>
       <a href="ia.html" class="sidebar-link">🤖 IA empresarial</a>
       <a href="configuracion.html" class="sidebar-link">⚙️ Configuración</a>
     </nav>
 
     <div class="sidebar-footer">
-      <span class="sidebar-footer-title">Mi negocio</span>
-      <span class="sidebar-footer-sub">Gestión de clientes</span>
+      <span class="sidebar-footer-title" id="sidebar-footer-title">Mi negocio</span>
+      <span class="sidebar-footer-sub">Módulo de clientes</span>
     </div>
   </aside>
 
@@ -48,12 +47,12 @@
       <div class="topbar-left">
         <h1 class="topbar-title">Clientes</h1>
         <p class="topbar-subtitle">
-          Registra y administra los clientes de tu negocio.
+          Registra y administra tus clientes para usarlos en el módulo de ventas y créditos.
         </p>
       </div>
 
       <div class="topbar-right">
-        <span class="topbar-company">Mi negocio</span>
+        <span class="topbar-company" id="topbar-company-label">Mi negocio</span>
         <span class="topbar-divider">•</span>
         <span class="topbar-user" id="topbar-user-label">Usuario (Rol)</span>
       </div>
@@ -61,103 +60,70 @@
 
     <!-- Contenido principal -->
     <main class="main-content">
-      <!-- KPIs de clientes -->
-      <section class="cards-grid">
-        <article class="card kpi-card">
-          <h2 class="card-title">Clientes totales</h2>
-          <p class="card-kpi" id="kpi-clientes-total">0</p>
-          <p class="card-kpi-sub">Cantidad de clientes registrados.</p>
-        </article>
-
-        <article class="card kpi-card">
-          <h2 class="card-title">Clientes de contado</h2>
-          <p class="card-kpi" id="kpi-clientes-contado">0</p>
-          <p class="card-kpi-sub">Compran sin crédito.</p>
-        </article>
-
-        <article class="card kpi-card">
-          <h2 class="card-title">Clientes a crédito</h2>
-          <p class="card-kpi" id="kpi-clientes-credito">0</p>
-          <p class="card-kpi-sub">Autorizados para fiado / crédito.</p>
-        </article>
-
-        <article class="card kpi-card">
-          <h2 class="card-title">Último cliente agregado</h2>
-          <p class="card-kpi" id="kpi-clientes-ultimo">-</p>
-          <p class="card-kpi-sub">Nombre del último registro.</p>
-        </article>
-      </section>
-
-      <!-- Formulario de nuevo cliente -->
+      <!-- Formulario -->
       <section class="card">
-        <h2 class="card-title">1. Registrar nuevo cliente</h2>
+        <h2 class="card-title">Agregar cliente</h2>
         <p class="card-description">
-          Guarda los datos básicos para usar después en ventas, facturación y control de cartera.
+          Guarda datos básicos del cliente. Luego podrás seleccionarlo fácilmente desde el módulo de Ventas.
         </p>
 
         <div class="form-grid">
           <div class="form-field">
-            <label for="cNombre">Nombre completo</label>
-            <input id="cNombre" class="input" type="text"
-                   placeholder="Ej: Juan Pérez, Tienda La Esquina">
+            <label for="clNombre">Nombre del cliente</label>
+            <input id="clNombre" class="input" type="text"
+                   placeholder="Ej: Juan Pérez, Tienda La Esquina, etc.">
           </div>
 
           <div class="form-field">
-            <label for="cTelefono">Teléfono / WhatsApp</label>
-            <input id="cTelefono" class="input" type="tel"
+            <label for="clTelefono">Teléfono</label>
+            <input id="clTelefono" class="input" type="tel"
                    placeholder="Ej: 5555-5555">
           </div>
 
           <div class="form-field">
-            <label for="cNit">NIT / DPI</label>
-            <input id="cNit" class="input" type="text"
-                   placeholder="Ej: 1234567-8, C/F">
+            <label for="clNit">NIT / DPI</label>
+            <input id="clNit" class="input" type="text"
+                   placeholder="Ej: C/F, 1234567-8, DPI, etc.">
           </div>
 
           <div class="form-field">
-            <label for="cTipo">Tipo de cliente</label>
-            <select id="cTipo" class="input">
+            <label for="clCorreo">Correo (opcional)</label>
+            <input id="clCorreo" class="input" type="email"
+                   placeholder="Ej: cliente@correo.com">
+          </div>
+
+          <div class="form-field">
+            <label for="clTipo">Tipo de cliente</label>
+            <select id="clTipo" class="input">
               <option value="contado">Contado</option>
-              <option value="credito">Crédito</option>
+              <option value="credito">Crédito / fiado</option>
             </select>
           </div>
 
-          <div class="form-field" id="campoLimiteCredito" style="display: none;">
-            <label for="cLimiteCredito">Límite de crédito (Q)</label>
-            <input id="cLimiteCredito" class="input" type="number" min="0" step="0.01"
-                   placeholder="Ej: 500.00">
-          </div>
-
-          <div class="form-field" style="grid-column: 1 / -1;">
-            <label for="cDireccion">Dirección</label>
-            <input id="cDireccion" class="input" type="text"
-                   placeholder="Ej: Zona 1, Guatemala, domicilio, referencia, etc.">
-          </div>
-
-          <div class="form-field" style="grid-column: 1 / -1;">
-            <label for="cNotas">Notas (opcional)</label>
-            <input id="cNotas" class="input" type="text"
-                   placeholder="Ej: Prefiere pago contra entrega, horarios de atención, etc.">
+          <div class="form-field" style="grid-column:1 / -1;">
+            <label for="clNotas">Notas (opcional)</label>
+            <input id="clNotas" class="input" type="text"
+                   placeholder="Ej: Cliente frecuente, paga los viernes, etc.">
           </div>
         </div>
 
-        <button class="btn" id="btnGuardarCliente" style="margin-top: 0.75rem;">
+        <button class="btn" id="btnGuardarCliente" style="margin-top:0.75rem;">
           Guardar cliente
         </button>
       </section>
 
-      <!-- Buscador y lista de clientes -->
+      <!-- Listado -->
       <section class="card">
-        <h2 class="card-title">2. Lista de clientes</h2>
+        <h2 class="card-title">Lista de clientes</h2>
         <p class="card-description">
-          Busca por nombre, teléfono o NIT. Los más recientes aparecen primero.
+          Estos clientes aparecerán en el campo "Cliente guardado" del módulo de Ventas.
         </p>
 
-        <div class="form-grid" style="margin-bottom: 0.75rem;">
-          <div class="form-field" style="grid-column: 1 / -1;">
+        <div class="form-grid" style="margin-bottom:0.75rem;">
+          <div class="form-field" style="grid-column:1 / -1;">
             <label for="buscarCliente">Buscar cliente</label>
             <input id="buscarCliente" class="input" type="text"
-                   placeholder="Escribe parte del nombre, teléfono o NIT">
+                   placeholder="Filtra por nombre, teléfono, NIT o notas">
           </div>
         </div>
 
@@ -168,14 +134,13 @@
               <th>Teléfono</th>
               <th>NIT / DPI</th>
               <th>Tipo</th>
-              <th>Dirección</th>
-              <th>Creado</th>
+              <th>Notas</th>
               <th>Acciones</th>
             </tr>
           </thead>
           <tbody id="tabla-clientes-body">
             <tr>
-              <td colspan="7" class="table-empty">
+              <td colspan="6" class="table-empty">
                 Aún no hay clientes registrados.
               </td>
             </tr>
@@ -199,7 +164,7 @@
       });
     }
 
-    // ===== Usuario y permisos =====
+    // ===== Usuario, permisos y negocio =====
     const usuarioActual = typeof getUsuarioActualObligatorio === "function"
       ? getUsuarioActualObligatorio()
       : null;
@@ -209,23 +174,33 @@
     }
 
     const labelUser = document.getElementById("topbar-user-label");
+    const labelCompany = document.getElementById("topbar-company-label");
+    const sidebarFooterTitle = document.getElementById("sidebar-footer-title");
+
+    let negocioConfig = {
+      nombre: "Mi negocio"
+    };
+
+    if (typeof load === "function") {
+      const cfg = load("negocio_config", null);
+      if (cfg && typeof cfg === "object") {
+        negocioConfig = Object.assign(negocioConfig, cfg);
+      }
+    }
+
+    if (labelCompany) labelCompany.textContent = negocioConfig.nombre || "Mi negocio";
+    if (sidebarFooterTitle) sidebarFooterTitle.textContent = negocioConfig.nombre || "Mi negocio";
+
     if (usuarioActual && labelUser) {
       const rolTexto = usuarioActual.rol === "dueno" ? "Dueño" : "Empleado";
       labelUser.textContent = `${usuarioActual.nombre} (${rolTexto})`;
     }
 
-    // ===== Helpers =====
-    function formatearFechaLocal(fechaIso) {
-      const d = new Date(fechaIso);
-      if (isNaN(d.getTime())) return "-";
-      return d.toLocaleString("es-GT");
-    }
-
-    // ===== Datos base: clientes =====
+    // ===== Storage clientes =====
     let clientes = [];
     if (typeof load === "function") {
-      const cData = load("clientes", []);
-      clientes = Array.isArray(cData) ? cData : [];
+      const data = load("clientes", []);
+      clientes = Array.isArray(data) ? data : [];
     }
 
     function guardarClientes() {
@@ -234,184 +209,110 @@
       }
     }
 
-    // ===== KPIs de clientes =====
-    function recalcularKPIsClientes() {
-      const total = clientes.length;
-      const contados = clientes.filter(c => c.tipo === "contado").length;
-      const creditos = clientes.filter(c => c.tipo === "credito").length;
-      const kpiTotal = document.getElementById("kpi-clientes-total");
-      const kpiContado = document.getElementById("kpi-clientes-contado");
-      const kpiCredito = document.getElementById("kpi-clientes-credito");
-      const kpiUltimo = document.getElementById("kpi-clientes-ultimo");
-
-      if (kpiTotal) kpiTotal.textContent = String(total);
-      if (kpiContado) kpiContado.textContent = String(contados);
-      if (kpiCredito) kpiCredito.textContent = String(creditos);
-      
-      if (kpiUltimo) {
-        if (!clientes.length) {
-          kpiUltimo.textContent = "-";
-        } else {
-          const ultimo = clientes[clientes.length - 1];
-          kpiUltimo.textContent = ultimo.nombre || "-";
-        }
-      }
-    }
-
-    // ===== Renderizar tabla de clientes =====
+    // ===== DOM =====
+    const inpNombre = document.getElementById("clNombre");
+    const inpTelefono = document.getElementById("clTelefono");
+    const inpNit = document.getElementById("clNit");
+    const inpCorreo = document.getElementById("clCorreo");
+    const selTipo = document.getElementById("clTipo");
+    const inpNotas = document.getElementById("clNotas");
+    const btnGuardarCliente = document.getElementById("btnGuardarCliente");
+    const inpBuscar = document.getElementById("buscarCliente");
     const tbodyClientes = document.getElementById("tabla-clientes-body");
-    const inputBuscarCliente = document.getElementById("buscarCliente");
 
+    // ===== Render tabla =====
     function renderClientes() {
       if (!tbodyClientes) return;
 
-      const filtro = (inputBuscarCliente && inputBuscarCliente.value.trim().toLowerCase()) || "";
-
+      const filtro = inpBuscar ? inpBuscar.value.trim().toLowerCase() : "";
       tbodyClientes.innerHTML = "";
 
       if (!clientes.length) {
         tbodyClientes.innerHTML = `
           <tr>
-            <td colspan="7" class="table-empty">
+            <td colspan="6" class="table-empty">
               Aún no hay clientes registrados.
             </td>
           </tr>
         `;
-        recalcularKPIsClientes();
         return;
       }
 
-      const ordenados = [...clientes].sort((a, b) => {
-        const fa = new Date(a.creadoEnIso || a.creadoEn || 0).getTime();
-        const fb = new Date(b.creadoEnIso || b.creadoEn || 0).getTime();
-        return fb - fa; // más recientes primero
-      });
-
       const filtrados = filtro
-        ? ordenados.filter(c => {
-            const nombre = (c.nombre || "").toLowerCase();
-            const tel = (c.telefono || "").toLowerCase();
-            const nit = (c.nit || "").toLowerCase();
-            return (
-              nombre.includes(filtro) ||
-              tel.includes(filtro) ||
-              nit.includes(filtro)
-            );
+        ? clientes.filter(c => {
+            const txt = [
+              c.nombre || "",
+              c.telefono || "",
+              c.nit || "",
+              c.correo || "",
+              c.notas || ""
+            ].join(" ").toLowerCase();
+            return txt.includes(filtro);
           })
-        : ordenados;
+        : clientes;
 
       if (!filtrados.length) {
         tbodyClientes.innerHTML = `
           <tr>
-            <td colspan="7" class="table-empty">
+            <td colspan="6" class="table-empty">
               No se encontraron clientes con ese texto.
             </td>
           </tr>
         `;
-        recalcularKPIsClientes();
         return;
       }
 
       filtrados.forEach((c, index) => {
-        const tipoLegible = c.tipo === "credito" ? "Crédito" : "Contado";
-        const fechaCreado = c.creadoEn || (c.creadoEnIso ? formatearFechaLocal(c.creadoEnIso) : "-");
+        const tipoTxt = c.tipo === "credito" ? "Crédito / fiado" : "Contado";
 
         tbodyClientes.innerHTML += `
           <tr>
             <td>${c.nombre || "-"}</td>
             <td>${c.telefono || "-"}</td>
             <td>${c.nit || "-"}</td>
-            <td>${tipoLegible}</td>
-            <td>${c.direccion || "-"}</td>
-            <td>${fechaCreado}</td>
+            <td>${tipoTxt}</td>
+            <td>${c.notas || "-"}</td>
             <td>
-              <button class="btn btn-small" data-delete-index="${index}">🗑️</button>
+              <button class="btn btn-small" data-index="${index}" data-action="eliminar">🗑️</button>
             </td>
           </tr>
         `;
       });
-
-      recalcularKPIsClientes();
     }
 
-    // ===== Mostrar / ocultar límite de crédito según tipo =====
-    const selectTipoCliente = document.getElementById("cTipo");
-    const campoLimiteCredito = document.getElementById("campoLimiteCredito");
-
-    if (selectTipoCliente && campoLimiteCredito) {
-      selectTipoCliente.addEventListener("change", () => {
-        if (selectTipoCliente.value === "credito") {
-          campoLimiteCredito.style.display = "block";
-        } else {
-          campoLimiteCredito.style.display = "none";
-        }
-      });
-    }
-
-    // ===== Guardar nuevo cliente =====
-    const inpNombre = document.getElementById("cNombre");
-    const inpTelefono = document.getElementById("cTelefono");
-    const inpNit = document.getElementById("cNit");
-    const inpTipo = document.getElementById("cTipo");
-    const inpLimiteCredito = document.getElementById("cLimiteCredito");
-    const inpDireccion = document.getElementById("cDireccion");
-    const inpNotas = document.getElementById("cNotas");
-    const btnGuardarCliente = document.getElementById("btnGuardarCliente");
-
+    // ===== Guardar cliente =====
     function guardarCliente() {
-      const nombre = (inpNombre.value || "").trim();
-      const telefono = (inpTelefono.value || "").trim();
-      const nit = (inpNit.value || "").trim() || "C/F";
-      const tipo = inpTipo.value || "contado";
-      const limiteCredito = tipo === "credito"
-        ? (parseFloat(inpLimiteCredito.value) || 0)
-        : 0;
-      const direccion = (inpDireccion.value || "").trim();
-      const notas = (inpNotas.value || "").trim();
+      const nombre = inpNombre ? inpNombre.value.trim() : "";
+      const telefono = inpTelefono ? inpTelefono.value.trim() : "";
+      const nit = inpNit ? inpNit.value.trim() : "";
+      const correo = inpCorreo ? inpCorreo.value.trim() : "";
+      const tipo = selTipo ? selTipo.value : "contado";
+      const notas = inpNotas ? inpNotas.value.trim() : "";
 
       if (!nombre) {
-        alert("Escribe el nombre del cliente.");
+        alert("Escribe al menos el nombre del cliente.");
         return;
       }
-
-      // Opcional: validar teléfono mínimo 6 caracteres
-      if (telefono && telefono.length < 6) {
-        if (!confirm("El teléfono parece muy corto, ¿seguro que es correcto?")) {
-          return;
-        }
-      }
-
-      const ahora = new Date();
-      const creadoEnIso = ahora.toISOString();
-      const creadoEn = ahora.toLocaleString("es-GT");
 
       const nuevo = {
         id: "cliente_" + Date.now(),
         nombre,
         telefono,
         nit,
-        tipo,
-        limiteCredito,
-        direccion,
-        notas,
-        creadoEn,
-        creadoEnIso,
-        usuarioCreador: usuarioActual ? usuarioActual.usuario : null
+        correo,
+        tipo,  // contado / credito
+        notas
       };
 
       clientes.push(nuevo);
       guardarClientes();
 
-      // Limpiar formulario
-      inpNombre.value = "";
-      inpTelefono.value = "";
-      inpNit.value = "";
-      inpDireccion.value = "";
-      inpNotas.value = "";
-      inpTipo.value = "contado";
-      if (inpLimiteCredito) inpLimiteCredito.value = "";
-      if (campoLimiteCredito) campoLimiteCredito.style.display = "none";
-      inpNombre.focus();
+      if (inpNombre) inpNombre.value = "";
+      if (inpTelefono) inpTelefono.value = "";
+      if (inpNit) inpNit.value = "";
+      if (inpCorreo) inpCorreo.value = "";
+      if (inpNotas) inpNotas.value = "";
+      if (selTipo) selTipo.value = "contado";
 
       renderClientes();
       alert("Cliente guardado correctamente.");
@@ -421,7 +322,22 @@
       btnGuardarCliente.addEventListener("click", guardarCliente);
     }
 
-    // Enter en NIT → guardar
+    if (inpNombre) {
+      inpNombre.addEventListener("keydown", (e) => {
+        if (e.key === "Enter") {
+          e.preventDefault();
+          guardarCliente();
+        }
+      });
+    }
+    if (inpTelefono) {
+      inpTelefono.addEventListener("keydown", (e) => {
+        if (e.key === "Enter") {
+          e.preventDefault();
+          guardarCliente();
+        }
+      });
+    }
     if (inpNit) {
       inpNit.addEventListener("keydown", (e) => {
         if (e.key === "Enter") {
@@ -431,26 +347,28 @@
       });
     }
 
-    // Buscar mientras se escribe
-    if (inputBuscarCliente) {
-      inputBuscarCliente.addEventListener("input", () => {
-        renderClientes();
-      });
+    // Buscar
+    if (inpBuscar) {
+      inpBuscar.addEventListener("input", renderClientes);
     }
 
-    // Eliminar cliente (por ahora permitimos que cualquiera que esté logueado pueda borrar;
-    // si quieres, luego lo hacemos solo para rol "dueno").
+    // Eliminar
     if (tbodyClientes) {
       tbodyClientes.addEventListener("click", (e) => {
-        const btn = e.target.closest("button[data-delete-index]");
+        const btn = e.target.closest("button[data-index][data-action]");
         if (!btn) return;
-        const idx = parseInt(btn.getAttribute("data-delete-index"));
-        if (isNaN(idx)) return;
+        const idx = parseInt(btn.getAttribute("data-index"));
+        const action = btn.getAttribute("data-action");
+        if (isNaN(idx) || !clientes[idx]) return;
 
-        if (!confirm("¿Seguro que quieres eliminar este cliente?")) return;
-        clientes.splice(idx, 1);
-        guardarClientes();
-        renderClientes();
+        if (action === "eliminar") {
+          const c = clientes[idx];
+          const confirmar = confirm(`¿Eliminar al cliente "${c.nombre}"? (No lo quitará de ventas pasadas).`);
+          if (!confirmar) return;
+          clientes.splice(idx, 1);
+          guardarClientes();
+          renderClientes();
+        }
       });
     }
 
