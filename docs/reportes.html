@@ -2,108 +2,179 @@
 <html lang="es">
 <head>
   <meta charset="UTF-8">
-  <title>Reportes - ALEX 3.0</title>
+  <title>ALEX 3.0 - Reportes</title>
   <link rel="stylesheet" href="styles.css">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
 </head>
 
 <body class="dashboard-body">
-
-  <div class="sidebar">
-    <h2 class="logo">ALEX 3.0</h2>
-    <ul class="menu">
-      <li id="menu-dashboard"><a href="dashboard.html">🏠 Inicio</a></li>
-      <li id="menu-inventario"><a href="inventario.html">📦 Inventario</a></li>
-      <li id="menu-ventas"><a href="ventas.html">💵 Ventas</a></li>
-      <li id="menu-caja"><a href="caja.html">💰 Caja</a></li>
-      <li id="menu-usuarios"><a href="usuarios.html">👤 Usuarios</a></li>
-      <li id="menu-reportes"><a href="reportes.html">📊 Reportes</a></li>
-      <li id="menu-configuracion"><a href="configuracion.html">⚙️ Configuración</a></li>
-    </ul>
-  </div>
-
-  <div class="main-content">
-    <h1>Reportes generales</h1>
-
-    <!-- RESUMEN PRINCIPAL -->
-    <div class="resumen-caja">
-      <div class="card-resumen">
-        <h4>Total de productos</h4>
-        <p><span id="rep-total-productos">0</span></p>
-      </div>
-      <div class="card-resumen">
-        <h4>Stock total</h4>
-        <p><span id="rep-stock-total">0</span></p>
-      </div>
-      <div class="card-resumen ingreso">
-        <h4>Ingresos caja (histórico)</h4>
-        <p><span id="rep-total-ingresos">Q 0.00</span></p>
-      </div>
-      <div class="card-resumen egreso">
-        <h4>Egresos caja (histórico)</h4>
-        <p><span id="rep-total-egresos">Q 0.00</span></p>
-      </div>
-      <div class="card-resumen saldo">
-        <h4>Saldo actual estimado</h4>
-        <p><span id="rep-saldo-actual">Q 0.00</span></p>
+  <!-- Sidebar -->
+  <aside class="sidebar">
+    <div class="sidebar-header">
+      <span class="logo-badge">A</span>
+      <div class="sidebar-logo-text">
+        <span class="sidebar-logo-main">ALEX 3.0</span>
+        <span class="sidebar-logo-sub">Panel del negocio</span>
       </div>
     </div>
 
-    <!-- INVENTARIO -->
-    <h2>Inventario (resumen)</h2>
-    <p>Listado rápido de productos registrados en el sistema.</p>
-    <table class="tabla">
-      <thead>
-        <tr>
-          <th>Código</th>
-          <th>Nombre</th>
-          <th>Compra</th>
-          <th>Venta</th>
-          <th>Ganancia</th>
-          <th>Margen (%)</th>
-          <th>Stock</th>
-        </tr>
-      </thead>
-      <tbody id="tabla-inventario-reporte"></tbody>
-    </table>
+    <nav class="sidebar-nav">
+      <a href="dashboard.html" class="sidebar-link">📊 Dashboard</a>
+      <a href="ventas.html" class="sidebar-link">💵 Ventas</a>
+      <a href="inventario.html" class="sidebar-link">📦 Inventario</a>
+      <a href="caja.html" class="sidebar-link">💰 Caja</a>
+      <a href="compras.html" class="sidebar-link">🧾 Compras</a>
+      <a href="gastos.html" class="sidebar-link">📉 Gastos</a>
+      <a href="clientes.html" class="sidebar-link">👥 Clientes</a>
+      <a href="proveedores.html" class="sidebar-link">🚚 Proveedores</a>
+      <a href="reportes.html" class="sidebar-link active">📚 Reportes</a>
+      <a href="ia.html" class="sidebar-link">🤖 IA empresarial</a>
+      <a href="configuracion.html" class="sidebar-link">⚙️ Configuración</a>
+    </nav>
 
-    <!-- MOVIMIENTOS DE CAJA -->
-    <h2>Movimientos de caja</h2>
-    <p>Historial de ingresos y egresos registrados en la caja profesional.</p>
-    <table class="tabla">
-      <thead>
-        <tr>
-          <th>Fecha/Hora</th>
-          <th>Tipo</th>
-          <th>Categoría</th>
-          <th>Descripción</th>
-          <th>Monto</th>
-        </tr>
-      </thead>
-      <tbody id="tabla-movimientos-reporte"></tbody>
-    </table>
+    <div class="sidebar-footer">
+      <span class="sidebar-footer-title" id="sidebar-footer-title">Mi negocio</span>
+      <span class="sidebar-footer-sub">Módulo de reportes</span>
+    </div>
+  </aside>
 
-    <!-- CIERRES DE CAJA -->
-    <h2>Cierres de caja</h2>
-    <p>Resumen de cada cierre registrado.</p>
-    <table class="tabla">
-      <thead>
-        <tr>
-          <th>Fecha/Hora</th>
-          <th>Saldo al cierre</th>
-          <th>Observaciones</th>
-        </tr>
-      </thead>
-      <tbody id="tabla-cierres-reporte"></tbody>
-    </table>
+  <!-- Layout principal -->
+  <div class="main-layout">
+    <!-- Topbar -->
+    <header class="topbar">
+      <button class="btn-menu-mobile" id="btnMenuMobile">☰</button>
 
+      <div class="topbar-left">
+        <h1 class="topbar-title">Reportes</h1>
+        <p class="topbar-subtitle">
+          Resumen inteligente de ventas, compras y gastos. ALEX te muestra el resultado del negocio por periodo.
+        </p>
+      </div>
+
+      <div class="topbar-right">
+        <span class="topbar-company" id="topbar-company-label">Mi negocio</span>
+        <span class="topbar-divider">•</span>
+        <span class="topbar-user" id="topbar-user-label">Usuario (Rol)</span>
+      </div>
+    </header>
+
+    <!-- Contenido principal -->
+    <main class="main-content">
+      <!-- Filtros generales -->
+      <section class="card">
+        <h2 class="card-title">Filtro de periodo</h2>
+        <p class="card-description">
+          Escoge el periodo para ver los reportes. ALEX recalcula todo: ventas, compras, gastos y resultado.
+        </p>
+
+        <div class="form-grid">
+          <div class="form-field">
+            <label for="filtroPeriodo">Periodo</label>
+            <select id="filtroPeriodo" class="input">
+              <option value="hoy">Hoy</option>
+              <option value="mes">Este mes</option>
+              <option value="todos">Toda la historia</option>
+            </select>
+          </div>
+        </div>
+      </section>
+
+      <!-- KPIs -->
+      <section class="cards-grid">
+        <article class="card kpi-card">
+          <h2 class="card-title">Ingresos por ventas</h2>
+          <p class="card-kpi" id="rep-ventas-total">Q 0.00</p>
+          <p class="card-kpi-sub">Suma de ventas en el periodo.</p>
+        </article>
+
+        <article class="card kpi-card">
+          <h2 class="card-title">Compras a proveedores</h2>
+          <p class="card-kpi" id="rep-compras-total">Q 0.00</p>
+          <p class="card-kpi-sub">Suma de compras en el periodo.</p>
+        </article>
+
+        <article class="card kpi-card">
+          <h2 class="card-title">Gastos del negocio</h2>
+          <p class="card-kpi" id="rep-gastos-total">Q 0.00</p>
+          <p class="card-kpi-sub">Suma de gastos (no inventario).</p>
+        </article>
+
+        <article class="card kpi-card">
+          <h2 class="card-title">Resultado operativo</h2>
+          <p class="card-kpi" id="rep-resultado">Q 0.00</p>
+          <p class="card-kpi-sub">Ventas - compras - gastos.</p>
+        </article>
+      </section>
+
+      <!-- Resumen texto -->
+      <section class="card">
+        <h2 class="card-title">Resumen del periodo</h2>
+        <p class="card-description" id="rep-resumen-texto">
+          Cargando resumen del periodo...
+        </p>
+
+        <ul class="bullet-list" id="rep-resumen-detalle">
+          <!-- Se llena por JS -->
+        </ul>
+      </section>
+
+      <!-- Tabla por día -->
+      <section class="card">
+        <h2 class="card-title">Detalle por día</h2>
+        <p class="card-description">
+          Aquí ves cómo se movió el negocio día por día: cuánto vendiste, cuánto compraste,
+          cuánto gastaste y cuál fue el resultado de cada día.
+        </p>
+
+        <table class="table">
+          <thead>
+            <tr>
+              <th>Fecha</th>
+              <th>Ventas</th>
+              <th>Compras</th>
+              <th>Gastos</th>
+              <th>Resultado</th>
+            </tr>
+          </thead>
+          <tbody id="rep-tabla-dias-body">
+            <tr>
+              <td colspan="5" class="table-empty">
+                Aún no hay movimientos para este periodo.
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </section>
+
+      <!-- Mini resumen de volúmenes -->
+      <section class="card">
+        <h2 class="card-title">Volumen de documentos</h2>
+        <p class="card-description">
+          Cantidad de documentos del periodo seleccionado.
+        </p>
+
+        <ul class="bullet-list" id="rep-volumen-detalle">
+          <!-- Se llena por JS -->
+        </ul>
+      </section>
+    </main>
   </div>
 
+  <!-- Scripts base -->
   <script src="alex-storage.js"></script>
-  <script src="alex-dev.js"></script>
   <script src="alex-roles.js"></script>
 
   <script>
-    // Usuario y permisos
+    // ===== Menú móvil =====
+    const btnMenuMobile = document.getElementById('btnMenuMobile');
+    const sidebar = document.querySelector('.sidebar');
+    if (btnMenuMobile) {
+      btnMenuMobile.addEventListener('click', () => {
+        sidebar.classList.toggle('sidebar-open');
+      });
+    }
+
+    // ===== Usuario, permisos y negocio =====
     const usuarioActual = typeof getUsuarioActualObligatorio === "function"
       ? getUsuarioActualObligatorio()
       : null;
@@ -112,188 +183,251 @@
       aplicarPermisosYProteger("reportes");
     }
 
-    // Helpers
-    function alex3FormatearMonedaSeguro(n) {
-      if (typeof alex3FormatearMoneda === "function") {
-        return alex3FormatearMoneda(n);
+    const labelUser = document.getElementById("topbar-user-label");
+    const labelCompany = document.getElementById("topbar-company-label");
+    const sidebarFooterTitle = document.getElementById("sidebar-footer-title");
+
+    let negocioConfig = {
+      nombre: "Mi negocio"
+    };
+
+    if (typeof load === "function") {
+      const cfg = load("negocio_config", null);
+      if (cfg && typeof cfg === "object") {
+        negocioConfig = Object.assign(negocioConfig, cfg);
       }
-      const num = Number(n);
+    }
+
+    if (labelCompany) labelCompany.textContent = negocioConfig.nombre || "Mi negocio";
+    if (sidebarFooterTitle) sidebarFooterTitle.textContent = negocioConfig.nombre || "Mi negocio";
+
+    if (usuarioActual && labelUser) {
+      const rolTexto = usuarioActual.rol === "dueno" ? "Dueño" : "Empleado";
+      labelUser.textContent = `${usuarioActual.nombre} (${rolTexto})`;
+    }
+
+    // ===== Helpers =====
+    function alex3FormatearMonedaSeguro(valor) {
+      if (typeof alex3FormatearMoneda === "function") {
+        return alex3FormatearMoneda(valor);
+      }
+      const num = Number(valor);
       if (isNaN(num)) return "Q 0.00";
       return "Q " + num.toFixed(2);
     }
 
-    function formatearFechaBonita(fechaIso) {
-      const d = new Date(fechaIso);
-      if (isNaN(d.getTime())) return fechaIso || "-";
-      const dia = String(d.getDate()).padStart(2, "0");
-      const mes = String(d.getMonth() + 1).padStart(2, "0");
-      const anio = d.getFullYear();
-      const horas = String(d.getHours()).padStart(2, "0");
-      const mins = String(d.getMinutes()).padStart(2, "0");
-      return `${dia}/${mes}/${anio} ${horas}:${mins}`;
+    function esMismoDia(a, b) {
+      return a.getFullYear() === b.getFullYear() &&
+             a.getMonth() === b.getMonth() &&
+             a.getDate() === b.getDate();
     }
 
-    // Cargar datos guardados con las claves nuevas que usamos en el sistema
-    const productos = (typeof load === "function" ? load("productos", []) : []) || [];
-    const movimientos = (typeof load === "function" ? load("caja_movimientos", []) : []) || [];
-    const cierres = (typeof load === "function" ? load("caja_cortes", []) : []) || [];
-    const ventas = (typeof load === "function" ? load("ventas", []) : []) || [];
-
-    // ===== RESUMEN PRINCIPAL =====
-    function calcularResumen() {
-      const totalProductos = Array.isArray(productos) ? productos.length : 0;
-      const stockTotal = Array.isArray(productos)
-        ? productos.reduce((acc, p) => acc + (Number(p.stock) || 0), 0)
-        : 0;
-
-      let totalIngresosMov = 0;
-      let totalEgresosMov = 0;
-
-      if (Array.isArray(movimientos)) {
-        movimientos.forEach(m => {
-          const monto = Number(m.monto) || 0;
-          if (m.tipo === "INGRESO") {
-            totalIngresosMov += monto;
-          } else if (m.tipo === "EGRESO") {
-            totalEgresosMov += monto;
-          }
-        });
-      }
-
-      let totalVentas = 0;
-      if (Array.isArray(ventas)) {
-        ventas.forEach(v => {
-          totalVentas += Number(v.total) || 0;
-        });
-      }
-
-      const totalIngresos = totalIngresosMov + totalVentas;
-      const totalEgresos = totalEgresosMov;
-      const saldoActual = totalIngresos - totalEgresos;
-
-      document.getElementById("rep-total-productos").innerText = totalProductos;
-      document.getElementById("rep-stock-total").innerText = stockTotal;
-      document.getElementById("rep-total-ingresos").innerText = alex3FormatearMonedaSeguro(totalIngresos);
-      document.getElementById("rep-total-egresos").innerText = alex3FormatearMonedaSeguro(totalEgresos);
-      document.getElementById("rep-saldo-actual").innerText = alex3FormatearMonedaSeguro(saldoActual);
+    function esMismoMes(a, b) {
+      return a.getFullYear() === b.getFullYear() &&
+             a.getMonth() === b.getMonth();
     }
 
-    // ===== TABLA DE INVENTARIO =====
-    function renderInventario() {
-      const tbody = document.getElementById("tabla-inventario-reporte");
-      tbody.innerHTML = "";
+    function normalizarFechaSolo(dateObj) {
+      const y = dateObj.getFullYear();
+      const m = String(dateObj.getMonth() + 1).padStart(2, "0");
+      const d = String(dateObj.getDate()).padStart(2, "0");
+      return `${y}-${m}-${d}`;
+    }
 
-      if (!Array.isArray(productos) || !productos.length) {
-        tbody.innerHTML = `
-          <tr>
-            <td colspan="7" class="table-empty">No hay productos registrados.</td>
-          </tr>
-        `;
-        return;
-      }
-
-      productos.forEach(p => {
-        const compra = alex3FormatearMonedaSeguro(p.compra);
-        const venta = alex3FormatearMonedaSeguro(p.venta);
-        const ganancia = alex3FormatearMonedaSeguro(p.ganancia);
-        const margen = (p.margen != null ? p.margen : 0) + "%";
-
-        tbody.innerHTML += `
-          <tr>
-            <td>${p.codigo || ""}</td>
-            <td>${p.nombre || ""}</td>
-            <td>${compra}</td>
-            <td>${venta}</td>
-            <td>${ganancia}</td>
-            <td>${margen}</td>
-            <td>${p.stock != null ? p.stock : 0}</td>
-          </tr>
-        `;
+    function formatearFechaBonita(fechaStr) {
+      // fechaStr: YYYY-MM-DD
+      const [y, m, d] = fechaStr.split("-");
+      const date = new Date(Number(y), Number(m)-1, Number(d));
+      return date.toLocaleDateString("es-GT", {
+        year: "numeric",
+        month: "short",
+        day: "2-digit"
       });
     }
 
-    // ===== TABLA DE MOVIMIENTOS DE CAJA =====
-    function renderMovimientos() {
-      const tbody = document.getElementById("tabla-movimientos-reporte");
-      tbody.innerHTML = "";
+    // ===== Datos: ventas, compras, gastos =====
+    let ventas = [];
+    let compras = [];
+    let gastos = [];
 
-      if (!Array.isArray(movimientos) || !movimientos.length) {
-        tbody.innerHTML = `
-          <tr>
-            <td colspan="5" class="table-empty">No hay movimientos de caja registrados.</td>
-          </tr>
-        `;
-        return;
+    if (typeof load === "function") {
+      const vData = load("ventas", []);
+      ventas = Array.isArray(vData) ? vData : [];
+
+      const cData = load("compras", []);
+      compras = Array.isArray(cData) ? cData : [];
+
+      const gData = load("gastos", []);
+      gastos = Array.isArray(gData) ? gData : [];
+    }
+
+    // ===== DOM =====
+    const filtroPeriodo = document.getElementById("filtroPeriodo");
+
+    const lblVentasTotal = document.getElementById("rep-ventas-total");
+    const lblComprasTotal = document.getElementById("rep-compras-total");
+    const lblGastosTotal = document.getElementById("rep-gastos-total");
+    const lblResultado = document.getElementById("rep-resultado");
+
+    const resumenTexto = document.getElementById("rep-resumen-texto");
+    const resumenDetalle = document.getElementById("rep-resumen-detalle");
+    const tablaDiasBody = document.getElementById("rep-tabla-dias-body");
+    const volumenDetalle = document.getElementById("rep-volumen-detalle");
+
+    // ===== Funciones de filtro por periodo =====
+    function estaEnPeriodo(fecha, periodo) {
+      const hoy = new Date();
+      if (periodo === "hoy") {
+        return esMismoDia(fecha, hoy);
       }
+      if (periodo === "mes") {
+        return esMismoMes(fecha, hoy);
+      }
+      return true; // "todos"
+    }
 
-      // Más recientes primero
-      const ordenados = [...movimientos].sort((a, b) => {
-        const fa = new Date(a.fecha || a.fechaHora || 0).getTime();
-        const fb = new Date(b.fecha || b.fechaHora || 0).getTime();
-        return fb - fa;
-      });
-
-      ordenados.forEach(m => {
-        const fecha = formatearFechaBonita(m.fecha || m.fechaHora || "");
-        const tipoTexto = m.tipo === "EGRESO" ? "Egreso" : "Ingreso";
-        const categoria = m.categoria || "";
-        const desc = m.descripcion || "";
-        const monto = alex3FormatearMonedaSeguro(m.monto);
-
-        tbody.innerHTML += `
-          <tr>
-            <td>${fecha}</td>
-            <td>${tipoTexto}</td>
-            <td>${categoria}</td>
-            <td>${desc}</td>
-            <td>${monto}</td>
-          </tr>
-        `;
+    function filtrarPorPeriodo(array, campoFecha, periodo) {
+      return array.filter(item => {
+        const fecha = new Date(item[campoFecha] || item.fecha || Date.now());
+        if (isNaN(fecha.getTime())) return false;
+        return estaEnPeriodo(fecha, periodo);
       });
     }
 
-    // ===== TABLA DE CIERRES DE CAJA =====
-    function renderCierres() {
-      const tbody = document.getElementById("tabla-cierres-reporte");
-      tbody.innerHTML = "";
+    // ===== Recalcular reportes =====
+    function recalcularReportes() {
+      if (!filtroPeriodo) return;
+      const periodo = filtroPeriodo.value || "hoy";
 
-      if (!Array.isArray(cierres) || !cierres.length) {
-        tbody.innerHTML = `
-          <tr>
-            <td colspan="3" class="table-empty">No hay cierres de caja registrados.</td>
-          </tr>
-        `;
-        return;
+      // Filtrar
+      const ventasFiltradas = filtrarPorPeriodo(ventas, "fechaHora", periodo);
+      const comprasFiltradas = filtrarPorPeriodo(compras, "fechaHora", periodo);
+      const gastosFiltrados = filtrarPorPeriodo(gastos, "fechaHora", periodo);
+
+      // Totales
+      const totalVentas = ventasFiltradas.reduce((s, v) => s + (Number(v.total) || 0), 0);
+      const totalCompras = comprasFiltradas.reduce((s, c) => s + (Number(c.total) || 0), 0);
+      const totalGastos = gastosFiltrados.reduce((s, g) => s + (Number(g.monto) || 0), 0);
+
+      const resultado = totalVentas - totalCompras - totalGastos;
+
+      if (lblVentasTotal) lblVentasTotal.textContent = alex3FormatearMonedaSeguro(totalVentas);
+      if (lblComprasTotal) lblComprasTotal.textContent = alex3FormatearMonedaSeguro(totalCompras);
+      if (lblGastosTotal) lblGastosTotal.textContent = alex3FormatearMonedaSeguro(totalGastos);
+      if (lblResultado) lblResultado.textContent = alex3FormatearMonedaSeguro(resultado);
+
+      // Resumen texto
+      if (resumenTexto && resumenDetalle) {
+        let textoPeriodo = "el día de hoy";
+        if (periodo === "mes") textoPeriodo = "este mes";
+        if (periodo === "todos") textoPeriodo = "toda la historia registrada";
+
+        if (!ventasFiltradas.length && !comprasFiltradas.length && !gastosFiltrados.length) {
+          resumenTexto.textContent = `No hay movimientos registrados para ${textoPeriodo}.`;
+          resumenDetalle.innerHTML = "";
+        } else {
+          resumenTexto.textContent = `Resumen del negocio para ${textoPeriodo}:`;
+          const signoResultado = resultado >= 0 ? "positivo" : "negativo";
+
+          resumenDetalle.innerHTML = `
+            <li><strong>Ingresos por ventas:</strong> ${alex3FormatearMonedaSeguro(totalVentas)}</li>
+            <li><strong>Compras a proveedores:</strong> ${alex3FormatearMonedaSeguro(totalCompras)}</li>
+            <li><strong>Gastos del negocio:</strong> ${alex3FormatearMonedaSeguro(totalGastos)}</li>
+            <li><strong>Resultado operativo (${signoResultado}):</strong> ${alex3FormatearMonedaSeguro(resultado)}</li>
+          `;
+        }
       }
 
-      // Más recientes primero
-      const ordenados = [...cierres].sort((a, b) => {
-        const fa = new Date(a.fecha || a.fechaHora || 0).getTime();
-        const fb = new Date(b.fecha || b.fechaHora || 0).getTime();
-        return fb - fa;
-      });
+      // Tabla por día
+      if (tablaDiasBody) {
+        tablaDiasBody.innerHTML = "";
 
-      ordenados.forEach(c => {
-        const fecha = formatearFechaBonita(c.fecha || c.fechaHora || "");
-        const saldoFinal = alex3FormatearMonedaSeguro(c.saldoFinal);
-        const obs = c.observaciones || "";
+        if (!ventasFiltradas.length && !comprasFiltradas.length && !gastosFiltrados.length) {
+          tablaDiasBody.innerHTML = `
+            <tr>
+              <td colspan="5" class="table-empty">
+                Aún no hay movimientos para este periodo.
+              </td>
+            </tr>
+          `;
+        } else {
+          const mapaDias = {};
 
-        tbody.innerHTML += `
-          <tr>
-            <td>${fecha}</td>
-            <td>${saldoFinal}</td>
-            <td>${obs}</td>
-          </tr>
+          // Ventas
+          ventasFiltradas.forEach(v => {
+            const fecha = new Date(v.fechaHora || v.fecha || Date.now());
+            if (isNaN(fecha.getTime())) return;
+            const key = normalizarFechaSolo(fecha);
+            if (!mapaDias[key]) {
+              mapaDias[key] = { ventas: 0, compras: 0, gastos: 0 };
+            }
+            mapaDias[key].ventas += Number(v.total) || 0;
+          });
+
+          // Compras
+          comprasFiltradas.forEach(c => {
+            const fecha = new Date(c.fechaHora || c.fecha || Date.now());
+            if (isNaN(fecha.getTime())) return;
+            const key = normalizarFechaSolo(fecha);
+            if (!mapaDias[key]) {
+              mapaDias[key] = { ventas: 0, compras: 0, gastos: 0 };
+            }
+            mapaDias[key].compras += Number(c.total) || 0;
+          });
+
+          // Gastos
+          gastosFiltrados.forEach(g => {
+            const fecha = new Date(g.fechaHora || g.fecha || Date.now());
+            if (isNaN(fecha.getTime())) return;
+            const key = normalizarFechaSolo(fecha);
+            if (!mapaDias[key]) {
+              mapaDias[key] = { ventas: 0, compras: 0, gastos: 0 };
+            }
+            mapaDias[key].gastos += Number(g.monto) || 0;
+          });
+
+          const fechasOrdenadas = Object.keys(mapaDias).sort((a, b) => {
+            return new Date(a).getTime() - new Date(b).getTime();
+          });
+
+          fechasOrdenadas.forEach(fechaKey => {
+            const data = mapaDias[fechaKey];
+            const resultadoDia = data.ventas - data.compras - data.gastos;
+
+            tablaDiasBody.innerHTML += `
+              <tr>
+                <td>${formatearFechaBonita(fechaKey)}</td>
+                <td>${alex3FormatearMonedaSeguro(data.ventas)}</td>
+                <td>${alex3FormatearMonedaSeguro(data.compras)}</td>
+                <td>${alex3FormatearMonedaSeguro(data.gastos)}</td>
+                <td>${alex3FormatearMonedaSeguro(resultadoDia)}</td>
+              </tr>
+            `;
+          });
+        }
+      }
+
+      // Volumen de documentos
+      if (volumenDetalle) {
+        const cantVentas = ventasFiltradas.length;
+        const cantCompras = comprasFiltradas.length;
+        const cantGastos = gastosFiltrados.length;
+
+        volumenDetalle.innerHTML = `
+          <li><strong>Tickets de venta:</strong> ${cantVentas}</li>
+          <li><strong>Documentos de compra:</strong> ${cantCompras}</li>
+          <li><strong>Registros de gastos:</strong> ${cantGastos}</li>
         `;
-      });
+      }
     }
 
-    // Inicializar página de reportes
-    calcularResumen();
-    renderInventario();
-    renderMovimientos();
-    renderCierres();
+    // ===== Eventos =====
+    if (filtroPeriodo) {
+      filtroPeriodo.addEventListener("change", recalcularReportes);
+    }
+
+    // ===== Primera carga =====
+    recalcularReportes();
   </script>
-
 </body>
 </html>
