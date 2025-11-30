@@ -27,9 +27,7 @@
       <a href="gastos.html" class="sidebar-link">📉 Gastos</a>
       <a href="clientes.html" class="sidebar-link">👥 Clientes</a>
       <a href="proveedores.html" class="sidebar-link">🚚 Proveedores</a>
-      <!-- Antes: Contabilidad + SAT. Ahora solo Reportes (comercial) -->
       <a href="reportes.html" class="sidebar-link">📚 Reportes</a>
-      <!-- Eliminado: <a href="sat.html" class="sidebar-link">🇬🇹 SAT Guatemala</a> -->
       <a href="ia.html" class="sidebar-link">🤖 IA empresarial</a>
       <a href="configuracion.html" class="sidebar-link">⚙️ Configuración</a>
     </nav>
@@ -49,7 +47,7 @@
       <div class="topbar-left">
         <h1 class="topbar-title">Ventas</h1>
         <p class="topbar-subtitle">
-          Registra ventas reales y que ALEX actualice caja y dashboard automáticamente.
+          Registra ventas reales y que ALEX actualice caja, inventario y dashboard automáticamente.
         </p>
       </div>
 
@@ -94,7 +92,7 @@
         <h2 class="card-title">1. Registrar una nueva venta</h2>
         <p class="card-description">
           Selecciona un cliente guardado o escribe uno manual. Si la venta es en efectivo, ALEX
-          registrará automáticamente un ingreso en caja.
+          registrará automáticamente un ingreso en caja y ajustará inventario.
         </p>
 
         <div class="form-grid">
@@ -314,6 +312,12 @@
       if (typeof save === "function") {
         save("caja_movimientos", movimientosCaja);
         save("movimientosCaja", movimientosCaja);
+      }
+    }
+
+    function guardarProductos() {
+      if (typeof save === "function") {
+        save("productos", productos);
       }
     }
 
@@ -574,6 +578,34 @@
         return;
       }
 
+      // ===== Ajuste de inventario si se usó código + cantidad =====
+      let codigoProd = inpCodigoProducto ? inpCodigoProducto.value.trim() : "";
+      let cantidadProd = 0;
+      if (inpCantidadProducto && inpCantidadProducto.value) {
+        const c = parseInt(inpCantidadProducto.value, 10);
+        if (!isNaN(c) && c > 0) cantidadProd = c;
+      }
+
+      if (codigoProd && cantidadProd > 0) {
+        const prod = buscarProductoPorCodigo(codigoProd);
+        if (prod && typeof prod.stock !== "undefined") {
+          const stockActual = Number(prod.stock) || 0;
+          if (stockActual < cantidadProd) {
+            const continuar = confirm(
+              `La cantidad vendida (${cantidadProd}) es mayor al stock disponible (${stockActual}). ` +
+              `¿Deseas continuar de todos modos?`
+            );
+            if (!continuar) {
+              return;
+            }
+          }
+          prod.stock = stockActual - cantidadProd;
+          if (prod.stock < 0) prod.stock = 0;
+          guardarProductos();
+        }
+      }
+      // ===== fin ajuste inventario =====
+
       // Monto efectivo para caja
       let montoEfectivoParaCaja = 0;
       if (formaPago === "EFECTIVO") {
@@ -662,7 +694,7 @@
       });
     }
 
-    // Eliminar venta (no ajusta caja todavía, si quieres luego hacemos reversa contable)
+    // Eliminar venta (no ajusta caja ni inventario todavía)
     if (tbodyVentas) {
       tbodyVentas.addEventListener("click", (e) => {
         const btn = e.target.closest("button[data-delete-index]");
@@ -670,7 +702,7 @@
         const idx = parseInt(btn.getAttribute("data-delete-index"));
         if (isNaN(idx)) return;
 
-        if (!confirm("¿Seguro que quieres eliminar esta venta? (no ajustará caja automáticamente)")) return;
+        if (!confirm("¿Seguro que quieres eliminar esta venta? (no ajustará caja ni inventario automáticamente)")) return;
         ventas.splice(idx, 1);
         guardarVentas();
         renderVentas();
@@ -678,7 +710,6 @@
     }
 
     // ===== Primera carga =====
-    // Prellenar fecha con ahora
     if (inpFecha) {
       const ahora = new Date();
       const isoLocal = new Date(ahora.getTime() - ahora.getTimezoneOffset() * 60000)
