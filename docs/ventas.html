@@ -72,4 +72,623 @@
 
         <article class="card kpi-card">
           <h2 class="card-title">Ventas del mes</h2>
-          <p class="card-kpi" id="kpi-
+          <p class="card-kpi" id="kpi-ventas-mes">Q 0.00</p>
+          <p class="card-kpi-sub">Sumatoria del mes actual (todas las formas de pago).</p>
+        </article>
+
+        <article class="card kpi-card">
+          <h2 class="card-title">Tickets emitidos</h2>
+          <p class="card-kpi" id="kpi-ventas-cantidad">0</p>
+          <p class="card-kpi-sub">Número de ventas registradas.</p>
+        </article>
+
+        <article class="card kpi-card">
+          <h2 class="card-title">Promedio por venta</h2>
+          <p class="card-kpi" id="kpi-ventas-promedio">Q 0.00</p>
+          <p class="card-kpi-sub">Ventas del mes / tickets.</p>
+        </article>
+      </section>
+
+      <!-- Formulario de nueva venta -->
+      <section class="card">
+        <h2 class="card-title">1. Registrar una nueva venta</h2>
+        <p class="card-description">
+          Selecciona un cliente guardado o escribe uno manual. Si la venta es en efectivo, ALEX
+          registrará automáticamente un ingreso en caja.
+        </p>
+
+        <div class="form-grid">
+          <div class="form-field">
+            <label for="vFecha">Fecha y hora</label>
+            <input id="vFecha" class="input" type="datetime-local">
+          </div>
+
+          <div class="form-field">
+            <label for="vClienteSelect">Cliente guardado</label>
+            <select id="vClienteSelect" class="input">
+              <option value="">-- Selecciona cliente --</option>
+            </select>
+          </div>
+
+          <div class="form-field">
+            <label for="vClienteTexto">Cliente (texto libre)</label>
+            <input id="vClienteTexto" class="input" type="text"
+                   placeholder="Si no está en la lista, escribe el nombre aquí">
+          </div>
+
+          <div class="form-field">
+            <label for="vDocumentoTipo">Tipo de documento</label>
+            <select id="vDocumentoTipo" class="input">
+              <option value="Ticket">Ticket</option>
+              <option value="Factura">Factura</option>
+              <option value="Recibo">Recibo</option>
+              <option value="Nota">Nota de venta</option>
+              <option value="Otro">Otro</option>
+            </select>
+          </div>
+
+          <div class="form-field">
+            <label for="vDocumentoNumero">Número de documento</label>
+            <input id="vDocumentoNumero" class="input" type="text"
+                   placeholder="Ej: T-001, F001-12345 (opcional)">
+          </div>
+
+          <!-- NUEVOS CAMPOS: código + cantidad para usar productos del inventario -->
+          <div class="form-field">
+            <label for="vCodigoProducto">Código / código de barras (buscar producto)</label>
+            <input id="vCodigoProducto" class="input" type="text"
+                   placeholder="Escribe o escanea el código del producto">
+          </div>
+
+          <div class="form-field">
+            <label for="vCantidadProducto">Cantidad</label>
+            <input id="vCantidadProducto" class="input" type="number" min="1" step="1" value="1">
+          </div>
+          <!-- FIN NUEVOS CAMPOS -->
+
+          <div class="form-field">
+            <label for="vMonto">Monto total (Q)</label>
+            <input id="vMonto" class="input" type="number" min="0" step="0.01">
+          </div>
+
+          <div class="form-field">
+            <label for="vFormaPago">Forma de pago</label>
+            <select id="vFormaPago" class="input">
+              <option value="EFECTIVO">Efectivo</option>
+              <option value="TRANSFERENCIA">Transferencia</option>
+              <option value="TARJETA">Tarjeta</option>
+              <option value="MIXTO">Mixto (efectivo + otro)</option>
+              <option value="CREDITO_CLIENTE">Crédito / fiado</option>
+            </select>
+          </div>
+
+          <div class="form-field" id="campoMontoEfectivo" style="display: none;">
+            <label for="vMontoEfectivo">Parte en efectivo (Q)</label>
+            <input id="vMontoEfectivo" class="input" type="number" min="0" step="0.01"
+                   placeholder="Solo si la venta es mixta">
+          </div>
+
+          <div class="form-field" style="grid-column: 1 / -1;">
+            <label for="vNotas">Notas (opcional)</label>
+            <input id="vNotas" class="input" type="text"
+                   placeholder="Ej: Incluye envío, promoción, cliente nuevo, etc.">
+          </div>
+        </div>
+
+        <!-- Botón para usar el producto escaneado -->
+        <button class="btn" id="btnUsarProducto" style="margin-top: 0.5rem;">
+          Usar producto del inventario (según código)
+        </button>
+
+        <button class="btn" id="btnGuardarVenta" style="margin-top: 0.75rem;">
+          Guardar venta y actualizar caja
+        </button>
+      </section>
+
+      <!-- Historial de ventas -->
+      <section class="card">
+        <h2 class="card-title">2. Últimas ventas registradas</h2>
+        <p class="card-description">
+          Las ventas más recientes aparecen primero. Puedes buscar por cliente, documento o notas.
+        </p>
+
+        <div class="form-grid" style="margin-bottom: 0.75rem;">
+          <div class="form-field" style="grid-column: 1 / -1;">
+            <label for="buscarVenta">Buscar venta</label>
+            <input id="buscarVenta" class="input" type="text"
+                   placeholder="Escribe parte del cliente, documento o notas">
+          </div>
+        </div>
+
+        <table class="table">
+          <thead>
+            <tr>
+              <th>Fecha</th>
+              <th>Cliente</th>
+              <th>Documento</th>
+              <th>Forma de pago</th>
+              <th>Total</th>
+              <th>Acciones</th>
+            </tr>
+          </thead>
+          <tbody id="tabla-ventas-body">
+            <tr>
+              <td colspan="6" class="table-empty">
+                Aún no hay ventas registradas.
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </section>
+    </main>
+  </div>
+
+  <!-- Scripts base -->
+  <script src="alex-storage.js"></script>
+  <script src="alex-roles.js"></script>
+
+  <script>
+    // ===== Menú móvil =====
+    const btnMenuMobile = document.getElementById('btnMenuMobile');
+    const sidebar = document.querySelector('.sidebar');
+    if (btnMenuMobile) {
+      btnMenuMobile.addEventListener('click', () => {
+        sidebar.classList.toggle('sidebar-open');
+      });
+    }
+
+    // ===== Usuario y permisos =====
+    const usuarioActual = typeof getUsuarioActualObligatorio === "function"
+      ? getUsuarioActualObligatorio()
+      : null;
+
+    if (typeof aplicarPermisosYProteger === "function") {
+      aplicarPermisosYProteger("ventas");
+    }
+
+    const labelUser = document.getElementById("topbar-user-label");
+    if (usuarioActual && labelUser) {
+      const rolTexto = usuarioActual.rol === "dueno" ? "Dueño" : "Empleado";
+      labelUser.textContent = `${usuarioActual.nombre} (${rolTexto})`;
+    }
+
+    // ===== Helpers =====
+    function alex3FormatearMonedaSeguro(valor) {
+      if (typeof alex3FormatearMoneda === "function") {
+        return alex3FormatearMoneda(valor);
+      }
+      const num = Number(valor);
+      if (isNaN(num)) return "Q 0.00";
+      return "Q " + num.toFixed(2);
+    }
+
+    function esMismoDia(a, b) {
+      return a.getFullYear() === b.getFullYear() &&
+             a.getMonth() === b.getMonth() &&
+             a.getDate() === b.getDate();
+    }
+
+    function esMismoMes(a, b) {
+      return a.getFullYear() === b.getFullYear() &&
+             a.getMonth() === b.getMonth();
+    }
+
+    function formatearFechaLocal(fechaIso) {
+      const d = new Date(fechaIso);
+      if (isNaN(d.getTime())) return "-";
+      return d.toLocaleString("es-GT");
+    }
+
+    // ===== Datos base: ventas, clientes, caja, productos =====
+    let ventas = [];
+    let clientes = [];
+    let movimientosCaja = [];
+    let productos = [];
+
+    if (typeof load === "function") {
+      const vData = load("ventas", []);
+      ventas = Array.isArray(vData) ? vData : [];
+
+      const cData = load("clientes", []);
+      clientes = Array.isArray(cData) ? cData : [];
+
+      const m1 = load("caja_movimientos", []);
+      const m2 = load("movimientosCaja", []);
+      if (Array.isArray(m1) && m1.length > 0) {
+        movimientosCaja = m1;
+      } else if (Array.isArray(m2)) {
+        movimientosCaja = m2;
+      }
+
+      const pData = load("productos", []);
+      productos = Array.isArray(pData) ? pData : [];
+    }
+
+    function guardarVentas() {
+      if (typeof save === "function") {
+        save("ventas", ventas);
+      }
+    }
+
+    function guardarMovimientosCaja() {
+      if (typeof save === "function") {
+        save("caja_movimientos", movimientosCaja);
+        save("movimientosCaja", movimientosCaja);
+      }
+    }
+
+    // ===== Controles del DOM =====
+    const inpFecha = document.getElementById("vFecha");
+    const selCliente = document.getElementById("vClienteSelect");
+    const inpClienteTexto = document.getElementById("vClienteTexto");
+    const selDocTipo = document.getElementById("vDocumentoTipo");
+    const inpDocNumero = document.getElementById("vDocumentoNumero");
+    const inpMonto = document.getElementById("vMonto");
+    const selFormaPago = document.getElementById("vFormaPago");
+    const inpMontoEfectivo = document.getElementById("vMontoEfectivo");
+    const campoMontoEfectivo = document.getElementById("campoMontoEfectivo");
+    const inpNotas = document.getElementById("vNotas");
+    const btnGuardarVenta = document.getElementById("btnGuardarVenta");
+    const tbodyVentas = document.getElementById("tabla-ventas-body");
+    const inputBuscarVenta = document.getElementById("buscarVenta");
+
+    // NUEVOS controles: código y cantidad de producto
+    const inpCodigoProducto = document.getElementById("vCodigoProducto");
+    const inpCantidadProducto = document.getElementById("vCantidadProducto");
+    const btnUsarProducto = document.getElementById("btnUsarProducto");
+
+    // ===== Llenar select de clientes =====
+    function llenarSelectClientes() {
+      if (!selCliente) return;
+      selCliente.innerHTML = `<option value="">-- Selecciona cliente --</option>`;
+      clientes.forEach(c => {
+        const opt = document.createElement("option");
+        opt.value = c.id || "";
+        opt.textContent = c.nombre || "(Sin nombre)";
+        selCliente.appendChild(opt);
+      });
+    }
+
+    // ===== Mostrar/ocultar campo de monto efectivo para ventas mixtas =====
+    if (selFormaPago && campoMontoEfectivo) {
+      selFormaPago.addEventListener("change", () => {
+        if (selFormaPago.value === "MIXTO") {
+          campoMontoEfectivo.style.display = "block";
+        } else {
+          campoMontoEfectivo.style.display = "none";
+          if (inpMontoEfectivo) inpMontoEfectivo.value = "";
+        }
+      });
+    }
+
+    // ===== Buscar producto por código =====
+    function buscarProductoPorCodigo(codigo) {
+      if (!codigo || !Array.isArray(productos)) return null;
+      const code = String(codigo).trim().toLowerCase();
+      if (!code) return null;
+      return productos.find(p => (p.codigo || "").toString().trim().toLowerCase() === code) || null;
+    }
+
+    function usarProductoEnVenta() {
+      if (!inpCodigoProducto) return;
+
+      const codigo = inpCodigoProducto.value;
+      const prod = buscarProductoPorCodigo(codigo);
+
+      if (!prod) {
+        alert("No se encontró ningún producto con ese código. Verifica el código o regístralo en inventario.");
+        return;
+      }
+
+      let cantidad = 1;
+      if (inpCantidadProducto && inpCantidadProducto.value) {
+        const c = parseInt(inpCantidadProducto.value, 10);
+        if (!isNaN(c) && c > 0) cantidad = c;
+      }
+
+      const precioUnit = Number(prod.venta) || 0;
+      if (precioUnit <= 0) {
+        alert("El producto encontrado tiene un precio de venta inválido o en 0.");
+        return;
+      }
+
+      const total = precioUnit * cantidad;
+
+      if (inpMonto) {
+        inpMonto.value = total.toFixed(2);
+      }
+
+      if (inpNotas && !inpNotas.value.trim()) {
+        inpNotas.value = `Producto: ${prod.nombre || ""} x ${cantidad}`;
+      }
+
+      if (inpMonto) {
+        inpMonto.focus();
+      }
+    }
+
+    if (btnUsarProducto) {
+      btnUsarProducto.addEventListener("click", (e) => {
+        e.preventDefault();
+        usarProductoEnVenta();
+      });
+    }
+
+    if (inpCodigoProducto) {
+      inpCodigoProducto.addEventListener("keydown", (e) => {
+        if (e.key === "Enter") {
+          e.preventDefault();
+          usarProductoEnVenta();
+        }
+      });
+    }
+
+    // ===== KPIs de ventas =====
+    function recalcularKPIsVentas() {
+      const hoy = new Date();
+      let totalHoy = 0;
+      let totalMes = 0;
+
+      ventas.forEach(v => {
+        const fecha = new Date(v.fechaHora || v.fecha || Date.now());
+        const total = Number(v.total) || 0;
+
+        if (esMismoDia(fecha, hoy)) {
+          totalHoy += total;
+        }
+        if (esMismoMes(fecha, hoy)) {
+          totalMes += total;
+        }
+      });
+
+      const cantidad = ventas.length;
+      const promedio = cantidad > 0 ? totalMes / cantidad : 0;
+
+      const elHoy = document.getElementById("kpi-ventas-hoy");
+      const elMes = document.getElementById("kpi-ventas-mes");
+      const elCant = document.getElementById("kpi-ventas-cantidad");
+      const elProm = document.getElementById("kpi-ventas-promedio");
+
+      if (elHoy) elHoy.textContent = alex3FormatearMonedaSeguro(totalHoy);
+      if (elMes) elMes.textContent = alex3FormatearMonedaSeguro(totalMes);
+      if (elCant) elCant.textContent = String(cantidad);
+      if (elProm) elProm.textContent = alex3FormatearMonedaSeguro(promedio);
+    }
+
+    // ===== Render tabla de ventas =====
+    function renderVentas() {
+      if (!tbodyVentas) return;
+
+      const filtro = (inputBuscarVenta && inputBuscarVenta.value.trim().toLowerCase()) || "";
+      tbodyVentas.innerHTML = "";
+
+      if (!ventas.length) {
+        tbodyVentas.innerHTML = `
+          <tr>
+            <td colspan="6" class="table-empty">
+              Aún no hay ventas registradas.
+            </td>
+          </tr>
+        `;
+        recalcularKPIsVentas();
+        return;
+      }
+
+      const ordenadas = [...ventas].sort((a, b) => {
+        const fa = new Date(a.fechaHora || a.fecha || 0).getTime();
+        const fb = new Date(b.fechaHora || b.fecha || 0).getTime();
+        return fb - fa; // más recientes primero
+      });
+
+      const filtradas = filtro
+        ? ordenadas.filter(v => {
+            const txt = [
+              v.clienteNombre || "",
+              v.documentoNumero || "",
+              v.documentoTipo || "",
+              v.notas || ""
+            ].join(" ").toLowerCase();
+            return txt.includes(filtro);
+          })
+        : ordenadas;
+
+      if (!filtradas.length) {
+        tbodyVentas.innerHTML = `
+          <tr>
+            <td colspan="6" class="table-empty">
+              No se encontraron ventas con ese texto.
+            </td>
+          </tr>
+        `;
+        recalcularKPIsVentas();
+        return;
+      }
+
+      filtradas.forEach((v, index) => {
+        const fechaTxt = v.fecha || (v.fechaHora ? formatearFechaLocal(v.fechaHora) : "-");
+        const clienteTxt = v.clienteNombre || "-";
+        const docTxt = v.documentoTipo
+          ? (v.documentoNumero ? `${v.documentoTipo} ${v.documentoNumero}` : v.documentoTipo)
+          : (v.documentoNumero || "-");
+        const formaPagoTxt = v.formaPago || "-";
+        const totalTxt = alex3FormatearMonedaSeguro(v.total);
+
+        tbodyVentas.innerHTML += `
+          <tr>
+            <td>${fechaTxt}</td>
+            <td>${clienteTxt}</td>
+            <td>${docTxt}</td>
+            <td>${formaPagoTxt}</td>
+            <td>${totalTxt}</td>
+            <td>
+              <button class="btn btn-small" data-delete-index="${index}">🗑️</button>
+            </td>
+          </tr>
+        `;
+      });
+
+      recalcularKPIsVentas();
+    }
+
+    // ===== Guardar venta =====
+    function guardarVenta() {
+      let fechaObj;
+      if (inpFecha && inpFecha.value) {
+        fechaObj = new Date(inpFecha.value);
+      } else {
+        fechaObj = new Date();
+      }
+      if (isNaN(fechaObj.getTime())) fechaObj = new Date();
+
+      const fechaLocal = fechaObj.toLocaleString("es-GT");
+      const fechaIso = fechaObj.toISOString();
+
+      // Cliente
+      let clienteId = selCliente ? selCliente.value : "";
+      let clienteNombre = "";
+
+      if (clienteId) {
+        const cli = clientes.find(c => (c.id || "") === clienteId);
+        clienteNombre = cli ? (cli.nombre || "") : "";
+      }
+
+      const clienteTexto = (inpClienteTexto && inpClienteTexto.value.trim()) || "";
+
+      if (!clienteNombre && clienteTexto) {
+        clienteNombre = clienteTexto;
+        clienteId = null;
+      }
+
+      if (!clienteNombre) {
+        clienteNombre = "Cliente general";
+      }
+
+      const documentoTipo = selDocTipo ? selDocTipo.value : "Ticket";
+      const documentoNumero = (inpDocNumero && inpDocNumero.value.trim()) || "";
+      const total = parseFloat(inpMonto && inpMonto.value);
+      const formaPago = selFormaPago ? selFormaPago.value : "EFECTIVO";
+      const notas = (inpNotas && inpNotas.value.trim()) || "";
+
+      if (isNaN(total) || total <= 0) {
+        alert("Escribe un monto válido mayor a 0.");
+        return;
+      }
+
+      // Monto efectivo para caja
+      let montoEfectivoParaCaja = 0;
+      if (formaPago === "EFECTIVO") {
+        montoEfectivoParaCaja = total;
+      } else if (formaPago === "MIXTO") {
+        const parcial = parseFloat(inpMontoEfectivo && inpMontoEfectivo.value);
+        if (!isNaN(parcial) && parcial > 0) {
+          montoEfectivoParaCaja = parcial;
+        }
+      } else {
+        montoEfectivoParaCaja = 0; // transferencias / tarjeta / crédito no entran a caja físico
+      }
+
+      const venta = {
+        id: "venta_" + Date.now(),
+        fecha: fechaLocal,
+        fechaHora: fechaIso,
+        clienteId,
+        clienteNombre,
+        documentoTipo,
+        documentoNumero,
+        total,
+        formaPago,
+        notas,
+        origen: "venta",
+        usuario: usuarioActual ? usuarioActual.usuario : null
+      };
+
+      ventas.push(venta);
+      guardarVentas();
+
+      // Registrar ingreso en caja si hay efectivo
+      if (montoEfectivoParaCaja > 0) {
+        const mov = {
+          id: "caja_venta_" + Date.now(),
+          fecha: fechaLocal,
+          fechaHora: fechaIso,
+          tipo: "INGRESO",
+          categoria: "Ventas",
+          descripcion: `Venta a ${clienteNombre}`,
+          monto: montoEfectivoParaCaja,
+          origen: "venta",
+          ventaId: venta.id,
+          usuario: usuarioActual ? usuarioActual.usuario : null
+        };
+        movimientosCaja.push(mov);
+        guardarMovimientosCaja();
+      }
+
+      // Limpiar formulario (dejo fecha igual para seguir vendiendo)
+      if (selCliente) selCliente.value = "";
+      if (inpClienteTexto) inpClienteTexto.value = "";
+      if (selDocTipo) selDocTipo.value = "Ticket";
+      if (inpDocNumero) inpDocNumero.value = "";
+      if (inpMonto) inpMonto.value = "";
+      if (selFormaPago) selFormaPago.value = "EFECTIVO";
+      if (campoMontoEfectivo) campoMontoEfectivo.style.display = "none";
+      if (inpMontoEfectivo) inpMontoEfectivo.value = "";
+      if (inpNotas) inpNotas.value = "";
+      if (inpCodigoProducto) inpCodigoProducto.value = "";
+      if (inpCantidadProducto) inpCantidadProducto.value = "1";
+      if (inpMonto) inpMonto.focus();
+
+      renderVentas();
+      alert("Venta registrada correctamente.");
+    }
+
+    if (btnGuardarVenta) {
+      btnGuardarVenta.addEventListener("click", guardarVenta);
+    }
+
+    // Enter en monto → guardar
+    if (inpMonto) {
+      inpMonto.addEventListener("keydown", (e) => {
+        if (e.key === "Enter") {
+          e.preventDefault();
+          guardarVenta();
+        }
+      });
+    }
+
+    // Buscar ventas
+    if (inputBuscarVenta) {
+      inputBuscarVenta.addEventListener("input", () => {
+        renderVentas();
+      });
+    }
+
+    // Eliminar venta (no ajusta caja todavía, si quieres luego hacemos reversa contable)
+    if (tbodyVentas) {
+      tbodyVentas.addEventListener("click", (e) => {
+        const btn = e.target.closest("button[data-delete-index]");
+        if (!btn) return;
+        const idx = parseInt(btn.getAttribute("data-delete-index"));
+        if (isNaN(idx)) return;
+
+        if (!confirm("¿Seguro que quieres eliminar esta venta? (no ajustará caja automáticamente)")) return;
+        ventas.splice(idx, 1);
+        guardarVentas();
+        renderVentas();
+      });
+    }
+
+    // ===== Primera carga =====
+    // Prellenar fecha con ahora
+    if (inpFecha) {
+      const ahora = new Date();
+      const isoLocal = new Date(ahora.getTime() - ahora.getTimezoneOffset() * 60000)
+        .toISOString()
+        .slice(0, 16);
+      inpFecha.value = isoLocal;
+    }
+
+    llenarSelectClientes();
+    renderVentas();
+  </script>
+</body>
+</html>
