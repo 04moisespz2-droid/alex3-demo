@@ -599,7 +599,6 @@
         return;
       }
 
-      // Si ya existe en carrito, sumamos cantidad (también para servicios, por si repiten)
       const existente = carrito.find(item =>
         String(item.codigo).trim().toLowerCase() === String(codigo).trim().toLowerCase()
       );
@@ -628,7 +627,6 @@
         inpNotas.value = `Venta con carrito (primer ítem: ${prod.nombre || ""})`;
       }
 
-      // Limpiar inputs de código/cantidad para el siguiente ítem
       inpCodigoProducto.value = "";
       if (inpCantidadProducto) inpCantidadProducto.value = "1";
       inpCodigoProducto.focus();
@@ -879,7 +877,6 @@
       }
 
       // Ajuste de inventario:
-      // Si hay carrito, usamos todos los ítems del carrito
       if (carrito.length > 0) {
         for (const item of carrito) {
           const prod = buscarProductoPorCodigo(item.codigo);
@@ -897,7 +894,6 @@
           }
         }
 
-        // Si el usuario aceptó, restamos stock
         for (const item of carrito) {
           const prod = buscarProductoPorCodigo(item.codigo);
           if (prod && typeof prod.stock !== "undefined") {
@@ -908,7 +904,6 @@
         }
         guardarProductos();
       } else {
-        // Modo antiguo: un solo ítem usando código + cantidad (por si se quiere usar sin carrito)
         let codigoProd = inpCodigoProducto ? inpCodigoProducto.value.trim() : "";
         let cantidadProd = 0;
         if (inpCantidadProducto && inpCantidadProducto.value) {
@@ -967,7 +962,6 @@
       ventas.push(venta);
       guardarVentas();
 
-      // Registrar ingreso en caja si hay efectivo
       if (montoEfectivoParaCaja > 0) {
         const mov = {
           id: "caja_venta_" + Date.now(),
@@ -985,7 +979,6 @@
         guardarMovimientosCaja();
       }
 
-      // Limpiar formulario (dejo fecha igual para seguir vendiendo)
       if (selCliente) selCliente.value = "";
       if (inpClienteTexto) inpClienteTexto.value = "";
       if (selDocTipo) selDocTipo.value = "Ticket";
@@ -998,7 +991,6 @@
       if (inpCodigoProducto) inpCodigoProducto.value = "";
       if (inpCantidadProducto) inpCantidadProducto.value = "1";
 
-      // Limpiar carrito
       carrito = [];
       renderCarrito();
 
@@ -1013,7 +1005,6 @@
       btnGuardarVenta.addEventListener("click", guardarVenta);
     }
 
-    // Enter en monto → guardar (si ya está todo listo)
     if (inpMonto) {
       inpMonto.addEventListener("keydown", (e) => {
         if (e.key === "Enter") {
@@ -1023,14 +1014,12 @@
       });
     }
 
-    // Buscar ventas
     if (inputBuscarVenta) {
       inputBuscarVenta.addEventListener("input", () => {
         renderVentas();
       });
     }
 
-    // Eliminar venta (no ajusta caja ni inventario)
     if (tbodyVentas) {
       tbodyVentas.addEventListener("click", (e) => {
         const btn = e.target.closest("button[data-delete-index]");
@@ -1058,5 +1047,10 @@
     renderVentas();
     renderCarrito();
   </script>
+
+  <!-- BOTÓN DE VOZ ALEX -->
+  <button id="btnVoz" class="btn-voz" onclick="iniciarReconocimiento()">🎤</button>
+  <script src="alex-voz.js"></script>
+
 </body>
 </html>
