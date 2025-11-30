@@ -2,7 +2,7 @@
 <html lang="es">
 <head>
   <meta charset="UTF-8">
-  <title>ALEX 3.0 - Proveedores</title>
+  <title>ALEX 3.0 - Compras</title>
   <link rel="stylesheet" href="styles.css">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
 </head>
@@ -23,10 +23,10 @@
       <a href="ventas.html" class="sidebar-link">💵 Ventas</a>
       <a href="inventario.html" class="sidebar-link">📦 Inventario</a>
       <a href="caja.html" class="sidebar-link">💰 Caja</a>
-      <a href="compras.html" class="sidebar-link">🧾 Compras</a>
+      <a href="compras.html" class="sidebar-link active">🧾 Compras</a>
       <a href="gastos.html" class="sidebar-link">📉 Gastos</a>
       <a href="clientes.html" class="sidebar-link">👥 Clientes</a>
-      <a href="proveedores.html" class="sidebar-link active">🚚 Proveedores</a>
+      <a href="proveedores.html" class="sidebar-link">🚚 Proveedores</a>
       <a href="reportes.html" class="sidebar-link">📚 Reportes</a>
       <a href="ia.html" class="sidebar-link">🤖 IA empresarial</a>
       <a href="configuracion.html" class="sidebar-link">⚙️ Configuración</a>
@@ -34,7 +34,7 @@
 
     <div class="sidebar-footer">
       <span class="sidebar-footer-title" id="sidebar-footer-title">Mi negocio</span>
-      <span class="sidebar-footer-sub">Módulo de proveedores</span>
+      <span class="sidebar-footer-sub">Módulo de compras</span>
     </div>
   </aside>
 
@@ -45,10 +45,9 @@
       <button class="btn-menu-mobile" id="btnMenuMobile">☰</button>
 
       <div class="topbar-left">
-        <h1 class="topbar-title">Proveedores</h1>
+        <h1 class="topbar-title">Compras</h1>
         <p class="topbar-subtitle">
-          Registra y administra los proveedores a los que compras mercadería o servicios.
-          Luego se usarán en el módulo de Compras.
+          Registra compras a proveedores, actualiza inventario y deja que ALEX registre la salida de efectivo en caja.
         </p>
       </div>
 
@@ -61,97 +60,201 @@
 
     <!-- Contenido principal -->
     <main class="main-content">
-      <!-- Formulario -->
+      <!-- KPIs de compras -->
+      <section class="cards-grid">
+        <article class="card kpi-card">
+          <h2 class="card-title">Compras de hoy</h2>
+          <p class="card-kpi" id="kpi-compras-hoy">Q 0.00</p>
+          <p class="card-kpi-sub">Total de compras registradas hoy.</p>
+        </article>
+
+        <article class="card kpi-card">
+          <h2 class="card-title">Compras del mes</h2>
+          <p class="card-kpi" id="kpi-compras-mes">Q 0.00</p>
+          <p class="card-kpi-sub">Sumatoria del mes actual.</p>
+        </article>
+
+        <article class="card kpi-card">
+          <h2 class="card-title">Documentos de compra</h2>
+          <p class="card-kpi" id="kpi-compras-cantidad">0</p>
+          <p class="card-kpi-sub">Total de compras registradas.</p>
+        </article>
+
+        <article class="card kpi-card">
+          <h2 class="card-title">Proveedores usados</h2>
+          <p class="card-kpi" id="kpi-proveedores-usados">0</p>
+          <p class="card-kpi-sub">Proveedores distintos en el historial.</p>
+        </article>
+      </section>
+
+      <!-- Registrar nueva compra -->
       <section class="card">
-        <h2 class="card-title">Agregar proveedor</h2>
+        <h2 class="card-title">1. Registrar una nueva compra</h2>
         <p class="card-description">
-          Guarda los datos del proveedor para usarlo al registrar compras y llevar control
-          de a quién le compras.
+          Selecciona un proveedor, agrega productos desde tu inventario y ALEX aumentará el stock
+          y registrará la salida de efectivo en caja si corresponde.
         </p>
 
+        <!-- Datos generales -->
         <div class="form-grid">
           <div class="form-field">
-            <label for="prNombre">Nombre / contacto principal</label>
-            <input id="prNombre" class="input" type="text"
-                   placeholder="Ej: Carlos López, Distribuidora El Centro, etc.">
+            <label for="cFecha">Fecha y hora</label>
+            <input id="cFecha" class="input" type="datetime-local">
           </div>
 
           <div class="form-field">
-            <label for="prEmpresa">Nombre de la empresa (opcional)</label>
-            <input id="prEmpresa" class="input" type="text"
-                   placeholder="Ej: Importadora XYZ, Mayorista ABC">
-          </div>
-
-          <div class="form-field">
-            <label for="prTelefono">Teléfono / WhatsApp</label>
-            <input id="prTelefono" class="input" type="tel"
-                   placeholder="Ej: 5555-5555">
-          </div>
-
-          <div class="form-field">
-            <label for="prCorreo">Correo (opcional)</label>
-            <input id="prCorreo" class="input" type="email"
-                   placeholder="Ej: proveedor@empresa.com">
-          </div>
-
-          <div class="form-field">
-            <label for="prTipo">Tipo de proveedor</label>
-            <select id="prTipo" class="input">
-              <option value="local">Local / nacional</option>
-              <option value="importador">Importador</option>
-              <option value="servicios">Servicios</option>
-              <option value="otro">Otro</option>
+            <label for="cProveedorSelect">Proveedor guardado</label>
+            <select id="cProveedorSelect" class="input">
+              <option value="">-- Selecciona proveedor --</option>
             </select>
           </div>
 
           <div class="form-field">
-            <label for="prDireccion">Dirección (opcional)</label>
-            <input id="prDireccion" class="input" type="text"
-                   placeholder="Ej: zona, ciudad, referencia, etc.">
+            <label for="cProveedorTexto">Proveedor (texto libre)</label>
+            <input id="cProveedorTexto" class="input" type="text"
+                   placeholder="Si no está en la lista, escribe el nombre aquí">
+          </div>
+
+          <div class="form-field">
+            <label for="cDocumentoTipo">Tipo de documento</label>
+            <select id="cDocumentoTipo" class="input">
+              <option value="Factura">Factura</option>
+              <option value="Nota de compra">Nota de compra</option>
+              <option value="Boleta">Boleta</option>
+              <option value="Recibo">Recibo</option>
+              <option value="Otro">Otro</option>
+            </select>
+          </div>
+
+          <div class="form-field">
+            <label for="cDocumentoNumero">Número de documento</label>
+            <input id="cDocumentoNumero" class="input" type="text"
+                   placeholder="Ej: F001-12345 (opcional)">
+          </div>
+
+          <div class="form-field">
+            <label for="cFormaPago">Forma de pago</label>
+            <select id="cFormaPago" class="input">
+              <option value="EFECTIVO">Efectivo</option>
+              <option value="TRANSFERENCIA">Transferencia</option>
+              <option value="TARJETA">Tarjeta</option>
+              <option value="MIXTO">Mixto (efectivo + otro)</option>
+              <option value="CREDITO_PROVEEDOR">Crédito proveedor</option>
+            </select>
+          </div>
+
+          <div class="form-field" id="campoMontoEfectivoCompra" style="display:none;">
+            <label for="cMontoEfectivo">Parte en efectivo (Q)</label>
+            <input id="cMontoEfectivo" class="input" type="number" min="0" step="0.01"
+                   placeholder="Solo si la compra es mixta">
           </div>
 
           <div class="form-field" style="grid-column:1 / -1;">
-            <label for="prNotas">Notas (opcional)</label>
-            <input id="prNotas" class="input" type="text"
-                   placeholder="Ej: día de crédito, condiciones de pago, productos que le compras, etc.">
+            <label for="cNotas">Notas (opcional)</label>
+            <input id="cNotas" class="input" type="text"
+                   placeholder="Ej: contado, crédito, incluye envío, etc.">
           </div>
         </div>
 
-        <button class="btn" id="btnGuardarProveedor" style="margin-top:0.75rem;">
-          Guardar proveedor
+        <!-- Detalle de productos (carrito de compra) -->
+        <h3 class="card-title" style="margin-top:1.25rem;">2. Agregar productos a esta compra</h3>
+        <p class="card-description">
+          Escribe el código del producto (de tu inventario), la cantidad comprada y el costo unitario.
+          ALEX sumará la cantidad al stock y actualizará el precio de compra.
+        </p>
+
+        <div class="form-grid">
+          <div class="form-field">
+            <label for="pCodigo">Código del producto</label>
+            <input id="pCodigo" class="input" type="text"
+                   placeholder="Código del inventario">
+          </div>
+
+          <div class="form-field">
+            <label for="pCantidad">Cantidad</label>
+            <input id="pCantidad" class="input" type="number" min="0.01" step="0.01" value="1">
+          </div>
+
+          <div class="form-field">
+            <label for="pCosto">Costo unitario (Q)</label>
+            <input id="pCosto" class="input" type="number" min="0" step="0.01"
+                   placeholder="Ej: 50.00">
+          </div>
+        </div>
+
+        <button class="btn" id="btnAgregarItemCompra" style="margin-top:0.5rem;">
+          ➕ Agregar producto a la compra
+        </button>
+
+        <table class="table" style="margin-top:0.75rem;">
+          <thead>
+            <tr>
+              <th>Código</th>
+              <th>Producto</th>
+              <th>Cantidad</th>
+              <th>Costo (Q)</th>
+              <th>Subtotal (Q)</th>
+              <th>Acciones</th>
+            </tr>
+          </thead>
+          <tbody id="carrito-compras-body">
+            <tr>
+              <td colspan="6" class="table-empty">
+                Aún no hay productos agregados a esta compra.
+              </td>
+            </tr>
+          </tbody>
+        </table>
+
+        <div style="text-align:right; margin-top:0.5rem;">
+          <strong>Total de esta compra:</strong>
+          <span id="total-compra">Q 0.00</span>
+        </div>
+
+        <button class="btn" id="btnGuardarCompra" style="margin-top:0.75rem;">
+          Guardar compra, actualizar inventario y caja
         </button>
       </section>
 
-      <!-- Listado -->
+      <!-- Historial de compras -->
       <section class="card">
-        <h2 class="card-title">Lista de proveedores</h2>
+        <h2 class="card-title">3. Historial de compras</h2>
         <p class="card-description">
-          Estos proveedores podrán seleccionarse desde el módulo de Compras para registrar entradas de inventario.
+          Las compras más recientes aparecen primero. Usa los filtros para revisar fecha, proveedor o texto.
         </p>
 
         <div class="form-grid" style="margin-bottom:0.75rem;">
+          <div class="form-field">
+            <label for="filtroFechaCompras">Filtro rápido</label>
+            <select id="filtroFechaCompras" class="input">
+              <option value="hoy">Hoy</option>
+              <option value="mes">Este mes</option>
+              <option value="todos">Toda la historia</option>
+            </select>
+          </div>
+
           <div class="form-field" style="grid-column:1 / -1;">
-            <label for="buscarProveedor">Buscar proveedor</label>
-            <input id="buscarProveedor" class="input" type="text"
-                   placeholder="Filtra por nombre, empresa, teléfono, tipo o notas">
+            <label for="buscarCompra">Buscar</label>
+            <input id="buscarCompra" class="input" type="text"
+                   placeholder="Filtra por proveedor, documento, notas">
           </div>
         </div>
 
         <table class="table">
           <thead>
             <tr>
-              <th>Nombre / contacto</th>
-              <th>Empresa</th>
-              <th>Teléfono</th>
-              <th>Tipo</th>
-              <th>Notas</th>
+              <th>Fecha</th>
+              <th>Proveedor</th>
+              <th>Documento</th>
+              <th>Forma de pago</th>
+              <th>Total</th>
               <th>Acciones</th>
             </tr>
           </thead>
-          <tbody id="tabla-proveedores-body">
+          <tbody id="tabla-compras-body">
             <tr>
               <td colspan="6" class="table-empty">
-                Aún no hay proveedores registrados.
+                Aún no hay compras registradas.
               </td>
             </tr>
           </tbody>
@@ -180,7 +283,7 @@
       : null;
 
     if (typeof aplicarPermisosYProteger === "function") {
-      aplicarPermisosYProteger("proveedores");
+      aplicarPermisosYProteger("compras");
     }
 
     const labelUser = document.getElementById("topbar-user-label");
@@ -206,182 +309,615 @@
       labelUser.textContent = `${usuarioActual.nombre} (${rolTexto})`;
     }
 
-    // ===== Storage proveedores =====
-    let proveedores = [];
-    if (typeof load === "function") {
-      const data = load("proveedores", []);
-      proveedores = Array.isArray(data) ? data : [];
+    // ===== Helpers =====
+    function alex3FormatearMonedaSeguro(valor) {
+      if (typeof alex3FormatearMoneda === "function") {
+        return alex3FormatearMoneda(valor);
+      }
+      const num = Number(valor);
+      if (isNaN(num)) return "Q 0.00";
+      return "Q " + num.toFixed(2);
     }
 
-    function guardarProveedores() {
+    function esMismoDia(a, b) {
+      return a.getFullYear() === b.getFullYear() &&
+             a.getMonth() === b.getMonth() &&
+             a.getDate() === b.getDate();
+    }
+
+    function esMismoMes(a, b) {
+      return a.getFullYear() === b.getFullYear() &&
+             a.getMonth() === b.getMonth();
+    }
+
+    function formatearFechaLocal(fechaIso) {
+      const d = new Date(fechaIso);
+      if (isNaN(d.getTime())) return "-";
+      return d.toLocaleString("es-GT");
+    }
+
+    // ===== Datos principales: compras, proveedores, productos, caja =====
+    let compras = [];
+    let proveedores = [];
+    let productos = [];
+    let movimientosCaja = [];
+
+    if (typeof load === "function") {
+      const cData = load("compras", []);
+      compras = Array.isArray(cData) ? cData : [];
+
+      const pvrData = load("proveedores", []);
+      proveedores = Array.isArray(pvrData) ? pvrData : [];
+
+      const prodData = load("productos", []);
+      if (Array.isArray(prodData)) {
+        productos = prodData.map(p => {
+          if (!p.tipoItem) p.tipoItem = "unidad";
+          if (!p.unidadPeso && p.tipoItem === "peso") p.unidadPeso = "lb";
+          return p;
+        });
+      }
+
+      const m1 = load("caja_movimientos", []);
+      const m2 = load("movimientosCaja", []);
+      if (Array.isArray(m1) && m1.length > 0) {
+        movimientosCaja = m1;
+      } else if (Array.isArray(m2) && m2.length > 0) {
+        movimientosCaja = m2;
+      }
+    }
+
+    function guardarCompras() {
       if (typeof save === "function") {
-        save("proveedores", proveedores);
+        save("compras", compras);
+      }
+    }
+
+    function guardarProductos() {
+      if (typeof save === "function") {
+        save("productos", productos);
+      }
+    }
+
+    function guardarMovimientosCaja() {
+      if (typeof save === "function") {
+        save("caja_movimientos", movimientosCaja);
+        save("movimientosCaja", movimientosCaja);
       }
     }
 
     // ===== DOM =====
-    const inpNombre = document.getElementById("prNombre");
-    const inpEmpresa = document.getElementById("prEmpresa");
-    const inpTelefono = document.getElementById("prTelefono");
-    const inpCorreo = document.getElementById("prCorreo");
-    const selTipo = document.getElementById("prTipo");
-    const inpDireccion = document.getElementById("prDireccion");
-    const inpNotas = document.getElementById("prNotas");
-    const btnGuardarProveedor = document.getElementById("btnGuardarProveedor");
-    const inpBuscar = document.getElementById("buscarProveedor");
-    const tbodyProveedores = document.getElementById("tabla-proveedores-body");
+    const inpFecha = document.getElementById("cFecha");
+    const selProveedor = document.getElementById("cProveedorSelect");
+    const inpProveedorTexto = document.getElementById("cProveedorTexto");
+    const selDocTipo = document.getElementById("cDocumentoTipo");
+    const inpDocNumero = document.getElementById("cDocumentoNumero");
+    const selFormaPago = document.getElementById("cFormaPago");
+    const campoMontoEfectivoCompra = document.getElementById("campoMontoEfectivoCompra");
+    const inpMontoEfectivo = document.getElementById("cMontoEfectivo");
+    const inpNotas = document.getElementById("cNotas");
+    const btnGuardarCompra = document.getElementById("btnGuardarCompra");
 
-    // ===== Render tabla =====
-    function renderProveedores() {
-      if (!tbodyProveedores) return;
+    const inpCodigoProd = document.getElementById("pCodigo");
+    const inpCantidadProd = document.getElementById("pCantidad");
+    const inpCostoProd = document.getElementById("pCosto");
+    const btnAgregarItemCompra = document.getElementById("btnAgregarItemCompra");
+    const tbodyCarritoCompras = document.getElementById("carrito-compras-body");
+    const spanTotalCompra = document.getElementById("total-compra");
 
-      const filtro = inpBuscar ? inpBuscar.value.trim().toLowerCase() : "";
-      tbodyProveedores.innerHTML = "";
+    const filtroFechaCompras = document.getElementById("filtroFechaCompras");
+    const buscarCompra = document.getElementById("buscarCompra");
+    const tbodyCompras = document.getElementById("tabla-compras-body");
 
-      if (!proveedores.length) {
-        tbodyProveedores.innerHTML = `
+    const kpiComprasHoy = document.getElementById("kpi-compras-hoy");
+    const kpiComprasMes = document.getElementById("kpi-compras-mes");
+    const kpiComprasCantidad = document.getElementById("kpi-compras-cantidad");
+    const kpiProveedoresUsados = document.getElementById("kpi-proveedores-usados");
+
+    // ===== Select proveedores =====
+    function llenarSelectProveedores() {
+      if (!selProveedor) return;
+      selProveedor.innerHTML = `<option value="">-- Selecciona proveedor --</option>`;
+      proveedores.forEach(p => {
+        const opt = document.createElement("option");
+        opt.value = p.id || "";
+        opt.textContent = p.nombre || "(Sin nombre)";
+        selProveedor.appendChild(opt);
+      });
+    }
+
+    // ===== Buscar producto por código =====
+    function buscarProductoPorCodigo(codigo) {
+      if (!codigo || !Array.isArray(productos)) return null;
+      const code = String(codigo).trim().toLowerCase();
+      if (!code) return null;
+      return productos.find(p => (p.codigo || "").toString().trim().toLowerCase() === code) || null;
+    }
+
+    // ===== Carrito de compra =====
+    let carritoCompra = [];
+
+    function calcularTotalCompra() {
+      return carritoCompra.reduce((s, item) => {
+        const st = Number(item.subtotal) || 0;
+        return s + st;
+      }, 0);
+    }
+
+    function actualizarTotalCompra() {
+      const total = calcularTotalCompra();
+      if (spanTotalCompra) {
+        spanTotalCompra.textContent = alex3FormatearMonedaSeguro(total);
+      }
+    }
+
+    function renderCarritoCompras() {
+      if (!tbodyCarritoCompras) return;
+
+      tbodyCarritoCompras.innerHTML = "";
+
+      if (!carritoCompra.length) {
+        tbodyCarritoCompras.innerHTML = `
           <tr>
             <td colspan="6" class="table-empty">
-              Aún no hay proveedores registrados.
+              Aún no hay productos agregados a esta compra.
             </td>
           </tr>
         `;
+        actualizarTotalCompra();
         return;
       }
 
-      const filtrados = filtro
-        ? proveedores.filter(p => {
-            const txt = [
-              p.nombre || "",
-              p.empresa || "",
-              p.telefono || "",
-              p.correo || "",
-              p.tipo || "",
-              p.direccion || "",
-              p.notas || ""
-            ].join(" ").toLowerCase();
-            return txt.includes(filtro);
-          })
-        : proveedores;
+      carritoCompra.forEach((item, index) => {
+        const costoFmt = alex3FormatearMonedaSeguro(item.costoUnitario);
+        const subtotalFmt = alex3FormatearMonedaSeguro(item.subtotal);
 
-      if (!filtrados.length) {
-        tbodyProveedores.innerHTML = `
+        tbodyCarritoCompras.innerHTML += `
           <tr>
-            <td colspan="6" class="table-empty">
-              No se encontraron proveedores con ese texto.
-            </td>
-          </tr>
-        `;
-        return;
-      }
-
-      filtrados.forEach((p, index) => {
-        let tipoTxt = "Otro";
-        if (p.tipo === "local") tipoTxt = "Local / nacional";
-        else if (p.tipo === "importador") tipoTxt = "Importador";
-        else if (p.tipo === "servicios") tipoTxt = "Servicios";
-
-        tbodyProveedores.innerHTML += `
-          <tr>
-            <td>${p.nombre || "-"}</td>
-            <td>${p.empresa || "-"}</td>
-            <td>${p.telefono || "-"}</td>
-            <td>${tipoTxt}</td>
-            <td>${p.notas || "-"}</td>
+            <td>${item.codigo}</td>
+            <td>${item.nombre}</td>
+            <td>${item.cantidad}</td>
+            <td>${costoFmt}</td>
+            <td>${subtotalFmt}</td>
             <td>
-              <button class="btn btn-small" data-index="${index}" data-action="eliminar">🗑️</button>
+              <button class="btn btn-small" data-cart-index="${index}" data-cart-action="menos">−</button>
+              <button class="btn btn-small" data-cart-index="${index}" data-cart-action="mas">+</button>
+              <button class="btn btn-small" data-cart-index="${index}" data-cart-action="eliminar">🗑️</button>
             </td>
           </tr>
         `;
       });
+
+      actualizarTotalCompra();
     }
 
-    // ===== Guardar proveedor =====
-    function guardarProveedor() {
-      const nombre = inpNombre ? inpNombre.value.trim() : "";
-      const empresa = inpEmpresa ? inpEmpresa.value.trim() : "";
-      const telefono = inpTelefono ? inpTelefono.value.trim() : "";
-      const correo = inpCorreo ? inpCorreo.value.trim() : "";
-      const tipo = selTipo ? selTipo.value : "local";
-      const direccion = inpDireccion ? inpDireccion.value.trim() : "";
-      const notas = inpNotas ? inpNotas.value.trim() : "";
+    if (tbodyCarritoCompras) {
+      tbodyCarritoCompras.addEventListener("click", (e) => {
+        const btn = e.target.closest("button[data-cart-index]");
+        if (!btn) return;
+        const idx = parseInt(btn.getAttribute("data-cart-index"));
+        const action = btn.getAttribute("data-cart-action");
+        if (isNaN(idx) || !carritoCompra[idx]) return;
 
-      if (!nombre && !empresa) {
-        alert("Escribe al menos el nombre del contacto o el nombre de la empresa.");
+        const item = carritoCompra[idx];
+        const step = 1; // compras generalmente son unidades completas, si quieres luego lo cambiamos
+
+        if (action === "mas") {
+          item.cantidad = Math.max(1, Math.round(item.cantidad + step));
+          item.subtotal = item.cantidad * item.costoUnitario;
+        } else if (action === "menos") {
+          const nueva = item.cantidad - step;
+          if (nueva < 1) {
+            if (confirm("¿Quitar este producto de la compra?")) {
+              carritoCompra.splice(idx, 1);
+            }
+          } else {
+            item.cantidad = Math.round(nueva);
+            item.subtotal = item.cantidad * item.costoUnitario;
+          }
+        } else if (action === "eliminar") {
+          if (confirm("¿Quitar este producto de la compra?")) {
+            carritoCompra.splice(idx, 1);
+          }
+        }
+
+        renderCarritoCompras();
+      });
+    }
+
+    function agregarItemCompra() {
+      const codigo = inpCodigoProd ? inpCodigoProd.value.trim() : "";
+      let cantidad = inpCantidadProd ? parseFloat(inpCantidadProd.value) : NaN;
+      const costoUnitario = inpCostoProd ? parseFloat(inpCostoProd.value) : NaN;
+
+      if (!codigo) {
+        alert("Escribe el código del producto.");
         return;
       }
 
-      const mostrarNombre = nombre || empresa;
+      if (isNaN(cantidad) || cantidad <= 0) {
+        cantidad = 1;
+      } else {
+        cantidad = Math.max(0.01, Math.round(cantidad * 100) / 100);
+      }
 
-      const nuevo = {
-        id: "proveedor_" + Date.now(),
-        nombre: mostrarNombre,
-        empresa,
-        telefono,
-        correo,
-        tipo,
-        direccion,
-        notas
-      };
+      if (isNaN(costoUnitario) || costoUnitario <= 0) {
+        alert("Escribe un costo unitario válido mayor a 0.");
+        return;
+      }
 
-      proveedores.push(nuevo);
-      guardarProveedores();
+      const prod = buscarProductoPorCodigo(codigo);
+      if (!prod) {
+        alert("No se encontró ningún producto con ese código en el inventario. Revísalo en el módulo de inventario.");
+        return;
+      }
 
-      if (inpNombre) inpNombre.value = "";
-      if (inpEmpresa) inpEmpresa.value = "";
-      if (inpTelefono) inpTelefono.value = "";
-      if (inpCorreo) inpCorreo.value = "";
-      if (inpDireccion) inpDireccion.value = "";
-      if (inpNotas) inpNotas.value = "";
-      if (selTipo) selTipo.value = "local";
+      const existente = carritoCompra.find(item =>
+        String(item.codigo).trim().toLowerCase() === String(codigo).trim().toLowerCase()
+      );
 
-      renderProveedores();
-      alert("Proveedor guardado correctamente.");
-    }
-
-    if (btnGuardarProveedor) {
-      btnGuardarProveedor.addEventListener("click", guardarProveedor);
-    }
-
-    // Enter en algunos campos -> guardar
-    [inpNombre, inpEmpresa, inpTelefono].forEach(inp => {
-      if (inp) {
-        inp.addEventListener("keydown", (e) => {
-          if (e.key === "Enter") {
-            e.preventDefault();
-            guardarProveedor();
-          }
+      if (existente) {
+        existente.cantidad += cantidad;
+        existente.cantidad = Math.max(0.01, Math.round(existente.cantidad * 100) / 100);
+        existente.costoUnitario = costoUnitario; // actualizamos al costo más reciente
+        existente.subtotal = existente.cantidad * existente.costoUnitario;
+      } else {
+        carritoCompra.push({
+          codigo: prod.codigo,
+          nombre: prod.nombre || "(Sin nombre)",
+          cantidad,
+          costoUnitario,
+          subtotal: costoUnitario * cantidad
         });
       }
-    });
 
-    // Buscar
-    if (inpBuscar) {
-      inpBuscar.addEventListener("input", renderProveedores);
+      if (inpNotas && !inpNotas.value.trim()) {
+        inpNotas.value = `Compra con productos del inventario (primer ítem: ${prod.nombre || ""})`;
+      }
+
+      if (inpCodigoProd) inpCodigoProd.value = "";
+      if (inpCantidadProd) inpCantidadProd.value = "1";
+      if (inpCostoProd) inpCostoProd.value = "";
+
+      if (inpCodigoProd) inpCodigoProd.focus();
+
+      renderCarritoCompras();
     }
 
-    // Eliminar
-    if (tbodyProveedores) {
-      tbodyProveedores.addEventListener("click", (e) => {
-        const btn = e.target.closest("button[data-index][data-action]");
-        if (!btn) return;
-        const idx = parseInt(btn.getAttribute("data-index"));
-        const action = btn.getAttribute("data-action");
-        if (isNaN(idx) || !proveedores[idx]) return;
+    if (btnAgregarItemCompra) {
+      btnAgregarItemCompra.addEventListener("click", (e) => {
+        e.preventDefault();
+        agregarItemCompra();
+      });
+    }
 
-        if (action === "eliminar") {
-          const p = proveedores[idx];
-          const confirmar = confirm(`¿Eliminar al proveedor "${p.nombre}"? (No lo quitará de compras pasadas).`);
-          if (!confirmar) return;
-          proveedores.splice(idx, 1);
-          guardarProveedores();
-          renderProveedores();
+    if (inpCodigoProd) {
+      inpCodigoProd.addEventListener("keydown", (e) => {
+        if (e.key === "Enter") {
+          e.preventDefault();
+          agregarItemCompra();
+        }
+      });
+    }
+
+    // ===== Forma de pago: mostrar campo efectivo si mixto =====
+    if (selFormaPago && campoMontoEfectivoCompra) {
+      selFormaPago.addEventListener("change", () => {
+        if (selFormaPago.value === "MIXTO") {
+          campoMontoEfectivoCompra.style.display = "block";
+        } else {
+          campoMontoEfectivoCompra.style.display = "none";
+          if (inpMontoEfectivo) inpMontoEfectivo.value = "";
+        }
+      });
+    }
+
+    // ===== KPIs de compras =====
+    function recalcularKPIsCompras() {
+      const hoy = new Date();
+      let totalHoy = 0;
+      let totalMes = 0;
+
+      compras.forEach(c => {
+        const fecha = new Date(c.fechaHora || c.fecha || Date.now());
+        const total = Number(c.total) || 0;
+        if (esMismoDia(fecha, hoy)) totalHoy += total;
+        if (esMismoMes(fecha, hoy)) totalMes += total;
+      });
+
+      const cantidad = compras.length;
+      const proveedoresSet = new Set(
+        compras.map(c => c.proveedorNombre || "").filter(Boolean)
+      );
+
+      if (kpiComprasHoy) kpiComprasHoy.textContent = alex3FormatearMonedaSeguro(totalHoy);
+      if (kpiComprasMes) kpiComprasMes.textContent = alex3FormatearMonedaSeguro(totalMes);
+      if (kpiComprasCantidad) kpiComprasCantidad.textContent = String(cantidad);
+      if (kpiProveedoresUsados) kpiProveedoresUsados.textContent = String(proveedoresSet.size);
+    }
+
+    // ===== Historial de compras =====
+    function renderCompras() {
+      if (!tbodyCompras) return;
+
+      const filtroFecha = filtroFechaCompras ? filtroFechaCompras.value : "hoy";
+      const textoBuscar = buscarCompra ? buscarCompra.value.trim().toLowerCase() : "";
+
+      tbodyCompras.innerHTML = "";
+
+      if (!compras.length) {
+        tbodyCompras.innerHTML = `
+          <tr>
+            <td colspan="6" class="table-empty">
+              Aún no hay compras registradas.
+            </td>
+          </tr>
+        `;
+        recalcularKPIsCompras();
+        return;
+      }
+
+      const hoy = new Date();
+      const mesActual = hoy.getMonth();
+      const anioActual = hoy.getFullYear();
+
+      const filtradas = compras.filter(c => {
+        const fecha = new Date(c.fechaHora || c.fecha || Date.now());
+        let pasaFecha = true;
+        if (filtroFecha === "hoy") {
+          pasaFecha = esMismoDia(fecha, hoy);
+        } else if (filtroFecha === "mes") {
+          pasaFecha = (fecha.getFullYear() === anioActual && fecha.getMonth() === mesActual);
+        }
+
+        let pasaTexto = true;
+        if (textoBuscar) {
+          const txt = [
+            c.proveedorNombre || "",
+            c.documentoTipo || "",
+            c.documentoNumero || "",
+            c.notas || "",
+            c.formaPago || ""
+          ].join(" ").toLowerCase();
+          pasaTexto = txt.includes(textoBuscar);
+        }
+
+        return pasaFecha && pasaTexto;
+      });
+
+      if (!filtradas.length) {
+        tbodyCompras.innerHTML = `
+          <tr>
+            <td colspan="6" class="table-empty">
+              No se encontraron compras con esos filtros.
+            </td>
+          </tr>
+        `;
+        recalcularKPIsCompras();
+        return;
+      }
+
+      filtradas.sort((a, b) => {
+        const fa = new Date(a.fechaHora || a.fecha || 0).getTime();
+        const fb = new Date(b.fechaHora || b.fecha || 0).getTime();
+        return fb - fa;
+      });
+
+      filtradas.forEach((c, index) => {
+        const fechaTxt = c.fecha || (c.fechaHora ? formatearFechaLocal(c.fechaHora) : "-");
+        const provTxt = c.proveedorNombre || "-";
+        const docTxt = c.documentoTipo
+          ? (c.documentoNumero ? `${c.documentoTipo} ${c.documentoNumero}` : c.documentoTipo)
+          : (c.documentoNumero || "-");
+        const fpTxt = c.formaPago || "-";
+        const totalTxt = alex3FormatearMonedaSeguro(c.total || 0);
+
+        tbodyCompras.innerHTML += `
+          <tr>
+            <td>${fechaTxt}</td>
+            <td>${provTxt}</td>
+            <td>${docTxt}</td>
+            <td>${fpTxt}</td>
+            <td>${totalTxt}</td>
+            <td>
+              <button class="btn btn-small" data-delete-index="${index}">🗑️</button>
+            </td>
+          </tr>
+        `;
+      });
+
+      recalcularKPIsCompras();
+    }
+
+    if (filtroFechaCompras) {
+      filtroFechaCompras.addEventListener("change", renderCompras);
+    }
+
+    if (buscarCompra) {
+      buscarCompra.addEventListener("input", renderCompras);
+    }
+
+    if (tbodyCompras) {
+      tbodyCompras.addEventListener("click", (e) => {
+        const btn = e.target.closest("button[data-delete-index]");
+        if (!btn) return;
+        const idx = parseInt(btn.getAttribute("data-delete-index"));
+        if (isNaN(idx) || !compras[idx]) return;
+
+        if (!confirm("¿Seguro que quieres eliminar esta compra? (no ajustará inventario ni caja automáticamente)")) return;
+        compras.splice(idx, 1);
+        guardarCompras();
+        renderCompras();
+      });
+    }
+
+    // ===== Guardar compra =====
+    function guardarCompra() {
+      let fechaObj;
+      if (inpFecha && inpFecha.value) {
+        fechaObj = new Date(inpFecha.value);
+      } else {
+        fechaObj = new Date();
+      }
+      if (isNaN(fechaObj.getTime())) fechaObj = new Date();
+
+      const fechaLocal = fechaObj.toLocaleString("es-GT");
+      const fechaIso = fechaObj.toISOString();
+
+      // Proveedor
+      let proveedorId = selProveedor ? selProveedor.value : "";
+      let proveedorNombre = "";
+
+      if (proveedorId) {
+        const pvr = proveedores.find(p => (p.id || "") === proveedorId);
+        proveedorNombre = pvr ? (pvr.nombre || "") : "";
+      }
+
+      const proveedorTexto = (inpProveedorTexto && inpProveedorTexto.value.trim()) || "";
+
+      if (!proveedorNombre && proveedorTexto) {
+        proveedorNombre = proveedorTexto;
+        proveedorId = null;
+      }
+
+      if (!proveedorNombre) {
+        proveedorNombre = "Proveedor general";
+      }
+
+      const documentoTipo = selDocTipo ? selDocTipo.value : "Factura";
+      const documentoNumero = (inpDocNumero && inpDocNumero.value.trim()) || "";
+      const formaPago = selFormaPago ? selFormaPago.value : "EFECTIVO";
+      const notas = (inpNotas && inpNotas.value.trim()) || "";
+
+      if (!carritoCompra.length) {
+        alert("Agrega al menos un producto a la compra.");
+        return;
+      }
+
+      const total = calcularTotalCompra();
+      if (total <= 0) {
+        alert("El total de la compra debe ser mayor a 0.");
+        return;
+      }
+
+      // Actualizar inventario (sumar stock + actualizar costo)
+      carritoCompra.forEach(item => {
+        const prod = buscarProductoPorCodigo(item.codigo);
+        if (prod) {
+          const stockActual = Number(prod.stock) || 0;
+          prod.stock = stockActual + item.cantidad;
+          prod.compra = item.costoUnitario;
+          const venta = Number(prod.venta) || 0;
+          const ganancia = venta - prod.compra;
+          prod.ganancia = ganancia;
+          prod.margen = prod.compra > 0 ? Number(((ganancia / prod.compra) * 100).toFixed(1)) : 0;
+        }
+      });
+      guardarProductos();
+
+      // Registrar movimiento de caja (EGRESO)
+      let montoEfectivoParaCaja = 0;
+      if (formaPago === "EFECTIVO") {
+        montoEfectivoParaCaja = total;
+      } else if (formaPago === "MIXTO") {
+        const parcial = parseFloat(inpMontoEfectivo && inpMontoEfectivo.value);
+        if (!isNaN(parcial) && parcial > 0) {
+          montoEfectivoParaCaja = parcial;
+        }
+      } else {
+        montoEfectivoParaCaja = 0;
+      }
+
+      const compra = {
+        id: "compra_" + Date.now(),
+        fecha: fechaLocal,
+        fechaHora: fechaIso,
+        proveedorId,
+        proveedorNombre,
+        documentoTipo,
+        documentoNumero,
+        formaPago,
+        total,
+        notas,
+        items: carritoCompra.map(item => ({
+          codigo: item.codigo,
+          nombre: item.nombre,
+          cantidad: item.cantidad,
+          costoUnitario: item.costoUnitario,
+          subtotal: item.subtotal
+        })),
+        usuario: usuarioActual ? usuarioActual.usuario : null
+      };
+
+      compras.push(compra);
+      guardarCompras();
+
+      if (montoEfectivoParaCaja > 0) {
+        const mov = {
+          id: "caja_compra_" + Date.now(),
+          fecha: fechaLocal,
+          fechaHora: fechaIso,
+          tipo: "EGRESO",
+          categoria: "Pago proveedores",
+          descripcion: `Compra a ${proveedorNombre}`,
+          monto: montoEfectivoParaCaja,
+          origen: "compra",
+          compraId: compra.id,
+          usuario: usuarioActual ? usuarioActual.usuario : null
+        };
+        movimientosCaja.push(mov);
+        guardarMovimientosCaja();
+      }
+
+      // Limpiar formulario
+      if (selProveedor) selProveedor.value = "";
+      if (inpProveedorTexto) inpProveedorTexto.value = "";
+      if (selDocTipo) selDocTipo.value = "Factura";
+      if (inpDocNumero) inpDocNumero.value = "";
+      if (selFormaPago) selFormaPago.value = "EFECTIVO";
+      if (campoMontoEfectivoCompra) campoMontoEfectivoCompra.style.display = "none";
+      if (inpMontoEfectivo) inpMontoEfectivo.value = "";
+      if (inpNotas) inpNotas.value = "";
+      if (inpCodigoProd) inpCodigoProd.value = "";
+      if (inpCantidadProd) inpCantidadProd.value = "1";
+      if (inpCostoProd) inpCostoProd.value = "";
+
+      carritoCompra = [];
+      renderCarritoCompras();
+
+      renderCompras();
+      alert("Compra registrada, inventario actualizado y movimiento de caja creado (si aplica).");
+    }
+
+    if (btnGuardarCompra) {
+      btnGuardarCompra.addEventListener("click", (e) => {
+        e.preventDefault();
+        guardarCompra();
+      });
+    }
+
+    // Enter en costo -> agregar ítem
+    if (inpCostoProd) {
+      inpCostoProd.addEventListener("keydown", (e) => {
+        if (e.key === "Enter") {
+          e.preventDefault();
+          agregarItemCompra();
         }
       });
     }
 
     // ===== Primera carga =====
-    renderProveedores();
+    if (inpFecha) {
+      const ahora = new Date();
+      const isoLocal = new Date(ahora.getTime() - ahora.getTimezoneOffset() * 60000)
+        .toISOString()
+        .slice(0, 16);
+      inpFecha.value = isoLocal;
+    }
+
+    llenarSelectProveedores();
+    renderCarritoCompras();
+    renderCompras();
   </script>
 </body>
 </html>
