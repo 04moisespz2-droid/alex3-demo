@@ -27,8 +27,9 @@
       <a href="gastos.html" class="sidebar-link">📉 Gastos</a>
       <a href="clientes.html" class="sidebar-link">👥 Clientes</a>
       <a href="proveedores.html" class="sidebar-link">🚚 Proveedores</a>
-      <a href="contabilidad.html" class="sidebar-link">📚 Contabilidad</a>
-      <a href="sat.html" class="sidebar-link">🇬🇹 SAT Guatemala</a>
+      <!-- Antes: Contabilidad + SAT. Ahora solo Reportes (comercial) -->
+      <a href="reportes.html" class="sidebar-link">📚 Reportes</a>
+      <!-- Eliminado: <a href="sat.html" class="sidebar-link">🇬🇹 SAT Guatemala</a> -->
       <a href="ia.html" class="sidebar-link">🤖 IA empresarial</a>
       <a href="configuracion.html" class="sidebar-link">⚙️ Configuración</a>
     </nav>
@@ -53,7 +54,8 @@
       <div class="topbar-right">
         <span class="topbar-company">Mi tienda demo</span>
         <span class="topbar-divider">•</span>
-        <span class="topbar-user">Brayan (Dueño)</span>
+        <!-- Antes: texto fijo Brayan (Dueño). Ahora dinámico según usuario logueado -->
+        <span class="topbar-user" id="topbar-user-label">Usuario (Rol)</span>
       </div>
     </header>
 
@@ -68,8 +70,9 @@
 
         <div class="form-grid">
           <div class="form-field">
-            <label for="codigo">Código del producto</label>
-            <input id="codigo" class="input" type="text" placeholder="Ej: SKU-001">
+            <!-- Solo cambié el texto para que también funcione como código de barras -->
+            <label for="codigo">Código / código de barras</label>
+            <input id="codigo" class="input" type="text" placeholder="Ej: SKU-001 o código de barras">
           </div>
 
           <div class="form-field">
@@ -150,6 +153,12 @@
 
     if (typeof aplicarPermisosYProteger === "function") {
       aplicarPermisosYProteger("inventario");
+    }
+
+    const labelUser = document.getElementById("topbar-user-label");
+    if (usuarioActual && labelUser) {
+      const rolTexto = usuarioActual.rol === "dueno" ? "Dueño" : "Empleado";
+      labelUser.textContent = `${usuarioActual.nombre} (${rolTexto})`;
     }
 
     // Cargar productos desde almacenamiento
